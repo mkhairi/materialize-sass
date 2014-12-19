@@ -1,10 +1,10 @@
 @font-face {
     font-family: "Material-Design-Icons";
-    src:url("../fonts/material-design-icons/Material-Design-Icons.eot?-g7cqhn");
-    src:url("../fonts/material-design-icons/Material-Design-Icons.eot?#iefix-g7cqhn") format("embedded-opentype"),
-        url("../fonts/material-design-icons/Material-Design-Icons.woff?-g7cqhn") format("woff"),
-        url("../fonts/material-design-icons/Material-Design-Icons.ttf?-g7cqhn") format("truetype"),
-        url("../fonts/material-design-icons/Material-Design-Icons.svg?-g7cqhn#Material-Design-Icons") format("svg");
+    src:font-url("material-design-icons/Material-Design-Icons.eot?-g7cqhn");
+    src:font-url("material-design-icons/Material-Design-Icons.eot?#iefix-g7cqhn") format("embedded-opentype"),
+        font-url("material-design-icons/Material-Design-Icons.woff?-g7cqhn") format("woff"),
+        font-url("material-design-icons/Material-Design-Icons.ttf?-g7cqhn") format("truetype"),
+        font-url("material-design-icons/Material-Design-Icons.svg?-g7cqhn#Material-Design-Icons") format("svg");
     font-weight: normal;
     font-style: normal;
 }
