@@ -23,13 +23,13 @@ $medium-only: "only screen and (min-width : #{$small-screen}) and (max-width : #
 //}
 
 body {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
+  // display: flex;
+  // min-height: 100vh;
+  // flex-direction: column;
 }
 
 main {
-  flex: 1;
+  // flex: 1 0 auto;
 }
 
 ul {
@@ -40,9 +40,7 @@ a {
 	color: color("blue", "darken-1");
 	text-decoration: none;
 }
-p {
-  color: #555;
-}
+
 
 
 // No Text Select
@@ -138,6 +136,13 @@ i {
     margin-left: 15px;
   }
 }
+
+// Images
+img.responsive-img {
+  max-width: 100%;
+  height: auto;
+}
+
 
 // parallax
 .parallax-container {
