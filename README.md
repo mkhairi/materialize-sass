@@ -1,4 +1,4 @@
-# Materializecss sass version for rails asset pipeline
+# Materializecss sass version for rails asset pipeline [![GitHub version](https://badge.fury.io/gh/mkhairi%2Fmaterialize-sass.svg)](http://badge.fury.io/gh/mkhairi%2Fmaterialize-sass)
 
 `materialize-sass` is a Sass-powered version of Materialize - a modern responsive front-end framework based on Material Design.
 
