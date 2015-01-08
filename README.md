@@ -1,26 +1,46 @@
-# Materializecss sass version for rails asset pipeline
+# Materializecss sass version for rails asset pipeline [![GitHub version](https://badge.fury.io/gh/mkhairi%2Fmaterialize-sass.svg)](http://badge.fury.io/gh/mkhairi%2Fmaterialize-sass)
 
-TODO: Write a gem description
+`materialize-sass` is a Sass-powered version of Materialize - a modern responsive front-end framework based on Material Design.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+In your Gemfile you need to add the `materialize-sass` gem:
 
 ```ruby
 gem 'materialize-sass'
 ```
 
-And then execute:
+**NOTE:** ensure that the `sass-rails` gem is presented in your Gemfile.
 
-    $ bundle
+And then run the bundler and restart your server to make the files available through the pipeline:
 
-Or install it yourself as:
+    $ bundle install
+
+Or install it separately:
 
     $ gem install materialize-sass
 
 ## Usage
+### a. SASS
 
-TODO: Write usage instructions here
+Import Materialize styles in `app/assets/stylesheets/application.css.scss`:
+```scss
+@import "materialize-sprockets";
+@import "materialize";
+```
+**NOTE:**  If you have just generated a new Rails app, it  may come with a `.css` file instead. If this file exists, it will be served instead of Sass, so remove it.
+
+```console
+$ rm app/assets/stylesheets/application.css
+```
+ ### b. JavaScript
+
+Require Bootstrap Javascripts in `app/assets/javascripts/application.js`:
+
+```js
+//= require jquery
+//= require materialize-sprockets
+```
 
 ## Contributing
 
