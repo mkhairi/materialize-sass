@@ -1,26 +1,14 @@
 @charset "UTF-8";
 
-// Media Query Ranges
-$small-screen: 600px !default;
-$medium-screen: 992px !default;
-$large-screen: 1200px !default;
-
-$medium-and-up: "only screen and (min-width : #{$small-screen})";
-$large-and-up: "only screen and (min-width : #{$medium-screen})";
-
-$small-and-down: "only screen and (max-width : #{$small-screen})";
-$medium-and-down: "only screen and (max-width : #{$medium-screen})";
-
-$medium-only: "only screen and (min-width : #{$small-screen}) and (max-width : #{$medium-screen})";
 
 //Default styles
 
-//html {
-//  box-sizing: border-box;
-//}
-//*, *:before, *:after {
-//  box-sizing: inherit;
-//}
+html {
+ box-sizing: border-box;
+}
+*, *:before, *:after {
+ box-sizing: inherit;
+}
 
 body {
   // display: flex;
@@ -42,46 +30,17 @@ a {
 }
 
 
-
-// No Text Select
-.no-select {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-
-// Text Align
-.left-align {
-  text-align: left;
-}
-.right-align {
-  text-align: right
-}
-.center, .center-align {
-  text-align: center; 
-}
-
-.left {
-  float: left;
-}
-.right {
-  float: right;
-}
 // Positioning
-.center-block {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.valign-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .valign {
+    display: block;
+  }
 }
 
-
-// Grid Variables
-$num-cols: 12;
-$gutter-width: 1.5rem;
 
 ul {
   padding: 0;
@@ -89,9 +48,6 @@ ul {
 li {
   list-style-type: none;
 }
-
-$num-cols: 12;
-
 
 // Z-levels
 
@@ -114,7 +70,16 @@ $num-cols: 12;
     @include box-shadow-2(0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22));
 }
 
-//  Blockquote 
+// Dividers
+
+.divider {
+  height: 1px;
+  overflow: hidden;
+  background-color: color("grey", "lighten-2");
+}
+
+
+//  Blockquote
 
 blockquote {
   margin: 20px 0;
@@ -134,6 +99,15 @@ i {
   &.right {
     float: right;
     margin-left: 15px;
+  }
+  &.small {
+    font-size: 2rem;
+  }
+  &.medium {
+    font-size: 4rem;
+  }
+  &.large {
+    font-size: 6rem;
   }
 }
 
@@ -181,42 +155,52 @@ img.responsive-img {
 }
 
 
+// Pushpin
+.pin-top, .pin-bottom {
+  position: relative;
+}
+.pinned {
+  position: fixed;
+}
+
+
+
 // Browser Size Dependent Visibility
 .hide-on-small-only, .hide-on-small-and-down {
   @media #{$small-and-down} {
     display: none !important;
-  } 
+  }
 }
 
 .hide-on-med-and-down {
   @media #{$medium-and-down} {
     display: none !important;
-  } 
+  }
 }
 
 .hide-on-med-and-up {
   @media #{$medium-and-up} {
     display: none !important;
-  } 
+  }
 }
 
 .hide-on-med-only {
   @media only screen and (min-width: $small-screen) and (max-width: $medium-screen) {
-    display: none !important; 
+    display: none !important;
   }
 }
 
 .hide-on-large-only {
   @media #{$large-and-up} {
-    display: none !important; 
+    display: none !important;
   }
 }
 
-// Center text on mobile 
+// Center text on mobile
 .center-on-small-only {
   @media #{$small-and-down} {
     text-align: center;
-  } 
+  }
 }
 
 
@@ -243,26 +227,26 @@ table, th, td {
 table {
   width:100%;
   display: table;
-  
+
   @media #{$small-and-down} {
     thead tr th, tbody tr td {
       text-align: center;
-      
-    } 
+
+    }
   }
-  
+
   &.bordered tr {
     border-bottom: 1px solid #e0e0e0;
   }
-  
+
   &.striped {
     tbody tr:nth-child(odd) {
       background-color: #f2f2f2;
     }
   }
-  
+
   &.hoverable {
-      
+
     tbody tr {
       @include transition(background-color .25s ease);
       &:hover {
@@ -270,11 +254,11 @@ table {
       }
     }
   }
-  
+
   &.centered {
     thead tr th, tbody tr td {
       text-align: center;
-      
+
     }
   }
 
@@ -294,58 +278,53 @@ td, th{
 
 // Collections
 .collection {
-  background-color: #FFF;
-  margin: 0 0 1rem 0;
-  border: 1px solid #e0e0e0;
+  background-color: $collection-bg-color;
+  margin: $element-top-margin 0 $element-bottom-margin 0;
+  border: 1px solid $collection-border-color;
   border-radius: 2px;
 
   .collection-item {
     line-height: 1.5rem;
     padding: 10px 20px;
     margin: 0px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid $collection-border-color;
       &:last-child {
         border-bottom: none;
-      } 
+      }
   }
-  
   a.collection-item{
     display: block;
     @include transition(.25s);
     &:not(.active) {
       &:hover {
-        background-color: #f2f2f2;
+        background-color: $collection-hover-bg-color;
       }
     }
-  }    
-  
+  }
+
   &.with-header {
     .collection-header {
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid $collection-border-color;
       padding: 10px 20px;
     }
     .collection-item {
      padding-left: 30px;
     }
   }
-  
   .active {
-    @extend .blue.lighten-1;
-    @extend .blue-text.lighten-4;
+    background-color: $collection-active-bg-color;
+    color: $collection-active-color;
   }
-  
-  .secondary-content {		
-    float: right;		
+  .secondary-content {
+    float: right;
   }
-  
-  
+
   //Pagination
   &.pagination {
     display: inline-block;
-    
+
       ul{
         background-color: transparent;
-        
         font-size: 0;
         display: inline-block;
       }
@@ -357,19 +336,18 @@ td, th{
       font-size: 1rem;
 
       a {
-       padding: 0px 5px; 
+       padding: 0px 5px;
       }
       &.active {
-        background-color: color('light-blue', 'base'); 
+        background-color: color('light-blue', 'base');
         color: #FFF;
       }
       &:hover {
         background-color: color('light-blue', 'lighten-5');
       }
     }
-    
   }
-  
+
 }
 
 // Badges
@@ -395,6 +373,62 @@ span.badge {
   }
 }
 
-img.circle {
+// Responsive Videos
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 30px;
+    height: 0;
+    overflow: hidden;
+
+    iframe, object, embed {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+}
+
+/*******************
+  Utility Classes
+*******************/
+
+// Text Align
+.left-align {
+  text-align: left;
+}
+.right-align {
+  text-align: right
+}
+.center, .center-align {
+  text-align: center;
+}
+
+.left {
+  float: left !important;
+}
+.right {
+  float: right !important;
+}
+
+// No Text Select
+.no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+// Circle
+.circle {
   @include border-radius(50%);
+}
+
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }

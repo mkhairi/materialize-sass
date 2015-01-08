@@ -24,44 +24,27 @@
         }
       });
     });
-    
+
 
     // Floating-Fixed table of contents
-    $('.table-of-contents').each(function() {
-      var origin = $(this);
-      $(window).scroll(function() {
-        var tabs_height = 0;
-        if ($('.tabs-wrapper').length) {
-          tabs_height = $('.tabs-wrapper').height();
-        }
-        if (origin.is(":visible")) {
-
-          if(origin.attr('data-origpos') === undefined) {
-            origin.attr('data-origpos', origin.position().top - tabs_height);            
-          }
-          if(origin.attr('data-origmargin') === undefined) {
-            origin.attr('data-origmargin', '1.5rem');            
-          }
-          if($(window).scrollTop() >= origin.attr('data-origpos') && !origin.hasClass('fixed')) {
-            origin.addClass('fixed');
-            origin.css('top', tabs_height);
-            origin.css('marginTop', '1.5rem');
-          }
-          if($(window).scrollTop() < origin.attr('data-origpos')) {
-            origin.removeClass('fixed');     
-            origin.css('marginTop', origin.attr('data-origmargin'));
-          }            
-
-        }
+    if ($('.table-of-contents').length) {
+      var toc_offset = $('.table-of-contents').first().offset().top;
+      $('.table-of-contents').each(function() {
+        var origin = $(this);
+        origin.pushpin({ top: toc_offset,
+          bottom: $(document).height() - window.innerHeight });
       });
-    });
+    }
+
+
+
 
     // BuySellAds Detection
     var $bsa = $(".buysellads"),
         $timesToCheck = 3;
     function checkForChanges()
     {
-        if ($bsa.find('.bsa_it').height() > 0) 
+        if ($bsa.find('#carbonads').height() > 0)
         {
               $('.table-of-contents').css('marginTop', 285);
               // Floating-Fixed table of contents
@@ -74,8 +57,8 @@
                 $(window).scroll(function() {
 
                   if (origin.is(":visible")) {
-                    origin.attr('data-origpos', origin.position().top - tabs_height + 285);            
-                    origin.attr('data-origmargin', 285);            
+                    origin.attr('data-origpos', origin.position().top - tabs_height + 285);
+                    origin.attr('data-origmargin', 285);
                   }
                 });
               });
@@ -83,7 +66,7 @@
         else {
           $timesToCheck -= 1;
           if ($timesToCheck >= 0) {
-            setTimeout(checkForChanges, 500);            
+            setTimeout(checkForChanges, 500);
           }
         }
 
@@ -93,41 +76,29 @@
 
 
     // Tabs Fixed
-    $(window).scroll(function() {
-      var origin = $('.tabs-wrapper'),
-          origin_row = origin.find('.row');
-      if (origin.is(":visible")) {
-        if(origin.attr('data-origpos') === undefined) {
-          origin.attr('data-origpos', origin.position().top);            
-        }
-        if($(window).scrollTop() >= origin.attr('data-origpos') && !origin.hasClass('fixed')) {
-          origin_row.addClass('fixed');
-        }
-        if($(window).scrollTop() < origin.attr('data-origpos')) {
-          origin_row.removeClass('fixed');            
-        }
-      }
-    });
+    if ($('.tabs-wrapper').length) {
+      $('.tabs-wrapper .row').pushpin({ top: $('.tabs-wrapper').offset().top });
+    }
 
     // Github Latest Commit
     if ($('.github-commit').length) { // Checks if widget div exists (Index only)
       $.ajax({
         url: "https://api.github.com/repos/dogfalo/materialize/commits/master",
-        dataType: "json", 
+        dataType: "json",
         success: function (data) {
           var sha = data.sha,
               date = jQuery.timeago(data.commit.author.date);
-          if (window_width < 600) {
+          if (window_width < 1120) {
             sha = sha.substring(0,7);
           }
           $('.github-commit').find('.date').html(date);
           $('.github-commit').find('.sha').html(sha).attr('href', data.html_url);
 
           // console.log(returndata, returndata.commit.author.date, returndata.sha);
-        }  
-      });      
+        }
+      });
     }
-  
+
     // Toggle Flow Text
     var toggleFlowTextButton = $('#flow-toggle')
     toggleFlowTextButton.click( function(){
@@ -135,7 +106,7 @@
           $(this).toggleClass('flow-text');
         })
     });
-    
+
 //    Toggle Containers on page
     var toggleContainersButton = $('#container-toggle-button');
     toggleContainersButton.click(function(){
@@ -150,6 +121,19 @@
         }
       });
     });
+
+    // Detect touch screen and enable scrollbar if necessary
+    function is_touch_device() {
+      try {
+        document.createEvent("TouchEvent");
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+    if (is_touch_device()) {
+      $('#nav-mobile').css({ overflow: 'auto'})
+    }
 
 
     // Plugin initialization
@@ -169,9 +153,10 @@
     $('.collapsible-expandable').collapsible({"accordion": false});
     $('.materialboxed').materialbox();
     $('.scrollspy').scrollSpy();
-    $('.button-collapse').sideNav();
-    $('.datepicker').pickadate({ formatSubmit: 'yyyy/mm/dd' });
+    $('.button-collapse').sideNav({'menuWidth': 400});
+    $('.datepicker').pickadate();
     $('select').not('.disabled').material_select();
+
 
   }); // end of document ready
 })(jQuery); // end of jQuery name space

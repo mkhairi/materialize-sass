@@ -16,5 +16,6 @@
 //= require ./materialize/forms
 //= require ./materialize/slider
 //= require ./materialize/cards
+//= require ./materialize/pushpin
 //= require ./materialize/date_picker/picker
 //= require ./materialize/date_picker/picker.date

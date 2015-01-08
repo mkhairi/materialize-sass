@@ -10,15 +10,25 @@
         in_duration: 300,
         out_duration: 200,
         ready: undefined,
-        complete: undefined
+        complete: undefined,
+        dismissible: true
       }
 
       // Override defaults
       options = $.extend(defaults, options);
 
-      $("#lean-overlay").click(function() {
-        $(modal).closeModal(options);
-      });
+      if (options.dismissible) {
+        $("#lean-overlay").click(function() {
+          $(modal).closeModal(options);
+        });
+        // Return on ESC
+        $(document).keyup(function(e) {
+          if (e.keyCode === 27) {   // ESC key
+            $(modal).closeModal(options);
+            $(this).off();
+          }
+        });
+      }
 
       $(modal).find(".modal-close").click(function(e) {
         e.preventDefault();

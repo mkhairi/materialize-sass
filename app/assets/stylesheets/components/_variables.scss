@@ -1,0 +1,96 @@
+/*** Buttons ***/
+$button-background-disabled: #DFDFDF;
+$button-color: color("blue", "base") !default;
+$button-color-disabled: #9F9F9F;
+$button-color-flat: #343434;
+$button-color-raised: #FFF;
+$button-floating-size: 37px !default;
+$button-height: 36px !default;
+$button-font-size-shared: 1.3rem;
+$button-line-height: 36px;
+
+
+/*** Cards ***/
+$default-color: #00bcd4 !default;
+$card-padding: 16px !default;
+$footer-font-color: #000 !default;
+$card-bg-color: #fff !default;
+
+/*** Collapsible ***/
+$collapsible-height: 3rem !default;
+$collapsible-header-color: #fff !default;
+$collapsible-border-color: #ddd !default;
+
+/*** Forms ***/
+// Text Inputs + Textarea
+$border-color: color("grey", "base") !default;
+$highlight-color: color("light-blue", "base") !default;
+$label-font-size: .8rem !default;
+
+// Radio Buttons
+$disabled-color: rgba(0,0,0, .26) !default;
+$fill-color: #0f9d58 !default;
+$radio-border: #5a5a5a !default;
+
+
+
+/*** Global ***/
+// Media Query Ranges
+$small-screen-up: 601px !default;
+$medium-screen-up: 993px !default;
+$large-screen-up: 1201px !default;
+$small-screen: 600px !default;
+$medium-screen: 992px !default;
+$large-screen: 1200px !default;
+
+$medium-and-up: "only screen and (min-width : #{$small-screen-up})" !default;
+$large-and-up: "only screen and (min-width : #{$medium-screen-up})" !default;
+$small-and-down: "only screen and (max-width : #{$small-screen})" !default;
+$medium-and-down: "only screen and (max-width : #{$medium-screen})" !default;
+$medium-only: "only screen and (min-width : #{$small-screen-up}) and (max-width : #{$medium-screen})" !default;
+
+
+
+// Grid Variables
+$num-cols: 12 !default;
+$gutter-width: 1.5rem !default;
+
+$element-top-margin: $gutter-width/3 !default;
+$element-bottom-margin: ($gutter-width*2)/3 !default;
+
+
+/*** Navbar ***/
+$navbar-height: 64px;
+$navbar-height-mobile: 56px;
+
+
+/*** SideNav ***/
+$sidenav-width: 240px;
+
+
+/*** Toasts ***/
+$toast-height: 48px !default;
+$toast-color: #323232 !default;
+$toast-text-color: #fff !default;
+
+/*** Typography ***/
+$off-black: rgba(0, 0, 0, 0.87) !default;
+// Header Styles
+$h1-fontsize: 4.2rem !default;
+$h2-fontsize: 3.56rem !default;
+$h3-fontsize: 2.92rem !default;
+$h4-fontsize: 2.28rem !default;
+$h5-fontsize: 1.64rem !default;
+$h6-fontsize: 1rem !default;
+
+// Flowtext
+$range : $large-screen - $small-screen !default;
+$intervals: 20 !default;
+$interval-size: $range / $intervals !default;
+
+/*** Collections ***/
+$collection-border-color: #e0e0e0 !default;
+$collection-bg-color: #fff !default;
+$collection-active-bg-color: color("blue", "lighten-1") !default;
+$collection-active-color: color("blue", "lighten-4") !default;
+$collection-hover-bg-color: rgba(0,0,0,.08) !default;

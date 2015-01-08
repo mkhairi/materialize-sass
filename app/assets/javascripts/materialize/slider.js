@@ -1,5 +1,5 @@
 (function ($) {
-    
+
   $.fn.slider = function (options) {
     var defaults = {
       indicators: true,
@@ -46,7 +46,10 @@
           $caption = $active.find('.caption');
 
           $active.removeClass('active');
-          $active.velocity({opacity: 0}, {duration: options.transition, queue: false, easing: 'easeOutQuad'});
+          $active.velocity({opacity: 0}, {duration: options.transition, queue: false, easing: 'easeOutQuad',
+                            complete: function() {
+                              $slides.not('.active').velocity({opacity: 0, translateX: 0, translateY: 0}, {duration: 0, queue: false});
+                            } });
           captionTransition($caption, options.transition);
 
 
@@ -54,7 +57,7 @@
           if (options.indicators) {
             $indicators.eq($active_index).removeClass('active');
           }
-          
+
           $slides.eq(index).velocity({opacity: 1}, {duration: options.transition, queue: false, easing: 'easeOutQuad'});
           $slides.eq(index).find('.caption').velocity({opacity: 1, translateX: 0, translateY: 0}, {duration: options.transition, delay: options.transition, queue: false, easing: 'easeOutQuad'});
           $slides.eq(index).addClass('active');
@@ -95,10 +98,10 @@
                 $active_index = $slider.find('.active').index();
                 if ($slides.length == $active_index + 1) $active_index = 0; // loop to start
                 else $active_index += 1;
-                
+
                 moveToSlide($active_index);
 
-              }, options.transition + options.interval 
+              }, options.transition + options.interval
             );
           });
           $indicators.append($indicator);
@@ -111,7 +114,6 @@
         $active.show();
       }
       else {
-        console.log("false");
         $slides.first().addClass('active').velocity({opacity: 1}, {duration: options.transition, queue: false, easing: 'easeOutQuad'});
 
         $active_index = 0;
@@ -129,13 +131,13 @@
         $active.find('.caption').velocity({opacity: 1, translateX: 0, translateY: 0}, {duration: options.transition, queue: false, easing: 'easeOutQuad'});
       });
 
-      // auto scroll 
+      // auto scroll
       $interval = setInterval(
         function(){
-          $active_index = $slider.find('.active').index();          
+          $active_index = $slider.find('.active').index();
           moveToSlide($active_index + 1);
 
-        }, options.transition + options.interval 
+        }, options.transition + options.interval
       );
 
 
@@ -160,7 +162,7 @@
 
           $curr_slide = $slider.find('.active');
           $curr_slide.velocity({ translateX: x
-              }, {duration: 50, queue: false, easing: 'easeOutQuad'});      
+              }, {duration: 50, queue: false, easing: 'easeOutQuad'});
 
           // Swipe Left
           if (direction === 4 && (x > ($this.innerWidth() / 2) || velocityX < -0.65)) {
@@ -171,9 +173,28 @@
             swipeLeft = true;
           }
 
-          
+          // Make Slide Behind active slide visible
+          var next_slide;
+          if (swipeLeft) {
+            next_slide = $curr_slide.next();
+            if (next_slide.length === 0) {
+              next_slide = $slides.first();
+            }
+            next_slide.velocity({ opacity: 1
+                }, {duration: 300, queue: false, easing: 'easeOutQuad'});
+          }
+          if (swipeRight) {
+            next_slide = $curr_slide.prev();
+            if (next_slide.length === 0) {
+              next_slide = $slides.last();
+            }
+            next_slide.velocity({ opacity: 1
+                }, {duration: 300, queue: false, easing: 'easeOutQuad'});
+          }
+
+
         }
-      
+
       }).bind('panend', function(e) {
         if (e.gesture.pointerType === "touch") {
 
@@ -188,14 +209,14 @@
           }
           else if (swipeLeft) {
             moveToSlide(curr_index + 1);
-            $curr_slide.velocity({translateX: -1 * $this.innerWidth() }, {duration: 300, queue: false, easing: 'easeOutQuad', 
+            $curr_slide.velocity({translateX: -1 * $this.innerWidth() }, {duration: 300, queue: false, easing: 'easeOutQuad',
                                   complete: function() {
                                     $curr_slide.velocity({opacity: 0, translateX: 0}, {duration: 0, queue: false});
                                   } });
           }
           else if (swipeRight) {
             moveToSlide(curr_index - 1);
-            $curr_slide.velocity({translateX: $this.innerWidth() }, {duration: 300, queue: false, easing: 'easeOutQuad', 
+            $curr_slide.velocity({translateX: $this.innerWidth() }, {duration: 300, queue: false, easing: 'easeOutQuad',
                                   complete: function() {
                                     $curr_slide.velocity({opacity: 0, translateX: 0}, {duration: 0, queue: false});
                                   } });
@@ -210,10 +231,10 @@
               $active_index = $slider.find('.active').index();
               if ($slides.length == $active_index + 1) $active_index = 0; // loop to start
               else $active_index += 1;
-              
+
               moveToSlide($active_index);
 
-            }, options.transition + options.interval 
+            }, options.transition + options.interval
           );
         }
       });
