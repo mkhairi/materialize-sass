@@ -25,7 +25,6 @@ Or install it separately:
 
 Import Materialize styles in `app/assets/stylesheets/application.css.scss`:
 ```scss
-@import "materialize-sprockets";
 @import "materialize";
 ```
 **NOTE:**  If you have just generated a new Rails app, it  may come with a `.css` file instead. If this file exists, it will be served instead of Sass, so remove it.
