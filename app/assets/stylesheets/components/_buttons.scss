@@ -7,18 +7,19 @@
   @include border-radius(2px);
   line-height: $button-line-height;
   text-transform: uppercase;
-  border:none;
+  border: none;
+  outline: 0;
   // Gets rid of tap active state
   -webkit-tap-highlight-color: transparent;
 }
 // Disabled shared style
 .btn.disabled, .btn-floating.disabled, .btn-large.disabled, .btn:disabled, .btn-large:disabled, .btn-floating:disabled {
-  background-color: $button-background-disabled;
+  background-color: $button-bg-color-disabled;
   box-shadow: none;
   color: $button-color-disabled;
 
   &:hover {
-    background-color: $button-background-disabled;
+    background-color: $button-bg-color-disabled;
     color: $button-color-disabled;
   }
 }
@@ -36,7 +37,7 @@
   color: $button-color-raised;
   background-color: $button-color;
   text-align: center;
-  letter-spacing: .8px;
+  letter-spacing: .5px;
   @extend .z-depth-1;
   @include transition(.2s ease-out);
   cursor: pointer;
@@ -50,6 +51,7 @@
 // Floating button
 .btn-floating {
   display: inline-block;
+  color: $button-color-raised;
   position: relative;
   z-index: 1;
   width: $button-floating-size;

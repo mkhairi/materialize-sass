@@ -25,16 +25,16 @@ ul {
 }
 
 a {
-	color: color("blue", "darken-1");
+	color: $link-color;
 	text-decoration: none;
 }
 
 
 // Positioning
 .valign-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flexbox();
+  @include align(center);
+  @include justify-content(center);
 
   .valign {
     display: block;
@@ -44,10 +44,11 @@ a {
 
 ul {
   padding: 0;
+  li {
+    list-style-type: none;
+  }
 }
-li {
-  list-style-type: none;
-}
+
 
 // Z-levels
 
@@ -99,6 +100,9 @@ i {
   &.right {
     float: right;
     margin-left: 15px;
+  }
+  &.tiny {
+    font-size: 1rem;
   }
   &.small {
     font-size: 2rem;
@@ -206,12 +210,14 @@ img.responsive-img {
 
 // Footer
 
-footer {
+footer.page-footer {
   margin-top: 20px;
   padding-top: 20px;
   background-color: color("materialize-red", "lighten-2");
 
   .footer-copyright {
+    overflow: hidden;
+    height: 50px;
     line-height: 50px;
     color: rgba(255,255,255,.8);
     background-color: rgba(51,51,51,.08);;
@@ -272,7 +278,7 @@ td, th{
 // Responsive Table
 @media #{$medium-and-down} {
 
-  table {
+  table.responsive-table {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
@@ -360,6 +366,7 @@ td, th{
   a.collection-item{
     display: block;
     @include transition(.25s);
+    color: $secondary-color;
     &:not(.active) {
       &:hover {
         background-color: $collection-hover-bg-color;
@@ -377,9 +384,7 @@ td, th{
     }
   }
 
-  .secondary-content {
-    float: right;
-  }
+
 
   //Pagination
   &.pagination {
@@ -411,6 +416,12 @@ td, th{
   }
 
 }
+// Made less specific to allow easier overriding
+.secondary-content {
+  float: right;
+  color: $secondary-color;
+}
+
 
 // Badges
 span.badge {
@@ -427,7 +438,7 @@ span.badge {
     font-weight: 300;
     font-size: 0.8rem;
     color: #fff;
-    background-color: color('blue', 'base');
+    background-color: $badge-bg-color;
     @include border-radius(2px);
   }
   &.new:after {
@@ -460,17 +471,28 @@ span.badge {
     width: 100%;
     background-color: lighten($progress-bar-color, 40%);
     @include border-radius(2px);
-    // margin: 1rem 0;
+    margin: $element-top-margin 0 $element-bottom-margin 0;
     overflow: hidden;
+  .determinate {
+    position: absolute;
+    background-color: inherit;
+    top: 0;
+    bottom: 0;
+    background-color: $progress-bar-color;
+    @include transition(width .3s linear);
+  }
   .indeterminate {
     background-color: $progress-bar-color;
     &:before {
       content: '';
-      background-color: inherit;
       position: absolute;
+      background-color: inherit;
       top: 0;
+      left:0;
       bottom: 0;
-      @include animation(indeterminate 2s cubic-bezier(0.550, 0.085, 0.680, 0.530) infinite);
+      will-change: left, right;
+      // Custom bezier
+      @include animation(indeterminate 2.1s cubic-bezier(0.650, 0.815, 0.735, 0.395) infinite);
 
     }
     &:after {
@@ -478,9 +500,12 @@ span.badge {
       position: absolute;
       background-color: inherit;
       top: 0;
+      left:0;
       bottom: 0;
-      @include animation(indeterminate-short 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) infinite);
-      @include animation-delay(1.05s);
+      will-change: left, right;
+      // Custom bezier
+      @include animation(indeterminate-short 2.1s cubic-bezier(0.165, 0.840, 0.440, 1.000) infinite);
+      @include animation-delay(1.15s);
     }
   }
 }
@@ -489,28 +514,28 @@ span.badge {
             left: -35%;
             right:100%;
         }
-        60% {
-            left: 100%;
-            right: -80%;
-        }
-        100% {
-            left: 100%;
-            right: -80%;
-        }
+    60% {
+        left: 100%;
+        right: -90%;
+    }
+    100% {
+        left: 100%;
+        right: -90%;
+    }
 }
 
 @include keyframes(indeterminate-short) {
     0% {
-        left: -80%;
+        left: -200%;
         right: 100%;
     }
-    50% {
-        left: 103%;
-        right: -6%;
+    60% {
+        left: 107%;
+        right: -8%;
     }
     100% {
-      left: 103%;
-      right: -6%;
+      left: 107%;
+      right: -8%;
     }
 }
 /*******************

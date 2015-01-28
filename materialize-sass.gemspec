@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Materialize::Sass::VERSION
   spec.authors       = ["mkhairi"]
   spec.email         = ["khairi@labs.my"]
-  spec.summary       = %q{materialzecss sass for rails.}
-  spec.description   = %q{use materialzecss in your rails asset pipeline.}
+  spec.summary       = %q{Materialzecss sass for rails.}
+  spec.description   = %q{Use materialzecss in your rails asset pipeline.}
   spec.homepage      = "https://github.com/mkhairi/materialize-sass"
   spec.license       = "MIT"
 
