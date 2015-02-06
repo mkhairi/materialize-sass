@@ -1,5 +1,12 @@
 (function ($) {
 
+  // Add posibility to scroll to selected option
+  // usefull for select for example
+  $.fn.scrollTo = function(elem) {
+    $(this).scrollTop($(this).scrollTop() - $(this).offset().top + $(elem).offset().top);
+    return this;
+  };
+
   $.fn.dropdown = function (options) {
     var defaults = {
       inDuration: 300,
@@ -40,6 +47,8 @@
       $('body').append(activates);
     }
 
+    var dropdownRealHeight = activates.height();
+
     /*
       Helper function to position and resize dropdown.
       Used in hover and click handler.
@@ -48,7 +57,6 @@
       // Check html data attributes
       updateOptions();
 
-      var dropdownRealHeight = activates.height();
       if (options.constrain_width == true) {
         activates.css('width', origin.outerWidth());
       }
@@ -102,6 +110,22 @@
         return isFixed;
     }
 
+    function hideDropdown() {
+      activates.velocity(
+        {
+          opacity: 0
+        },
+        {
+          duration: options.outDuration,
+          easing: 'easeOutQuad',
+          complete: function(){
+            activates.css({
+              display: 'none',
+              'overflow-y': ''
+            });
+          }
+        });
+    }
 
     // Hover
     if (options.hover) {
@@ -112,20 +136,7 @@
 
       // Document click handler
       activates.on('mouseleave', function(e){ // Mouse out
-        activates.velocity(
-          {
-            opacity: 0
-          },
-          {
-            duration: options.outDuration,
-            easing: 'easeOutQuad',
-            complete: function(){
-              activates.css({
-                display: 'none',
-                'overflow-y': ''
-              });
-            }
-          });
+        hideDropdown();
       });
 
     // Click
@@ -139,25 +150,17 @@
         placeDropdown();
         $(document).bind('click.'+ activates.attr('id'), function (e) {
           if (!activates.is(e.target) && (!origin.is(e.target))) {
-            activates.velocity({
-              opacity: 0
-            },
-            {
-              duration: options.outDuration,
-              easing: 'easeOutQuad',
-              complete: function(){
-                activates.css({
-                  display: 'none',
-                  'overflow-y': ''
-                });
-              }
-            });
+            hideDropdown();
             $(document).unbind('click.' + activates.attr('id'));
           }
         });
       });
 
     } // End else
+
+    // Listen to open and close event - usefull for select component
+    origin.on('open', placeDropdown);
+    origin.on('close', hideDropdown);
 
     // Window Resize Reposition
     $(document).on('resize', function(){

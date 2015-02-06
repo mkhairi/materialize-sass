@@ -13,9 +13,13 @@ nav {
 
   a { color: #fff; }
 
+  @media #{$large-and-up} {
+    a.button-collapse { display: none; }
+  }
+
+
   a.button-collapse {
     float: left;
-    @extend .hide-on-large-only;
     position: relative;
     z-index: 1;
     height: $navbar-height-mobile;
@@ -49,7 +53,6 @@ nav {
 
   ul {
     margin: 0;
-    float: right;
 
     li {
       float: left;
@@ -63,7 +66,7 @@ nav {
     a {
       font-size: 1rem;
       color: #fff;
-      display: block;
+      display: inline-block;
       padding: 0px 15px;
     }
 
@@ -74,6 +77,8 @@ nav {
 
   // Navbar Search Form
   .input-field {
+    margin: 0;
+
     input {
       height: 100%;
       font-size: 1.2rem;

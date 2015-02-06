@@ -12,9 +12,7 @@ $primary-color-dark: false !default;
 $secondary-color: color("teal", "lighten-1") !default;
 $success-color: color("green", "base") !default;
 $error-color: color("red", "base") !default;
-
 $link-color: color("light-blue", "darken-1") !default;
-
 
 /*** Badges ***/
 $badge-bg-color: $secondary-color;
@@ -44,6 +42,9 @@ $collapsible-border-color: #ddd !default;
 /*** Dropdown ***/
 $dropdown-color: $secondary-color;
 
+/*** Fonts ***/
+$roboto-font-path: "roboto/" !default;
+$icons-font-path: "material-design-icons/" !default;
 
 /*** Forms ***/
 // Text Inputs + Textarea
@@ -111,6 +112,9 @@ $h3-fontsize: 2.92rem !default;
 $h4-fontsize: 2.28rem !default;
 $h5-fontsize: 1.64rem !default;
 $h6-fontsize: 1rem !default;
+
+// Footer
+$footer-bg-color: $primary-color;
 
 // Flowtext
 $range : $large-screen - $small-screen !default;
