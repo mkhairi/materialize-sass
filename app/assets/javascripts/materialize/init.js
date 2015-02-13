@@ -27,58 +27,35 @@
 
 
     // Floating-Fixed table of contents
-    if ($('.table-of-contents').length) {
-      var toc_offset = $('.table-of-contents').first().offset().top;
-      $('.table-of-contents').each(function() {
-        var origin = $(this);
-        origin.pushpin({ top: toc_offset,
-          bottom: $(document).height() - window.innerHeight });
-      });
+    if ($('nav').length) {
+      $('.toc-wrapper').pushpin({ top: $('nav').height() });
     }
-
+    else {
+      $('.toc-wrapper').pushpin({ top: 0 });
+    }
 
 
 
     // BuySellAds Detection
     var $bsa = $(".buysellads"),
         $timesToCheck = 3;
-    function checkForChanges()
-    {
-        if ($bsa.find('#carbonads').height() > 0)
-        {
-              $('.table-of-contents').css('marginTop', 285);
-              // Floating-Fixed table of contents
-              $('.table-of-contents').each(function() {
-                var origin = $(this),
-                    tabs_height = 0;
-                if ($('.tabs-wrapper').length) {
-                  tabs_height = $('.tabs-wrapper').height();
-                }
-                $(window).scroll(function() {
-
-                  if (origin.is(":visible")) {
-                    origin.attr('data-origpos', origin.position().top - tabs_height + 285);
-                    origin.attr('data-origmargin', 285);
-                  }
-                });
-              });
-        }
-        else {
+    function checkForChanges() {
+        if (!$bsa.find('#carbonads').length) {
           $timesToCheck -= 1;
           if ($timesToCheck >= 0) {
             setTimeout(checkForChanges, 500);
+          }
+          else {
+            console.log("no ad");
+            var donateAd = $('<div id="carbonads"><span><a class="carbon-text" href="#" onclick="document.getElementById("paypal_donate").submit();"><img src="images/donate.png" /> Help support us by turning off adblock. If you still prefer to keep adblock on for this page but still want to support us, feel free to donate. Any little bit helps.</a></form></span></div>');
+
+            $bsa.append(donateAd);
           }
         }
 
     }
     checkForChanges();
 
-
-
-    // Tabs Fixed
-    if ($('.tabs-wrapper').length) {
-      $('.tabs-wrapper .row').pushpin({ top: $('.tabs-wrapper').offset().top });
-    }
 
     // Github Latest Commit
     if ($('.github-commit').length) { // Checks if widget div exists (Index only)

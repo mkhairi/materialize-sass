@@ -12,11 +12,13 @@
 //= require ./materialize/waves
 //= require ./materialize/toasts
 //= require ./materialize/sideNav
+//= require ./materialize/scrollFire
 //= require ./materialize/scrollspy
 //= require ./materialize/forms
 //= require ./materialize/slider
 //= require ./materialize/cards
 //= require ./materialize/pushpin
+//= require ./materialize/animations
 //= require ./materialize/buttons
 //= require ./materialize/transitions
 //= require ./materialize/date_picker/picker
