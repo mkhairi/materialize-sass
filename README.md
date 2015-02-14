@@ -1,6 +1,7 @@
-# Materializecss sass version for rails asset pipeline [![Gem Version](https://badge.fury.io/rb/materialize-sass.svg)](http://badge.fury.io/rb/materialize-sass)
+# Materialize Sass version for Rails Asset Pipeline
+[![Gem Version](https://badge.fury.io/rb/materialize-sass.svg)](http://badge.fury.io/rb/materialize-sass)
 
-`materialize-sass` is a Sass-powered version of Materialize - a modern responsive front-end framework based on Material Design.
+`materialize-sass` is a Sass powered version of Materialize, a modern responsive front-end framework based on Material Design.
 
 ## Installation
 
@@ -10,31 +11,39 @@ In your Gemfile you need to add the `materialize-sass` gem:
 gem 'materialize-sass'
 ```
 
-**NOTE:** ensure that the `sass-rails` gem is presented in your Gemfile.
+**NOTE:** Ensure that the `sass-rails` gem is presented in your Gemfile.
 
 And then run the bundler and restart your server to make the files available through the pipeline:
 
-    $ bundle install
+```console
+$ bundle install
+```
 
 Or install it separately:
 
-    $ gem install materialize-sass
+```console
+$ gem install materialize-sass
+```
 
 ## Usage
-### a. SASS
+
+### a. Sass
 
 Import Materialize styles in `app/assets/stylesheets/application.css.scss`:
+
 ```scss
 @import "materialize";
 ```
-**NOTE:**  If you have just generated a new Rails app, it  may come with a `.css` file instead. If this file exists, it will be served instead of Sass, so remove it.
+
+**NOTE:** If you have just generated a new Rails application, it  may come with a `.css` file instead. If this file exists, it will be served instead of Sass, so remove it.
 
 ```console
 $ rm app/assets/stylesheets/application.css
 ```
- ### b. JavaScript
 
-Require Bootstrap Javascripts in `app/assets/javascripts/application.js`:
+### b. JavaScript
+
+Require Bootstrap javascripts in `app/assets/javascripts/application.js`:
 
 ```js
 //= require jquery
