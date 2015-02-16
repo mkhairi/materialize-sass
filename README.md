@@ -27,7 +27,7 @@ $ gem install materialize-sass
 
 ## Usage
 
-### a. Sass
+### Sass
 
 Import Materialize styles in `app/assets/stylesheets/application.css.scss`:
 
@@ -41,7 +41,7 @@ Import Materialize styles in `app/assets/stylesheets/application.css.scss`:
 $ rm app/assets/stylesheets/application.css
 ```
 
-### b. JavaScript
+### JavaScript
 
 Require Bootstrap javascripts in `app/assets/javascripts/application.js`:
 
