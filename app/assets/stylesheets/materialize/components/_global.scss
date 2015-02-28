@@ -27,6 +27,7 @@ ul {
 a {
   color: $link-color;
   text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 
@@ -34,7 +35,8 @@ a {
 .valign-wrapper {
   @include flexbox();
   @include align(center);
-  @include justify-content(center);
+  align-items: center;
+  // @include justify-content(center);
 
   .valign {
     display: block;
@@ -150,6 +152,8 @@ video.responsive-video {
     position: absolute;
     bottom: 0;
     width: 100%;
+    min-height: 100%;
+    background-position: center;
   }
 }
 @media #{$medium-and-down} {
@@ -309,12 +313,16 @@ thead {
   border-bottom: 1px solid $table-border-color;
 }
 
-td, th{
+td, th {
   padding: 15px 5px;
   display: table-cell;
   text-align: left;
   vertical-align: middle;
   border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  background-clip: padding-box;
 }
 
 // Responsive Table
@@ -390,12 +398,49 @@ td, th{
   margin: $element-top-margin 0 $element-bottom-margin 0;
   border: 1px solid $collection-border-color;
   border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  background-clip: padding-box;
+  overflow: hidden;
 
   .collection-item {
+    background-color: $collection-item-color;
     line-height: 1.5rem;
     padding: 10px 20px;
     margin: 0px;
     border-bottom: 1px solid $collection-border-color;
+      &.avatar {
+        height: 84px;
+        padding-left: 72px;
+        position: relative;
+        .circle {
+          position: absolute;
+          width: 42px;
+          height: 42px;
+          overflow: hidden;
+          left: 15px;
+          display: inline-block;
+          vertical-align: middle;
+        }
+        i.circle {
+          font-size: 18px;
+          line-height: 42px;
+          color: #fff;
+          background-color: #999;
+          text-align: center;
+        }
+        .title {
+          font-size: 16px;
+        }
+        p {
+          margin: 0;
+        }
+        .secondary-content {
+          position: absolute;
+          top: 16px;
+          right: 16px;
+        }
+      }
       &:last-child {
         border-bottom: none;
       }
@@ -418,6 +463,7 @@ td, th{
 
   &.with-header {
     .collection-header {
+      background-color: $collection-header-color;
       border-bottom: 1px solid $collection-border-color;
       padding: 10px 20px;
     }
@@ -429,35 +475,64 @@ td, th{
 
 
   //Pagination
-  &.pagination {
-    display: inline-block;
+  // &.pagination {
+  //   display: inline-block;
 
-      ul{
-        background-color: transparent;
-        font-size: 0;
-        display: inline-block;
-      }
-    li {
-      display: inline;
-      font-weight: 500;
-      margin: 0px;
-      padding: 0px;
-      font-size: 1rem;
+  //     ul{
+  //       background-color: transparent;
+  //       font-size: 0;
+  //       display: inline-block;
+  //     }
+  //   li {
+  //     // display: inline;
+  //     // font-weight: 500;
+  //     // margin: 0px;
+  //     // padding: 0px;
+  //     // font-size: 1rem;
 
-      a {
-       padding: 0px 5px;
-      }
-      &.active {
-        background-color: color('light-blue', 'base');
-        color: #FFF;
-      }
-      &:hover {
-        background-color: color('light-blue', 'lighten-5');
-      }
-    }
-  }
+  //     font-size: 1.2rem;
+  //     float: left;
+  //     width: 30px;
+  //     height: 30px;
+  //     margin: 0 10px;
+  //     -webkit-border-radius: 2px;
+  //     -moz-border-radius: 2px;
+  //     border-radius: 2px;
+  //     background-clip: padding-box;
+  //     text-align: center;
 
+  //     a {
+  //       color: #444;
+  //     }
+  //     &.active a {
+  //       color: #fff;
+  //     }
+  //     &.active {
+  //       background-color: #ee6e73;
+  //     }
+  //     &.disabled a {
+  //       color: #999;
+  //     }
+  //     i {
+  //       font-size: 2rem;
+  //       line-height: 1.8rem;
+  //     }
+  //   }
+
+  //     a {
+  //      padding: 0px 5px;
+  //     }
+  //     &.active {
+  //       background-color: color('light-blue', 'base');
+  //       color: #FFF;
+  //     }
+  //     &:hover {
+  //       background-color: color('light-blue', 'lighten-5');
+  //     }
+  //   }
+  // }
 }
+
 // Made less specific to allow easier overriding
 .secondary-content {
   float: right;

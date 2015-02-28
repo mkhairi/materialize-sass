@@ -9,6 +9,9 @@ nav {
   .nav-wrapper {
     position: relative;
     height: 100%;
+    i {
+      font-size: 2rem;
+    }
   }
 
   a { color: #fff; }
@@ -23,6 +26,7 @@ nav {
     position: relative;
     z-index: 1;
     height: $navbar-height-mobile;
+    color: #fff;
 
     i {
       font-size: 2.7rem;
@@ -37,12 +41,28 @@ nav {
     display: inline-block;
     font-size: 2.1rem;
     padding: 0;
+    &.center {
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
 
     @media #{$medium-and-down} {
-      left: 0;
-      width: 100%;
-      text-align: center;
-      z-index: 0;
+      // left: 0;
+      // width: 100%;
+      // text-align: center;
+      // z-index: 0;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
     }
 
     &.right {
@@ -125,9 +145,9 @@ nav {
     height: $navbar-height;
     line-height: $navbar-height;
   }
-  nav .nav-wrapper i {
-    font-size: 2rem;
-  }
+  // nav .nav-wrapper i {
+  //   font-size: 2rem;
+  // }
   .navbar-fixed {
     height: $navbar-height;
   }
