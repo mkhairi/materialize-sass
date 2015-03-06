@@ -23,5 +23,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
 
   #runtime dependencies
-  spec.add_dependency "sass", "~>3.1"
+  spec.add_dependency "sass", "~>3.3"
 end

@@ -4,7 +4,7 @@ select:focus {
 }
 button:focus {
   outline: none;
-  background-color: lighten($button-color, 10%);
+  background-color: lighten($button-color, 4%);
 }
 
 label {
@@ -322,7 +322,7 @@ form p {
   border-left: 2px solid transparent;
   border-right: 2px solid $radio-fill-color;
   border-bottom: 2px solid $radio-fill-color;
-  @include transform(rotateZ(40deg));
+  @include transform(rotate(40deg));
   -webkit-backface-visibility: hidden;
 
   @include transform-origin(100% 100%);
@@ -336,7 +336,7 @@ form p {
   background-color: $input-disabled-color;
   width: 18px; height: 18px;
   border: 2px solid $input-disabled-color;
-  @include transform(rotateZ(0deg));
+  @include transform(rotate(0deg));
 }
 
 [type="checkbox"]:disabled:checked + label:before {
@@ -347,7 +347,7 @@ form p {
   border-left: 2px solid transparent;
   border-right: 2px solid $input-disabled-color;
   border-bottom: 2px solid $input-disabled-color;
-  @include transform(rotateZ(40deg));
+  @include transform(rotate(40deg));
   -webkit-backface-visibility: hidden;
 
   @include transform-origin(100% 100%);
@@ -360,7 +360,9 @@ form p {
 }
 
 
-// Switch
+/***************
+     Switch
+***************/
 .switch,
 .switch * {
     -webkit-user-select: none;
@@ -370,24 +372,24 @@ form p {
 .switch label {
     cursor: pointer;
 }
-.switch label input[type=checkbox]:first-child {
+.switch label input[type=checkbox]{
     opacity: 0;
     width: 0;
     height: 0;
 }
-.switch label input[type=checkbox]:first-child:checked + .lever {
-    background-color: #7bc5be;
+.switch label input[type=checkbox]:checked + .lever {
+    background-color: $switch-checked-lever-bg;
 }
-.switch label input[type=checkbox]:first-child:checked + .lever:after {
-    background-color: #009587;
+.switch label input[type=checkbox]:checked + .lever:after {
+    background-color: $switch-bg-color;
 }
-.switch label .lever,
-.switch label input[type=checkbox][disabled]:first-child + .lever {
+.switch label .lever {
     content: "";
     display: inline-block;
-    width: 45px;
+    position: relative;
+    width: 40px;
     height: 15px;
-    background-color: #818181;
+    background-color: $switch-unchecked-lever-bg;
     border-radius: 15px;
     margin-right: 10px;
     transition: background 0.3s ease;
@@ -396,35 +398,37 @@ form p {
 }
 .switch label .lever:after {
     content: "";
+    position: absolute;
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    background-color: #F1F1F1;
-    border-radius: 20px;
-    position: relative;
+    width: 21px;
+    height: 21px;
+    background-color: $switch-unchecked-bg;
+    border-radius: 21px;
     box-shadow: 0 1px 3px 1px rgba(0,0,0,0.4);
     left: -5px;
-    top: -2px;
+    top: -3px;
     transition: left 0.3s ease, background 0.3s ease, box-shadow 0.1s ease;
 }
 // Switch active style
-input[type=checkbox]:first-child:checked:not(:disabled) ~ .lever:active:after {
-       box-shadow: 0 1px 3px 1px rgba(0,0,0,0.4), 0 0 0 15px rgba(0, 149, 135, 0.1);
+input[type=checkbox]:checked:not(:disabled) ~ .lever:active:after {
+       box-shadow: 0 1px 3px 1px rgba(0,0,0,0.4), 0 0 0 15px transparentize($switch-bg-color, .9);
 }
-input[type=checkbox]:first-child:not(:disabled) ~ .lever:active:after {
-       box-shadow: 0 1px 3px 1px rgba(0,0,0,0.4), 0 0 0 15px rgba(0, 0, 0, 0.1);
+input[type=checkbox]:not(:disabled) ~ .lever:active:after {
+       box-shadow: 0 1px 3px 1px rgba(0,0,0,0.4), 0 0 0 15px rgba(0, 0, 0, 0.08);
+}
+.switch label input[type=checkbox]:checked + .lever:after {
+    left: 24px;
 }
 
 // Disabled Styles
-.switch label input[type=checkbox][disabled]:first-child + .lever:after,
-.switch label input[type=checkbox][disabled]:checked:first-child + .lever:after {
-    background-color: #BDBDBD;
-}
 
-.switch label input[type=checkbox]:first-child:checked + .lever:after {
-    left: 30px;
+.switch input[type=checkbox][disabled] + .lever{
+  cursor: default;
 }
-
+.switch label input[type=checkbox][disabled] + .lever:after,
+.switch label input[type=checkbox][disabled]:checked + .lever:after {
+    background-color: $input-disabled-solid-color;
+}
 
 
 
