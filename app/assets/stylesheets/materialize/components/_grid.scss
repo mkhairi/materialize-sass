@@ -20,8 +20,8 @@
 }
 
 .section {
-	padding-top: 1rem;
-	padding-bottom: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 
   &.no-pad {
     padding: 0;
@@ -48,7 +48,6 @@
   }
 
   .col {
-    // @include transition(all .3s);
     float: left;
     @include box-sizing(border-box);
     padding: 0 $gutter-width / 2;

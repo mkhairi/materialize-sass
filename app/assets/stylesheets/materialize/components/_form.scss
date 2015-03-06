@@ -4,8 +4,7 @@ select:focus {
 }
 button:focus {
   outline: none;
-  // background-color: lighten($button-color, 10%);
-  background-color: #2ab7a9;
+  background-color: lighten($button-color, 4%);
 }
 
 label {
@@ -323,7 +322,7 @@ form p {
   border-left: 2px solid transparent;
   border-right: 2px solid $radio-fill-color;
   border-bottom: 2px solid $radio-fill-color;
-  @include transform(rotateZ(40deg));
+  @include transform(rotate(40deg));
   -webkit-backface-visibility: hidden;
 
   @include transform-origin(100% 100%);
@@ -337,7 +336,7 @@ form p {
   background-color: $input-disabled-color;
   width: 18px; height: 18px;
   border: 2px solid $input-disabled-color;
-  @include transform(rotateZ(0deg));
+  @include transform(rotate(0deg));
 }
 
 [type="checkbox"]:disabled:checked + label:before {
@@ -348,7 +347,7 @@ form p {
   border-left: 2px solid transparent;
   border-right: 2px solid $input-disabled-color;
   border-bottom: 2px solid $input-disabled-color;
-  @include transform(rotateZ(40deg));
+  @include transform(rotate(40deg));
   -webkit-backface-visibility: hidden;
 
   @include transform-origin(100% 100%);
@@ -361,7 +360,9 @@ form p {
 }
 
 
-// Switch
+/***************
+     Switch
+***************/
 .switch,
 .switch * {
     -webkit-user-select: none;
@@ -371,24 +372,24 @@ form p {
 .switch label {
     cursor: pointer;
 }
-.switch label input[type=checkbox] {
+.switch label input[type=checkbox]{
     opacity: 0;
     width: 0;
     height: 0;
 }
 .switch label input[type=checkbox]:checked + .lever {
-    background-color: #84c7c1;
+    background-color: $switch-checked-lever-bg;
 }
 .switch label input[type=checkbox]:checked + .lever:after {
-    background-color: #26a69a;
+    background-color: $switch-bg-color;
 }
 .switch label .lever {
     content: "";
     display: inline-block;
+    position: relative;
     width: 40px;
     height: 15px;
-    position: relative;
-    background-color: #818181;
+    background-color: $switch-unchecked-lever-bg;
     border-radius: 15px;
     margin-right: 10px;
     transition: background 0.3s ease;
@@ -396,14 +397,13 @@ form p {
     margin: 0px 16px;
 }
 .switch label .lever:after {
-    position: absolute;
     content: "";
+    position: absolute;
     display: inline-block;
     width: 21px;
     height: 21px;
-    background-color: #F1F1F1;
+    background-color: $switch-unchecked-bg;
     border-radius: 21px;
-    position: relative;
     box-shadow: 0 1px 3px 1px rgba(0,0,0,0.4);
     left: -5px;
     top: -3px;
@@ -411,25 +411,27 @@ form p {
 }
 // Switch active style
 input[type=checkbox]:checked:not(:disabled) ~ .lever:active:after {
-       box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 0 0 15px rgba(38, 166, 154, 0.1);
+       box-shadow: 0 1px 3px 1px rgba(0,0,0,0.4), 0 0 0 15px transparentize($switch-bg-color, .9);
 }
 input[type=checkbox]:not(:disabled) ~ .lever:active:after {
-       box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 0 0 15px rgba(0, 0, 0, 0.08);
+       box-shadow: 0 1px 3px 1px rgba(0,0,0,0.4), 0 0 0 15px rgba(0, 0, 0, 0.08);
 }
-
-// Disabled Styles
 .switch label input[type=checkbox]:checked + .lever:after {
     left: 24px;
 }
 
-.switch input[type=checkbox][disabled] + .lever {
-    cursor: default;
-}
+// Disabled Styles
 
+.switch input[type=checkbox][disabled] + .lever{
+  cursor: default;
+}
 .switch label input[type=checkbox][disabled] + .lever:after,
 .switch label input[type=checkbox][disabled]:checked + .lever:after {
-  background-color: #BDBDBD;
+    background-color: $input-disabled-solid-color;
 }
+
+
+
 
 /***************
   Select Field
