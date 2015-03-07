@@ -22,7 +22,7 @@
     // white-space: nowrap;
     // outline: 0;
 
-    // vertical-align: middle;
+    vertical-align: middle;
     // cursor: pointer;
     // border: none;
     // outline: none;
@@ -32,7 +32,6 @@
     // line-height:1em;
     // text-align: center;
     // text-decoration: none;
-    vertical-align: middle;
     z-index: 1;
     will-change: opacity, transform;
     @include transition(all .3s ease-out);
