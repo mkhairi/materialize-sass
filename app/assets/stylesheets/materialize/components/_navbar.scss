@@ -5,22 +5,25 @@ nav {
   width: 100%;
   height: $navbar-height-mobile;
   line-height: $navbar-height-mobile;
+  overflow: hidden;
+
+  a { color: #fff; }
 
   .nav-wrapper {
     position: relative;
     height: 100%;
+
     i {
       font-size: 2rem;
     }
   }
-
-  a { color: #fff; }
 
   @media #{$large-and-up} {
     a.button-collapse { display: none; }
   }
 
 
+  // Collapse button
   a.button-collapse {
     float: left;
     position: relative;
@@ -29,40 +32,32 @@ nav {
     color: #fff;
 
     i {
+
       font-size: 2.7rem;
       height: $navbar-height-mobile;
       line-height: $navbar-height-mobile;
     }
   }
 
+
+  // Logo
   .brand-logo {
     position: absolute;
     color: #fff;
     display: inline-block;
     font-size: 2.1rem;
     padding: 0;
+
     &.center {
       top: 50%;
       left: 50%;
-      -webkit-transform: translate(-50%, -50%);
-      -moz-transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%);
-      -o-transform: translate(-50%, -50%);
-      transform: translate(-50%, -50%);
+      @include transform(translate(-50%, -50%));
     }
 
     @media #{$medium-and-down} {
-      // left: 0;
-      // width: 100%;
-      // text-align: center;
-      // z-index: 0;
       top: 50%;
       left: 50%;
-      -webkit-transform: translate(-50%, -50%);
-      -moz-transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%);
-      -o-transform: translate(-50%, -50%);
-      transform: translate(-50%, -50%);
+      @include transform(translate(-50%, -50%));
     }
 
     &.right {
@@ -71,13 +66,15 @@ nav {
     }
   }
 
+
+  // Navbar Links
   ul {
     margin: 0;
 
     li {
+      @include transition(background-color .3s);
       float: left;
       padding: 0px;
-      @include transition(background-color .3s);
 
       &:hover, &.active {
         background-color: rgba(0,0,0,.1);
@@ -145,9 +142,6 @@ nav {
     height: $navbar-height;
     line-height: $navbar-height;
   }
-  // nav .nav-wrapper i {
-  //   font-size: 2rem;
-  // }
   .navbar-fixed {
     height: $navbar-height;
   }

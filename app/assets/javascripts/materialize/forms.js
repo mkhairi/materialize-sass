@@ -69,30 +69,41 @@
 
 
     // Textarea Auto Resize
-    if ($('.hiddendiv').length === 0) {
-      var hiddenDiv = $('<div class="hiddendiv common"></div>'),
-        content = null;
-        $('body').append(hiddenDiv);
+    var hiddenDiv = $('.hiddendiv').first();
+    if (!hiddenDiv.length) {
+      hiddenDiv = $('<div class="hiddendiv common"></div>');
+      $('body').append(hiddenDiv);
     }
     var text_area_selector = '.materialize-textarea';
-    $('.hiddendiv').css('width', $(text_area_selector).width());
+
+    function textareaAutoResize($textarea) {
+      hiddenDiv.text($textarea.val() + '\n');
+      var content = hiddenDiv.html().replace(/\n/g, '<br>');
+      hiddenDiv.html(content);
+
+      // When textarea is hidden, width goes crazy.
+      // Approximate with half of window size
+
+      if ($textarea.is(':visible')) {
+        hiddenDiv.css('width', $textarea.width());
+      }
+      else {
+        hiddenDiv.css('width', $(window).width()/2);
+      }
+
+      $textarea.css('height', hiddenDiv.height());
+    }
 
     $(text_area_selector).each(function () {
-      if ($(this).val().length) {
-        content = $(this).val();
-        content = content.replace(/\n/g, '<br>');
-        hiddenDiv.html(content + '<br>');
-        $(this).css('height', hiddenDiv.height());
+      var $textarea = $(this);
+      if ($textarea.val().length) {
+        textareaAutoResize($textarea);
       }
     });
-      $('body').on('keyup keydown',text_area_selector , function () {
-        // console.log($(this).val());
-        content = $(this).val();
-        content = content.replace(/\n/g, '<br>');
-        hiddenDiv.html(content + '<br>');
-        // console.log(hiddenDiv.html());
-        $(this).css('height', hiddenDiv.height());
-      });
+
+    $('body').on('keyup keydown', text_area_selector, function () {
+      textareaAutoResize($(this));
+    });
 
 
     // File Input Path
@@ -187,11 +198,22 @@
       $(this).each(function(){
         $select = $(this);
 
-        if ( $select.hasClass('browser-default') || $select.hasClass('initialized')) {
+        if ( $select.hasClass('browser-default')) {
           return; // Continue to next (return false breaks out of entire loop)
         }
 
+        // Tear down structure if Select needs to be rebuilt
+        var lastID = $select.data('select-id');
+        if (lastID) {
+          $select.parent().find('i').remove();
+          $select.parent().find('input').remove();
+
+          $select.unwrap();
+          $('ul#select-options-'+lastID).remove();
+        }
+
         var uniqueID = guid();
+        $select.data('select-id', uniqueID);
         var wrapper = $('<div class="select-wrapper"></div>');
         var options = $('<ul id="select-options-' + uniqueID+'" class="dropdown-content select-dropdown"></ul>');
         var selectOptions = $select.children('option');

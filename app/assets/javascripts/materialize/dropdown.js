@@ -13,7 +13,6 @@
       outDuration: 225,
       constrain_width: true, // Constrains width of dropdown to the activator
       hover: true,
-      alignment: 'left',
       gutter: 0, // Spacing from edge
       belowOrigin: false
     }
@@ -26,16 +25,14 @@
     var activates = $("#"+ origin.attr('data-activates'));
 
     function updateOptions() {
-      if (origin.data('inDuration') != undefined)
+      if (origin.data('induration') != undefined)
         options.inDuration = origin.data('inDuration');
-      if (origin.data('outDuration') != undefined)
+      if (origin.data('outduration') != undefined)
         options.outDuration = origin.data('outDuration');
       if (origin.data('constrainwidth') != undefined)
         options.constrain_width = origin.data('constrainwidth');
       if (origin.data('hover') != undefined)
         options.hover = origin.data('hover');
-      if (origin.data('alignment') != undefined)
-        options.alignment = origin.data('alignment');
       if (origin.data('gutter') != undefined)
         options.gutter = origin.data('gutter');
       if (origin.data('beloworigin') != undefined)
@@ -67,10 +64,14 @@
       if (options.belowOrigin == true) {
         offset = origin.height();
       }
+
       // Handle edge alignment
+      var offsetLeft = origin.offset().left;
+
       var width_difference = 0;
       var gutter_spacing = options.gutter;
-      if (options.alignment == 'right') {
+
+      if (offsetLeft + activates.innerWidth() > $(window).width()) {
         width_difference = origin.innerWidth() - activates.innerWidth();
         gutter_spacing = gutter_spacing * -1;
       }
@@ -151,12 +152,16 @@
       var open = false;
 
       // Click handler to show dropdown
-      origin.click( function(e){ // Click
-        e.preventDefault(); // Prevents button click from moving window
-        e.stopPropagation(); // Allows clicking on icon
-        placeDropdown();
+      origin.unbind('click.' + origin.attr('id'));
+      origin.bind('click.'+origin.attr('id'), function(e){
+        if (origin[0] == e.currentTarget) {
+
+          e.preventDefault(); // Prevents button click from moving window
+          placeDropdown();
+        }
+
         $(document).bind('click.'+ activates.attr('id'), function (e) {
-          if (!activates.is(e.target) && (!origin.is(e.target))) {
+          if (!activates.is(e.target) && !origin.is(e.target) && (!origin.find(e.target).length > 0) ) {
             hideDropdown();
             $(document).unbind('click.' + activates.attr('id'));
           }
@@ -165,14 +170,11 @@
 
     } // End else
 
-    // Listen to open and close event - usefull for select component
+    // Listen to open and close event - useful for select component
     origin.on('open', placeDropdown);
     origin.on('close', hideDropdown);
 
-    // Window Resize Reposition
-    $(document).on('resize', function(){
 
-    });
    });
   }; // End dropdown plugin
 }( jQuery ));

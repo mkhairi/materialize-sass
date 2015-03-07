@@ -7,6 +7,11 @@
         var $this = $(this);
         $this.addClass('parallax');
 
+        $this.find('img').each(function () {
+          $(this).css('background-image', 'url(' + $(this).attr('src') + ')' );
+          $(this).attr('src', 'data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==');
+        });
+
         function updateParallax(initial) {
           var container_height;
           if (window_width < 992) {
@@ -32,8 +37,12 @@
             $this.children("img").first().css('display', 'block');
           }
         }
-        $this.children("img").load(function () {
+
+        // Wait for image load
+        $this.children("img").one("load", function() {
           updateParallax(true);
+        }).each(function() {
+          if(this.complete) $(this).load();
         });
 
         $(window).scroll(function() {

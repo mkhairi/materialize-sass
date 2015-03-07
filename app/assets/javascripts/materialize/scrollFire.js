@@ -10,15 +10,16 @@
         var selector = value.selector,
             offset = value.offset,
             callback = value.callback;
+        
+        if ($(selector).length != 0) {
+          var elementOffset = $(selector).offset().top;
 
-        var elementOffset = $(selector).offset().top;
-
-        if (windowScroll > (elementOffset + offset)) {
-          if ($(selector).data('done') === undefined) {
-            var callbackFunc = new Function(callback);
-            callbackFunc();
-
-            $(selector).data('done', true);
+          if (windowScroll > (elementOffset + offset)) {
+            if (value.done != true) {
+              var callbackFunc = new Function(callback);
+              callbackFunc();
+              value.done = true;
+            }
           }
         }
 

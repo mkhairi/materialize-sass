@@ -1,10 +1,10 @@
 (function ($) {
   $(document).ready(function() {
 
-    var time = 0;
 
     // Horizontal staggered list
     showStaggeredList = function(selector) {
+      var time = 0;
       $(selector).find('li').velocity(
           { translateX: "-100px"},
           { duration: 0 });
@@ -21,7 +21,6 @@
     var staggeredListOptions = [];
     $('ul.staggered-list').each(function (i) {
 
-      console.log(i);
       var label = 'scrollFire-' + i;
       $(this).addClass(label);
       staggeredListOptions.push(
@@ -29,10 +28,66 @@
          offset: 200,
          callback: 'showStaggeredList("ul.staggered-list.' + label + '")'});
     });
-    console.log(staggeredListOptions);
     scrollFire(staggeredListOptions);
 
 
+    // HammerJS, Swipe navigation
+
+    // Touch Event
+    var swipeLeft = false;
+    var swipeRight = false;
+
+    $('.dismissable').each(function() {
+      $(this).hammer({
+        prevent_default: false
+      }).bind('pan', function(e) {
+        if (e.gesture.pointerType === "touch") {
+          var $this = $(this);
+          var direction = e.gesture.direction;
+          var x = e.gesture.deltaX;
+          var velocityX = e.gesture.velocityX;
+
+          $this.velocity({ translateX: x
+              }, {duration: 50, queue: false, easing: 'easeOutQuad'});
+
+          // Swipe Left
+          if (direction === 4 && (x > ($this.innerWidth() / 2) || velocityX < -0.75)) {
+            swipeLeft = true;
+          }
+          // Swipe Right
+          else if (direction === 2 && (x < (-1 * $this.innerWidth() / 2) || velocityX > 0.75)) {
+            swipeRight = true;
+          }
+        }
+      }).bind('panend', function(e) {
+        if (e.gesture.pointerType === "touch") {
+          var $this = $(this);
+          if (swipeLeft || swipeRight) {
+            var fullWidth;
+            if (swipeLeft) { fullWidth = $this.innerWidth() }
+            else { fullWidth = -1 * $this.innerWidth() }
+
+            $this.velocity({ translateX: fullWidth,
+              }, {duration: 100, queue: false, easing: 'easeOutQuad', complete:
+              function() {
+                $this.css('border', 'none');
+                $this.velocity({ height: 0, padding: 0,
+                  }, {duration: 200, queue: false, easing: 'easeOutQuad', complete:
+                    function() { $this.remove(); }
+                  });
+              }
+            });
+          }
+          else {
+            $this.velocity({ translateX: 0,
+              }, {duration: 100, queue: false, easing: 'easeOutQuad'});
+          }
+          swipeLeft = false;
+          swipeRight = false;
+        }
+      });
+
+    });
 
 
     // time = 0
@@ -77,9 +132,9 @@
                 var grayscale_setting = now/100;
                 var brightness_setting = 150 - (100 - now)/1.75;
 
-                if (brightness_setting < 100)
+                if (brightness_setting < 100) {
                   brightness_setting = 100;
-                console.log(grayscale_setting)
+                }
                 if (now >= 0) {
                   $(this).css({
                       "-webkit-filter": "grayscale("+grayscale_setting+")" + "brightness("+brightness_setting+"%)",

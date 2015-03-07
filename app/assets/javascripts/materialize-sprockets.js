@@ -1,4 +1,5 @@
 //= require ./materialize/jquery.easing.1.3
+//= require ./materialize/animation
 //= require ./materialize/velocity.min
 //= require ./materialize/hammer.min
 //= require ./materialize/jquery.hammer
@@ -18,7 +19,6 @@
 //= require ./materialize/slider
 //= require ./materialize/cards
 //= require ./materialize/pushpin
-//= require ./materialize/animations
 //= require ./materialize/buttons
 //= require ./materialize/transitions
 //= require ./materialize/date_picker/picker
