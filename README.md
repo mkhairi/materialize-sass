@@ -43,7 +43,7 @@ $ rm app/assets/stylesheets/application.css
 
 ### b. JavaScript
 
-Require Bootstrap javascripts in `app/assets/javascripts/application.js`:
+Require Materialize javascripts in `app/assets/javascripts/application.js`:
 
 ```js
 //= require jquery
