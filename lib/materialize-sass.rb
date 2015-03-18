@@ -33,7 +33,7 @@ module Materialize
       end
 
       def assets_path
-        @assets_path ||= File.join gem_path, 'apps/assets'
+        @assets_path ||= File.join gem_path, 'app/assets'
       end
 
       # Environment detection helpers
