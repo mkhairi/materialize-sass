@@ -5,7 +5,6 @@ nav {
   width: 100%;
   height: $navbar-height-mobile;
   line-height: $navbar-height-mobile;
-  overflow: hidden;
 
   a { color: #fff; }
 
@@ -24,12 +23,11 @@ nav {
 
 
   // Collapse button
-  a.button-collapse {
+  .button-collapse {
     float: left;
     position: relative;
     z-index: 1;
     height: $navbar-height-mobile;
-    color: #fff;
 
     i {
 
@@ -74,7 +72,7 @@ nav {
     li {
       @include transition(background-color .3s);
       float: left;
-      padding: 0px;
+      padding: 0;
 
       &:hover, &.active {
         background-color: rgba(0,0,0,.1);
@@ -84,7 +82,7 @@ nav {
       font-size: 1rem;
       color: #fff;
       display: inline-block;
-      padding: 0px 15px;
+      padding: 0 15px;
     }
 
     &.left {
@@ -101,12 +99,11 @@ nav {
       font-size: 1.2rem;
       border: none;
       padding-left: 2rem;
-      @include box-sizing(border-box);
 
       &:focus, &[type=text]:valid, &[type=password]:valid,
       &[type=email]:valid, &[type=url]:valid, &[type=date]:valid {
         border: none;
-        @include box-shadow(none);
+        box-shadow: none;
       }
     }
     label {

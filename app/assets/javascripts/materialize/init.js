@@ -112,10 +112,14 @@
       $('#nav-mobile').css({ overflow: 'auto'})
     }
 
+    // Set checkbox on forms.html to indeterminate
+    var indeterminateCheckbox = document.getElementById('indeterminate-checkbox');
+    if (indeterminateCheckbox !== null)
+      indeterminateCheckbox.indeterminate = true;
+
 
     // Plugin initialization
     $('.slider').slider({full_width: true});
-    $('.dropdown-button').dropdown({hover: false});
     $('.tab-demo').show().tabs();
     $('.parallax').parallax();
     $('.modal-trigger').leanModal();

@@ -2,6 +2,7 @@
 //= require ./materialize/animation
 //= require ./materialize/velocity.min
 //= require ./materialize/hammer.min
+//= require ./materialize/global
 //= require ./materialize/jquery.hammer
 //= require ./materialize/collapsible
 //= require ./materialize/dropdown
@@ -13,7 +14,6 @@
 //= require ./materialize/waves
 //= require ./materialize/toasts
 //= require ./materialize/sideNav
-//= require ./materialize/scrollFire
 //= require ./materialize/scrollspy
 //= require ./materialize/forms
 //= require ./materialize/slider
@@ -21,5 +21,6 @@
 //= require ./materialize/pushpin
 //= require ./materialize/buttons
 //= require ./materialize/transitions
+//= require ./materialize/scrollFire
 //= require ./materialize/date_picker/picker
 //= require ./materialize/date_picker/picker.date
