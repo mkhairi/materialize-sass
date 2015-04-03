@@ -29,7 +29,7 @@ $ gem install materialize-sass
 
 ### a. Sass
 
-Import Materialize styles in `app/assets/stylesheets/application.css.scss`:
+Import Materialize styles in `app/assets/stylesheets/application.scss`:
 
 ```scss
 @import "materialize";

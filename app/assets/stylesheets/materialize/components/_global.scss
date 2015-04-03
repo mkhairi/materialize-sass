@@ -177,14 +177,33 @@ video.responsive-video {
   img {
     display: none;
     position: absolute;
+    left: 50%;
     bottom: 0;
-    width: 100%;
+    min-width: 100%;
     min-height: 100%;
-    background-size: 100% auto;
-    background-position: center;
-    background-repeat: no-repeat;
+    -webkit-transform: translate3d(0,0,0);
+            transform: translate3d(0,0,0);
+    transform: translateX(-50%);
   }
 }
+
+@media #{$small-and-down} {
+  .parallax-container {
+    height: auto;
+
+    .parallax {
+      position: relative;
+
+      img {
+        position: relative;
+        min-height: 0;
+        min-width: 0;
+        width: 100%;
+      }
+    }
+  }
+}
+
 
 // Pushpin
 .pin-top, .pin-bottom {
@@ -360,6 +379,10 @@ td, th{
       tr {
         display: block;
         padding: 0 10px 0 0;
+
+        th::before {
+          content: "\00a0";
+        }
       }
     }
     tbody {
@@ -409,6 +432,7 @@ td, th{
   border: 1px solid $collection-border-color;
   border-radius: 2px;
   overflow: hidden;
+  position: relative;
 
   .collection-item {
     background-color: $collection-bg-color;
@@ -505,7 +529,8 @@ span.badge {
   font-size: 1rem;
   line-height: inherit;
   color: color('grey', 'darken-1');
-  float: right;
+  position: absolute;
+  right: 15px;
   @include box-sizing(border-box);
 
   &.new {

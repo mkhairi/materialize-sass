@@ -2,8 +2,8 @@
 //= require ./materialize/animation
 //= require ./materialize/velocity.min
 //= require ./materialize/hammer.min
-//= require ./materialize/global
 //= require ./materialize/jquery.hammer
+//= require ./materialize/global
 //= require ./materialize/collapsible
 //= require ./materialize/dropdown
 //= require ./materialize/leanModal
@@ -24,3 +24,4 @@
 //= require ./materialize/scrollFire
 //= require ./materialize/date_picker/picker
 //= require ./materialize/date_picker/picker.date
+//= require ./materialize/character_counter

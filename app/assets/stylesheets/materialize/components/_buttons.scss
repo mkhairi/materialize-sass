@@ -19,6 +19,9 @@
   box-shadow: none;
   color: $button-color-disabled;
   cursor: default;
+  * {
+    pointer-events: none;
+  }
 
   &:hover {
     background-color: $button-bg-color-disabled;
@@ -55,6 +58,7 @@
   display: inline-block;
   color: $button-color-raised;
   position: relative;
+  overflow: hidden;
   z-index: 1;
   width: $button-floating-size;
   height: $button-floating-size;
@@ -79,6 +83,9 @@
   &:hover {
     @extend .z-depth-1-half;
   }
+  &:before {
+    border-radius: 0;
+  }
   &.btn-large {
     width: $button-floating-size * 1.5;
     height: $button-floating-size * 1.5;
@@ -100,7 +107,7 @@ button.btn-floating {
   bottom: 23px;
   padding-top: 15px;
   margin-bottom: 0;
-  z-index: 1000;
+  z-index: 998;
 
   ul {
     left: 0;

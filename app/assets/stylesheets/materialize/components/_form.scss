@@ -50,6 +50,7 @@ textarea.materialize-textarea {
   background-color: transparent;
   border: none;
   border-bottom: 1px solid $input-border-color;
+  border-radius: 0;
   outline: none;
   height: 3rem;
   width: 100%;
@@ -81,12 +82,14 @@ textarea.materialize-textarea {
     color: $input-focus-color;
   }
   // Valid Input Style
-  &.valid {
+  &.valid,
+  &:focus.valid {
     border-bottom: 1px solid $input-success-color;
     box-shadow: 0 1px 0 0 $input-success-color;
   }
   // Invalid Input Style
-  &.invalid {
+  &.invalid,
+  &:focus.invalid {
     border-bottom: 1px solid $input-error-color;
     box-shadow: 0 1px 0 0 $input-error-color;
   }
@@ -110,7 +113,6 @@ textarea.materialize-textarea {
     font-size: $label-font-size;
     @include transform(translateY(-140%));
   }
-
 
   // Prefix Icons
   .prefix {
@@ -304,7 +306,6 @@ form p:last-child {
     -moz-user-select: none; /* mozilla browsers */
     -khtml-user-select: none; /* webkit (konqueror) browsers */
     -ms-user-select: none; /* IE10+ */
-
   }
 
   /* checkbox aspect */
@@ -370,6 +371,91 @@ form p:last-child {
     border-right: 2px solid $input-disabled-color;
     background-color: transparent;
   }
+}
+
+
+// Filled in Style
+[type="checkbox"].filled-in {
+  // General
+  + label:after {
+    border-radius: 2px;
+  }
+  + label:before,
+  + label:after {
+    content: '';
+    left: 0;
+    position: absolute;
+    /* .1s delay is for check animation */
+    transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    z-index: 1;
+  }
+  // Unchecked style
+  &:not(:checked) + label:before {
+    width: 0;
+     height: 0;
+     border: 3px solid transparent;
+     left: 6px;
+     top: 10px;
+
+     -webkit-transform: rotateZ(37deg);
+             transform: rotateZ(37deg);
+     -webkit-transform-origin: 20% 40%;
+             transform-origin: 100% 100%;
+  }
+  &:not(:checked) + label:after {
+    height: 20px;
+    width: 20px;
+    background-color: transparent;
+    border: 2px solid $radio-empty-color;
+    top: 0px;
+    z-index: 0;
+  }
+  // Checked style
+  &:checked {
+    + label:before {
+      top: 0;
+      left: 1px;
+      width: 8px;
+      height: 13px;
+      border-top: 2px solid transparent;
+      border-left: 2px solid transparent;
+      border-right: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      -webkit-transform: rotateZ(37deg);
+      transform: rotateZ(37deg);
+
+      -webkit-transform-origin: 100% 100%;
+      transform-origin: 100% 100%;
+    }
+    + label:after {
+      top: 0px;
+      width: 20px;
+      height: 20px;
+      border: 2px solid $secondary-color;
+      background-color: $secondary-color;
+      z-index: 0;
+    }
+  }
+  // Disabled style
+  &:disabled:not(:checked) + label:before {
+
+    background-color: transparent;
+    border: 2px solid transparent;
+
+  }
+  &:disabled:not(:checked) + label:after {
+    border-color: transparent;
+    background-color: $input-disabled-solid-color;
+  }
+  &:disabled:checked + label:before {
+    background-color: transparent;
+
+  }
+  &:disabled:checked + label:after {
+    background-color: $input-disabled-solid-color;
+    border-color: $input-disabled-solid-color;
+  }
+
 }
 
 /***************
@@ -513,15 +599,16 @@ select:disabled {
 **********************/
 .file-field {
   position: relative;
-  overflow: hidden;
 
   input.file-path {
     margin-left: 100px;
+    width: calc(100% - 100px);
   }
 
   .btn {
     position: absolute;
     top: 0;
+    left: 0;
     height: 3rem;
     line-height: 3rem;
   }

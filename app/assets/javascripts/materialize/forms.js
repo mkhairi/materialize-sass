@@ -37,6 +37,7 @@
     $(document).on('reset', function(e) {
       if ($(e.target).is('form')) {
         $(this).find(input_selector).removeClass('valid').removeClass('invalid');
+        $(this).find(input_selector).siblings('label, i').removeClass('active');
 
         // Reset select
         $(this).find('select.initialized').each(function () {
@@ -227,9 +228,16 @@
         $('ul#select-options-'+lastID).remove();
       }
 
+      // If destroying the select, remove the selelct-id and reset it to it's uninitialized state.
+      if(callback === 'destroy') {
+          $select.data('select-id', null).removeClass('initialized');
+          return;
+      }
+
       var uniqueID = Materialize.guid();
       $select.data('select-id', uniqueID);
       var wrapper = $('<div class="select-wrapper"></div>');
+      wrapper.addClass($select.attr('class'));
       var options = $('<ul id="select-options-' + uniqueID+'" class="dropdown-content select-dropdown"></ul>');
       var selectOptions = $select.children('option');
       if ($select.find('option:selected') !== undefined) {
@@ -279,6 +287,12 @@
       if (!$select.is(':disabled')) {
         $newSelect.dropdown({"hover": false});
       }
+
+      // Copy tabindex
+      if ($select.attr('tabindex')) {
+        $($newSelect[0]).attr('tabindex', $select.attr('tabindex'));
+      }
+
       $select.addClass('initialized');
 
       $newSelect.on('focus', function(){
