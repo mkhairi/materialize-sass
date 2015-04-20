@@ -1,6 +1,3 @@
-.dropdown-button {
-  position: relative;
-}
 .dropdown-content {
   @extend .z-depth-1;
   background-color: #FFFFFF;
@@ -33,6 +30,12 @@
       color: $dropdown-color;
       display: block;
       padding: 1rem 1rem;
+    }
+
+    // Icon alignment override
+    & > a > i {
+      height: inherit;
+      line-height: inherit;
     }
   }
 }
