@@ -6,7 +6,7 @@ module Materialize
           app.config.assets.paths << root.join('app/assets', sub).to_s
         end
         app.config.assets.precompile << %r(material-design-icons/Material-Design-Icons\.(?:eot|svg|ttf|woff2?)$)
-        app.config.assets.precompile << %r(roboto/Roboto-Bold\.(?:eot|svg|ttf|woff2?)$)
+        app.config.assets.precompile << %r(roboto/Roboto-[\w-]+\.(?:eot|svg|ttf|woff2?)$)
       end
     end
   end
