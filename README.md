@@ -41,6 +41,21 @@ Import Materialize styles in `app/assets/stylesheets/application.scss`:
 $ rm app/assets/stylesheets/application.css
 ```
 
+**HINT:** Override materialize color variable.
+
+Since materialize color scheme are declared in _color.scss you should import the color.scss first. then you can override color variable just like this:
+
+```scss
+@import "materialize/components/color";
+$primary-color: color("blue", "lighten-2") !default;
+@import 'materialize';
+```
+
+or
+
+You can import each component just like in this file below:
+https://github.com/mkhairi/materialize-sass/blob/master/app/assets/stylesheets/materialize.scss
+
 ### b. JavaScript
 
 Require Materialize javascripts in `app/assets/javascripts/application.js`:
