@@ -151,12 +151,11 @@
     $('.file-field').each(function() {
       var path_input = $(this).find('input.file-path');
       $(this).find('input[type="file"]').change(function () {
-        if ($(this)[0].files.length){
-          path_input.val($(this)[0].files[0].name);
-          path_input.trigger('change');
-        }
+        path_input.val($(this)[0].files[0].name);
+        path_input.trigger('change');
       });
     });
+
 
 
     /****************
@@ -332,7 +331,7 @@
       // Wrap Elements
       $select.wrap(wrapper);
       // Add Select Display Element
-      var dropdownIcon = $('<i class="mdi-navigation-arrow-drop-down"></i>');
+      var dropdownIcon = $('<span class="caret">&#9660;</span>');
       if ( $select.is(':disabled') )
         dropdownIcon.addClass('disabled');
 
