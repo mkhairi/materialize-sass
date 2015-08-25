@@ -18,6 +18,7 @@
 //= require ./materialize/forms
 //= require ./materialize/slider
 //= require ./materialize/cards
+//= require ./materialize/chips
 //= require ./materialize/pushpin
 //= require ./materialize/buttons
 //= require ./materialize/transitions
@@ -25,3 +26,6 @@
 //= require ./materialize/date_picker/picker
 //= require ./materialize/date_picker/picker.date
 //= require ./materialize/character_counter
+
+
+
