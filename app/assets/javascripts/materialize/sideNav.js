@@ -6,6 +6,7 @@
         menuWidth: 240,
         edge: 'left',
         closeOnClick: false,
+        ready: undefined,
         complete: undefined
       };
       options = $.extend(defaults, options);
@@ -287,6 +288,9 @@
               complete: function () {
                 menuOut = true;
                 panning = false;
+                if (typeof(options.ready) === "function") {
+                  options.ready();
+                }
               }
             });
           }
