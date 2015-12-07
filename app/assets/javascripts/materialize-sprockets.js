@@ -1,3 +1,4 @@
+//= require ./materialize/initial
 //= require ./materialize/jquery.easing.1.3
 //= require ./materialize/animation
 //= require ./materialize/velocity.min
