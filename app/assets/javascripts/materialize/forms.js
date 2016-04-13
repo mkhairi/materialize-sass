@@ -100,7 +100,7 @@
         $(this).addClass('tabbed');
         var $this = $(this);
         $this.one('blur', function(e) {
-          console.log(e);
+          
           $(this).removeClass('tabbed');
         });
         return;
@@ -317,6 +317,7 @@
       var appendOptionWithIcon = function(select, option, type) {
         // Add disabled attr if disabled
         var disabledClass = (option.is(':disabled')) ? 'disabled ' : '';
+        var optgroupClass = (type === 'optgroup-option') ? 'optgroup-option ' : '';
 
         // add icons
         var icon_url = option.data('icon');
@@ -329,7 +330,7 @@
           if (type === 'multiple') {
             options.append($('<li class="' + disabledClass + '"><img src="' + icon_url + '"' + classString + '><span><input type="checkbox"' + disabledClass + '/><label></label>' + option.html() + '</span></li>'));
           } else {
-            options.append($('<li class="' + disabledClass + '"><img src="' + icon_url + '"' + classString + '><span>' + option.html() + '</span></li>'));
+            options.append($('<li class="' + disabledClass + optgroupClass + '"><img src="' + icon_url + '"' + classString + '><span>' + option.html() + '</span></li>'));
           }
           return true;
         }
@@ -338,7 +339,7 @@
         if (type === 'multiple') {
           options.append($('<li class="' + disabledClass + '"><span><input type="checkbox"' + disabledClass + '/><label></label>' + option.html() + '</span></li>'));
         } else {
-          options.append($('<li class="' + disabledClass + '"><span>' + option.html() + '</span></li>'));
+          options.append($('<li class="' + disabledClass + optgroupClass + '"><span>' + option.html() + '</span></li>'));
         }
       };
 
@@ -359,7 +360,7 @@
             options.append($('<li class="optgroup"><span>' + $(this).attr('label') + '</span></li>'));
 
             selectOptions.each(function() {
-              appendOptionWithIcon($select, $(this));
+              appendOptionWithIcon($select, $(this), 'optgroup-option');
             });
           }
         });
