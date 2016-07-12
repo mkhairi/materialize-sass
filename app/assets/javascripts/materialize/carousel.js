@@ -8,7 +8,8 @@
         dist: -100, // zoom scale TODO: make this more intuitive as an option
         shift: 0, // spacing for center image
         padding: 0, // Padding between non center items
-        full_width: false // Change to full width styles
+        full_width: false, // Change to full width styles
+        indicators: false // Toggle indicators
       };
       options = $.extend(defaults, options);
 
@@ -17,9 +18,13 @@
         var images, offset, center, pressed, dim, count,
             reference, referenceY, amplitude, target, velocity,
             xform, frame, timestamp, ticker, dragged, vertical_dragged;
+        var $indicators = $('<ul class="indicators"></ul>');
+
 
         // Initialize
         var view = $(this);
+        var showIndicators = view.attr('data-indicators') || options.indicators;
+
         // Don't double initialize.
         if (view.hasClass('initialized')) {
           // Redraw carousel.
@@ -30,10 +35,22 @@
         // Options
         if (options.full_width) {
           options.dist = 0;
-          imageHeight = view.find('.carousel-item img').first().load(function(){
-            view.css('height', $(this).height());
-          });
+          var firstImage = view.find('.carousel-item img').first();
+          if (firstImage.length) {
+            imageHeight = firstImage.load(function(){
+              view.css('height', $(this).height());
+            });
+          } else {
+            imageHeight = view.find('.carousel-item').first().height();
+            view.css('height', imageHeight);
+          }
+
+          // Offset fixed items when indicators.
+          if (showIndicators) {
+            view.find('.carousel-fixed-item').addClass('with-indicators');
+          }
         }
+
 
         view.addClass('initialized');
         pressed = false;
@@ -42,10 +59,28 @@
         item_width = view.find('.carousel-item').first().innerWidth();
         dim = item_width * 2 + options.padding;
 
-        view.find('.carousel-item').each(function () {
+        view.find('.carousel-item').each(function (i) {
           images.push($(this)[0]);
+          if (showIndicators) {
+            var $indicator = $('<li class="indicator-item"></li>');
+
+            // Add active to first by default.
+            if (i === 0) {
+              $indicator.addClass('active');
+            }
+
+            // Handle clicks on indicators.
+            $indicator.click(function () {
+              var index = $(this).index();
+              cycleTo(index);
+            });
+            $indicators.append($indicator);
+          }
         });
 
+        if (showIndicators) {
+          view.append($indicators);
+        }
         count = images.length;
 
 
@@ -58,6 +93,7 @@
           view[0].addEventListener('mousedown', tap);
           view[0].addEventListener('mousemove', drag);
           view[0].addEventListener('mouseup', release);
+          view[0].addEventListener('mouseleave', release);
           view[0].addEventListener('click', click);
         }
 
@@ -99,6 +135,16 @@
             alignment += 'translateY(' + (view[0].clientHeight - item_width) / 2 + 'px)';
           } else {
             alignment = 'translateX(0)';
+          }
+
+          // Set indicator active
+          if (showIndicators) {
+            var diff = (center % count);
+            var activeIndicator = $indicators.find('.indicator-item.active');
+            if (activeIndicator.index() !== diff) {
+              activeIndicator.removeClass('active');
+              $indicators.find('.indicator-item').eq(diff).addClass('active');
+            }
           }
 
           // center
@@ -197,21 +243,34 @@
             var clickedIndex = $(e.target).closest('.carousel-item').index();
             var diff = (center % count) - clickedIndex;
 
-            // Account for wraparound.
-            if (diff < 0) {
-              if (Math.abs(diff + count) < Math.abs(diff)) { diff += count; }
-
-            } else if (diff > 0) {
-              if (Math.abs(diff - count) < diff) { diff -= count; }
+            // Disable clicks if carousel was shifted by click
+            if (diff !== 0) {
+              e.preventDefault();
+              e.stopPropagation();
             }
+            console.log($(this));
+            cycleTo(clickedIndex);
+          }
+        }
 
-            // Call prev or next accordingly.
-            if (diff < 0) {
-              $(this).trigger('carouselNext', [Math.abs(diff)]);
+        function cycleTo(n) {
+          var diff = (center % count) - n;
 
-            } else if (diff > 0) {
-              $(this).trigger('carouselPrev', [diff]);
-            }
+          // Account for wraparound.
+          if (diff < 0) {
+            if (Math.abs(diff + count) < Math.abs(diff)) { diff += count; }
+
+          } else if (diff > 0) {
+            if (Math.abs(diff - count) < diff) { diff -= count; }
+          }
+
+          // Call prev or next accordingly.
+          if (diff < 0) {
+            console.log("TRIGGER", $(this));
+            view.trigger('carouselNext', [Math.abs(diff)]);
+
+          } else if (diff > 0) {
+            view.trigger('carouselPrev', [diff]);
           }
         }
 
@@ -266,7 +325,11 @@
         }
 
         function release(e) {
-          pressed = false;
+          if (pressed) {
+            pressed = false;
+          } else {
+            return;
+          }
 
           clearInterval(ticker);
           target = offset;
@@ -279,8 +342,10 @@
           timestamp = Date.now();
           requestAnimationFrame(autoScroll);
 
-          e.preventDefault();
-          e.stopPropagation();
+          if (dragged) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
           return false;
         }
 
@@ -302,6 +367,7 @@
         scroll(offset);
 
         $(this).on('carouselNext', function(e, n) {
+          console.log("NEXT");
           if (n === undefined) {
             n = 1;
           }
@@ -325,6 +391,13 @@
           }
         });
 
+        $(this).on('carouselSet', function(e, n) {
+          if (n === undefined) {
+            n = 0;
+          }
+          cycleTo(n);
+        });
+
       });
 
 
@@ -336,6 +409,9 @@
     prev : function(n) {
       $(this).trigger('carouselPrev', [n]);
     },
+    set : function(n) {
+      $(this).trigger('carouselSet', [n]);
+    }
   };
 
 
