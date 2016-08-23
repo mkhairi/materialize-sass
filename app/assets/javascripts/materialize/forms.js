@@ -1,5 +1,5 @@
 (function ($) {
-  $(document).ready(function() {
+  $(document).on('ready turbolinks:load', function() {
 
     // Function to update labels of text fields
     Materialize.updateTextFields = function() {
@@ -26,7 +26,7 @@
     });
 
     // Add active if input element has been pre-populated on document ready
-    $(document).ready(function() {
+    $(document).on('ready turbolinks:load', function() {
       Materialize.updateTextFields();
     });
 

@@ -131,7 +131,7 @@
     });
   };
 
-  $(document).ready(function(){
+  $(document).on('ready turbolinks:load', function(){
     $('.collapsible').collapsible();
   });
 }( jQuery ));

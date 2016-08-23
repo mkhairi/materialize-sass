@@ -65,7 +65,7 @@
     }
   }
 
-  $(document).ready(function(){
+  $(document).on('ready turbolinks:load', function(){
     $('input, textarea').characterCounter();
   });
 

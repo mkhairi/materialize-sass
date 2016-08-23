@@ -262,7 +262,7 @@
         });
 };
 
-$(document).ready(function(){
+$(document).on('ready turbolinks:load', function(){
   $('.materialboxed').materialbox();
 });
 

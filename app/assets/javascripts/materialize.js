@@ -443,7 +443,7 @@ if ($) {
     });
   };
 
-  $(document).ready(function(){
+  $(document).on('ready turbolinks:load', function(){
     $('.collapsible').collapsible();
   });
 }( jQuery ));;(function ($) {
@@ -707,7 +707,7 @@ if ($) {
     });
   }; // End dropdown plugin
 
-  $(document).ready(function(){
+  $(document).on('ready turbolinks:load', function(){
     $('.dropdown-button').dropdown();
   });
 }( jQuery ));
@@ -1167,7 +1167,7 @@ if ($) {
         });
 };
 
-$(document).ready(function(){
+$(document).on('ready turbolinks:load', function(){
   $('.materialboxed').materialbox();
 });
 
@@ -1373,7 +1373,7 @@ $(document).ready(function(){
     }
   };
 
-  $(document).ready(function(){
+  $(document).on('ready turbolinks:load', function(){
     $('ul.tabs').tabs();
   });
 }( jQuery ));
@@ -1603,7 +1603,7 @@ $(document).ready(function(){
     return {x: newX, y: newY};
   };
 
-  $(document).ready(function(){
+  $(document).on('ready turbolinks:load', function(){
      $('.tooltipped').tooltip();
    });
 }( jQuery ));
@@ -2631,7 +2631,7 @@ $(document).ready(function(){
 
 		var throttledScroll = throttle(onScroll, options.throttle || 100);
 		var readyScroll = function(){
-			$(document).ready(throttledScroll);
+			$(document).on('ready turbolinks:load', throttledScroll);
 		};
 
 		if (!isSpying) {
@@ -2717,7 +2717,7 @@ $(document).ready(function(){
 
 })(jQuery);
 ;(function ($) {
-  $(document).ready(function() {
+  $(document).on('ready turbolinks:load', function() {
 
     // Function to update labels of text fields
     Materialize.updateTextFields = function() {
@@ -2744,7 +2744,7 @@ $(document).ready(function(){
     });
 
     // Add active if input element has been pre-populated on document ready
-    $(document).ready(function() {
+    $(document).on('ready turbolinks:load', function() {
       Materialize.updateTextFields();
     });
 
@@ -3719,7 +3719,7 @@ $(document).ready(function(){
     }; // Plugin end
 }( jQuery ));
 ;(function ($) {
-  $(document).ready(function() {
+  $(document).on('ready turbolinks:load', function() {
 
     $(document).on('click.card', '.card', function (e) {
       if ($(this).find('> .card-reveal').length) {
@@ -3751,7 +3751,7 @@ $(document).ready(function(){
     secondaryPlaceholder: '',
   };
 
-  $(document).ready(function(){
+  $(document).on('ready turbolinks:load', function(){
     // Handle removal of static chips.
     $(document).on('click', '.chip .close', function(e){
       var $chips = $(this).closest('.chips');
@@ -4080,7 +4080,7 @@ $(document).ready(function(){
 
   };
 }( jQuery ));;(function ($) {
-  $(document).ready(function() {
+  $(document).on('ready turbolinks:load', function() {
 
     // jQuery reverse
     $.fn.reverse = [].reverse;
@@ -4233,7 +4233,7 @@ $(document).ready(function(){
   };
 
 
-  $(document).ready(function() {
+  $(document).on('ready turbolinks:load', function() {
     // Hardcoded .staggered-list scrollFire
     // var staggeredListOptions = [];
     // $('ul.staggered-list').each(function (i) {
@@ -7007,7 +7007,7 @@ Picker.extend( 'pickadate', DatePicker )
     }
   }
 
-  $(document).ready(function(){
+  $(document).on('ready turbolinks:load', function(){
     $('input, textarea').characterCounter();
   });
 
