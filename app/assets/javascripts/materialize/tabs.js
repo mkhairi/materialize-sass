@@ -142,7 +142,7 @@
     }
   };
 
-  $(document).ready(function(){
+  document.addEventListener("turbolinks:load", function(){
     $('ul.tabs').tabs();
   });
 }( jQuery ));

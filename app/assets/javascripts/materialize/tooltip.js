@@ -224,7 +224,7 @@
     return {x: newX, y: newY};
   };
 
-  $(document).ready(function(){
+  document.addEventListener("turbolinks:load", function(){
      $('.tooltipped').tooltip();
    });
 }( jQuery ));
