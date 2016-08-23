@@ -65,7 +65,7 @@
     }
   }
 
-  document.addEventListener("turbolinks:load", function(){
+  $(document).on('ready turbolinks:load', function(){
     $('input, textarea').characterCounter();
   });
 

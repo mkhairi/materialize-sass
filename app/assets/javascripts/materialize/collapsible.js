@@ -131,7 +131,7 @@
     });
   };
 
-  document.addEventListener("turbolinks:load", function(){
+  $(document).on('ready turbolinks:load', function(){
     $('.collapsible').collapsible();
   });
 }( jQuery ));
