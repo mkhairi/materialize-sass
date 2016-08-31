@@ -1,11 +1,11 @@
 @charset "UTF-8";
 
 // Mixins
-@import "materialize/components/prefixer";
+// @import "materialize/components/prefixer";
 @import "materialize/components/mixins";
 @import "materialize/components/color";
 
-// Variables
+// Variables;
 @import "materialize/components/variables";
 
 // Reset
@@ -35,6 +35,6 @@
 @import "materialize/components/preloader";
 @import "materialize/components/slider";
 @import "materialize/components/carousel";
-@import "materialize/components/date_picker/default.scss";
-@import "materialize/components/date_picker/default.date.scss";
-@import "materialize/components/date_picker/default.time.scss";
+@import "materialize/components/date_picker/default";
+@import "materialize/components/date_picker/default.date";
+@import "materialize/components/date_picker/default.time";
