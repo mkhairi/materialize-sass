@@ -7,7 +7,7 @@
 //= require ./materialize/global
 //= require ./materialize/collapsible
 //= require ./materialize/dropdown
-//= require ./materialize/leanModal
+//= require ./materialize/modal
 //= require ./materialize/materialbox
 //= require ./materialize/parallax
 //= require ./materialize/tabs
@@ -27,4 +27,4 @@
 //= require ./materialize/date_picker/picker
 //= require ./materialize/date_picker/picker.date
 //= require ./materialize/character_counter
-//= require ./materialize/carousel.js
+//= require ./materialize/carousel
