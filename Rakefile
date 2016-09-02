@@ -15,7 +15,7 @@ namespace :javascripts do
     tgt_dir = "app/assets/javascripts/materialize/"
     mkdir_p tgt_dir
     cp_r src_dir, tgt_dir
-    cp "#{source_dir}/bin/materialize.js", "app/assets/javascripts"
+    cp "#{source_dir}/dist/js/materialize.js", "app/assets/javascripts"
   end
   
   ##todo
@@ -29,9 +29,24 @@ namespace :javascripts do
     cp_r src_dir, tgt_dir
   end
   
+  task :turbolinks_init do
+    files =  Dir.glob('app/assets/javascripts/**/*.js').reject { |file| file.end_with?(".min.js") and File.file?(file) }
+    files.each do |file|
+      selected_files = %w(materialize.js buttons.js cards.js character_counter.js chips.js collapsible.js 
+                          dropdown.js forms.js materialbox.js scrollspy.js tabs.js tooltip.js transitions.js)
+      file_name = File.basename file
+      #only selected file
+      if selected_files.include?(file_name)
+        content = File.read(file)
+        fixed_content = content.gsub("$(document).ready(", "$(document).on('ready turbolinks:load', ")
+        File.open(file, "w") { |f| f.puts fixed_content}
+      end
+    end
+  end 
+  
 
   desc "Setup javascript assets"
-  task setup: [:clean, :copy, :copy_extras]
+  task setup: [:clean, :copy, :copy_extras, :turbolinks_init]
 end
 
 namespace :stylesheets do
@@ -85,12 +100,12 @@ namespace :stylesheets do
   task setup: [:clean, :copy, :copy_extras, :fix_urls]
 end
 
-desc "Remove minified file .min"
-task :cleanup do
-  Dir.glob('app/assets/**/*.min.*').each do |file|
-    rm file
-  end
-end
+#desc "Remove minified file .min"
+#task :cleanup do
+#  Dir.glob('app/assets/**/*.min.*').each do |file|
+#    rm file
+#  end
+#end
 
 desc "Setup or update assets files"
 task setup: ["javascripts:setup", "stylesheets:setup"]
