@@ -196,7 +196,7 @@
 
 		var throttledScroll = throttle(onScroll, options.throttle || 100);
 		var readyScroll = function(){
-			$(document).on('ready turbolinks:load', throttledScroll);
+			$(document).ready(throttledScroll);
 		};
 
 		if (!isSpying) {
