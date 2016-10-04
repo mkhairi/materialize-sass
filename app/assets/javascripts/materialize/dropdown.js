@@ -259,7 +259,7 @@
     });
   }; // End dropdown plugin
 
-  $(document).ready(function(){
+  $(document).on('turbolinks:load', function(){
     $('.dropdown-button').dropdown();
   });
 }( jQuery ));

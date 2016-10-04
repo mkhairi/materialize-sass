@@ -158,7 +158,7 @@
     }
   };
 
-  $(document).ready(function(){
+  $(document).on('turbolinks:load', function(){
     $('ul.tabs').tabs();
   });
 }( jQuery ));

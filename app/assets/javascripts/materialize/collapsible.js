@@ -154,7 +154,7 @@
     });
   };
 
-  $(document).ready(function(){
+  $(document).on('turbolinks:load', function(){
     $('.collapsible').collapsible();
   });
 }( jQuery ));

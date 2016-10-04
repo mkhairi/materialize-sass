@@ -43,7 +43,7 @@ $ rm app/assets/stylesheets/application.css
 
 **HINT:** Override materialize color variable.
 
-Since materialize color scheme are declared in _color.scss you should import the color.scss first. then you can override color variable just like this:
+Since materialize color scheme are declared in color.scss you should import the color.scss first. then you can override color variable just like this:
 
 ```scss
 @import "materialize/components/color";
@@ -60,9 +60,30 @@ https://github.com/mkhairi/materialize-sass/blob/master/app/assets/stylesheets/m
 
 Require Materialize javascripts in `app/assets/javascripts/application.js`:
 
+For turbolinks 5 users
 ```js
 //= require jquery
+//= require turbolinks
 //= require materialize-sprockets
+```
+
+For turbolinks classic users
+
+Add [`jquery-turbolinks`](https://github.com/kossnocorp/jquery.turbolinks) gem to Gemfile 
+
+``` gem 'jquery-turbolinks' ```
+
+```js
+//= require jquery
+//= require jquery.turbolinks
+//= require materialize
+//= require turbolinks
+```
+
+For non turbolinks users
+```js
+//= require jquery
+//= require materialize
 ```
 
 ### c. Extras
