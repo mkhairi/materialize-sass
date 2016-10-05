@@ -399,7 +399,7 @@ $colors: (
 // usage: color("name_of_color", "type_of_color")
 // to avoid to repeating map-get($colors, ...)
 
-@function color($color, $type) {
+@function color($color, $type: "base") {
   @if map-has-key($colors, $color) {
     $curr_color: map-get($colors, $color);
     @if map-has-key($curr_color, $type) {
