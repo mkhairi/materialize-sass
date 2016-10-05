@@ -48,6 +48,7 @@ Since materialize color scheme are declared in color.scss you should import the 
 ```scss
 @import "materialize/components/color";
 $primary-color: color("blue", "lighten-2") !default;
+$secondary-color: color("yellow") !default;
 @import 'materialize';
 ```
 
@@ -69,7 +70,7 @@ For turbolinks 5 users
 
 For turbolinks classic users
 
-Add [`jquery-turbolinks`](https://github.com/kossnocorp/jquery.turbolinks) gem to Gemfile 
+Add [`jquery-turbolinks`](https://github.com/kossnocorp/jquery.turbolinks) gem to Gemfile
 
 ``` gem 'jquery-turbolinks' ```
 
