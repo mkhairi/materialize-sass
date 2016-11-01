@@ -64,6 +64,15 @@ Materialize.guid = (function() {
   };
 })();
 
+/**
+ * Escapes hash from special characters
+ * @param {string} hash  String returned from this.hash
+ * @returns {string}
+ */
+Materialize.escapeHash = function(hash) {
+  return hash.replace( /(:|\.|\[|\]|,|=)/g, "\\$1" );
+};
+
 Materialize.elementOrParentIsFixed = function(element) {
     var $element = $(element);
     var $checkElements = $element.add($element.parents());
@@ -78,11 +87,12 @@ Materialize.elementOrParentIsFixed = function(element) {
 };
 
 // Velocity has conflicts when loaded with jQuery, this will check for it
+// First, check if in noConflict mode
 var Vel;
-if ($) {
-  Vel = $.Velocity;
-} else if (jQuery) {
+if (jQuery) {
   Vel = jQuery.Velocity;
+} else if ($) {
+  Vel = $.Velocity;
 } else {
   Vel = Velocity;
 }
