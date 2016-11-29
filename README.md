@@ -48,7 +48,7 @@ Since materialize color scheme are declared in color.scss you should import the 
 ```scss
 @import "materialize/components/color";
 $primary-color: color("blue", "lighten-2") !default;
-$secondary-color: color("yellow") !default;
+$secondary-color: color("yellow", "base") !default;
 @import 'materialize';
 ```
 
