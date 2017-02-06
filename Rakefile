@@ -15,7 +15,7 @@ namespace :javascripts do
     tgt_dir = "app/assets/javascripts/materialize/"
     mkdir_p tgt_dir
     cp_r src_dir, tgt_dir
-    cp "#{source_dir}/dist/js/materialize.js", "app/assets/javascripts"
+    cp "#{source_dir}/bin/materialize.js", "app/assets/javascripts"
   end
   
   ##todo
@@ -30,15 +30,15 @@ namespace :javascripts do
   end
   
   task :turbolinks_init do
-    files =  Dir.glob('app/assets/javascripts/**/*.js').reject { |file| file.end_with?(".min.js") and File.file?(file) }
+    files =  Dir.glob('app/assets/javascripts/materialize/**/*.js').reject { |file| file.end_with?(".min.js") and File.file?(file) }
     files.each do |file|
-      selected_files = %w(materialize.js buttons.js cards.js character_counter.js chips.js collapsible.js 
+      selected_files = %w(buttons.js cards.js character_counter.js chips.js collapsible.js 
                           dropdown.js forms.js materialbox.js scrollspy.js tabs.js tooltip.js transitions.js)
       file_name = File.basename file
       #only selected file
       if selected_files.include?(file_name)
         content = File.read(file)
-        fixed_content = content.gsub("$(document).ready(", "$(document).on('ready turbolinks:load', ")
+        fixed_content = content.gsub("$(document).ready(", "$(document).on('turbolinks:load', ")
         File.open(file, "w") { |f| f.puts fixed_content}
       end
     end
@@ -47,6 +47,7 @@ namespace :javascripts do
 
   desc "Setup javascript assets"
   task setup: [:clean, :copy, :copy_extras, :turbolinks_init]
+  #task setup: [:clean, :copy, :copy_extras]
 end
 
 namespace :stylesheets do
@@ -62,7 +63,7 @@ namespace :stylesheets do
     mkdir_p tgt_dir
     cp_r src_dir, tgt_dir
     rm tgt_dir+"ghpages-materialize.scss"
-    rm tgt_dir+"style.scss"
+    rm tgt_dir+"_style.scss"
     mv tgt_dir+"materialize.scss", "app/assets/stylesheets/"
   end
 
