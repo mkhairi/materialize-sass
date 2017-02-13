@@ -100,6 +100,21 @@ in your application.js
 //= require materialize/extras/nouislider
 ```
 
+### d. Icons
+
+Include this line in the <head>portion of your HTML code
+
+``` <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> ```
+
+or import this line in your application.scss
+
+``` @import "https://fonts.googleapis.com/icon?family=Material+Icons"; ```
+
+or install this gem for offline icons
+
+``` gem 'material_icons' ```
+
+see [docs](https://github.com/Angelmmiguel/material_icons)
 
 ## Contributing
 
