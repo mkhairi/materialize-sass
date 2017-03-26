@@ -28,3 +28,4 @@
 //= require ./materialize/date_picker/picker.date
 //= require ./materialize/character_counter
 //= require ./materialize/carousel
+//= require ./materialize/tapTarget
