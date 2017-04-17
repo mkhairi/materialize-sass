@@ -116,6 +116,7 @@ or install this gem for offline icons
 see [docs](https://github.com/Angelmmiguel/material_icons)
 
 ## Contributing
+note: Any changes or Pull Request regarding materialize assets should be made in official [materialize](https://github.com/Dogfalo/materialize) repo.
 
 1. Fork it ( https://github.com/mkhairi/materialize-sass/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
