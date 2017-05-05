@@ -2,6 +2,8 @@
 
 `materialize-sass` is a Sass powered version of [Materialize](http://materializecss.com), a modern responsive front-end framework based on Material Design.
 
+example: http://materialize-rails.herokuapp.com/
+
 ## Installation
 
 In your Gemfile you need to add the `materialize-sass` gem:
