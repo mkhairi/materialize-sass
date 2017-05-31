@@ -2,7 +2,7 @@
 
 `materialize-sass` is a Sass powered version of [Materialize](http://materializecss.com), a modern responsive front-end framework based on Material Design.
 
-example: http://materialize-rails.herokuapp.com/
+example: http://materialize.labs.my/
 
 ## Installation
 
