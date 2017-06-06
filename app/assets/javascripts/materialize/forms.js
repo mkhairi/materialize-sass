@@ -1,5 +1,5 @@
 (function ($) {
-  $(document).on('turbolinks:load', function() {
+  $(document).on('turbolinks:load ready', function() {
 
     // Function to update labels of text fields
     Materialize.updateTextFields = function() {
