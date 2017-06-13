@@ -4,6 +4,14 @@
 
 example: http://materialize.labs.my/
 
+## Dependencies
+
+**Rails 5.1+**
+The Rails JavaScript helpers has been rewritten in a new gem called rails-ujs and they use vanilla JavaScript, so jQuery is not a dependency of Rails anymore. Since materializecss relies on it, install it with ```bin/yarn add jquery``` or via ```gem 'jquery-rails'```  and add ```//= require jquery``` to ```application.js```. 
+
+**NOTE:** Ensure that the `sass-rails` gem is presented in your Gemfile.
+
+
 ## Installation
 
 In your Gemfile you need to add the `materialize-sass` gem:
@@ -12,7 +20,6 @@ In your Gemfile you need to add the `materialize-sass` gem:
 gem 'materialize-sass'
 ```
 
-**NOTE:** Ensure that the `sass-rails` gem is presented in your Gemfile.
 
 And then run the bundler and restart your server to make the files available through the pipeline:
 
