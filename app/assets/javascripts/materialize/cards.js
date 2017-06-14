@@ -1,5 +1,5 @@
 (function ($) {
-  $(document).on('turbolinks:load', function() {
+  $(document).on('ready turbolinks:load', function() {
 
     $(document).on('click.card', '.card', function (e) {
       if ($(this).find('> .card-reveal').length) {

@@ -61,7 +61,7 @@
   };
 
 
-  $(document).on('turbolinks:load', function() {
+  $(document).on('ready turbolinks:load', function() {
     // Hardcoded .staggered-list scrollFire
     // var staggeredListOptions = [];
     // $('ul.staggered-list').each(function (i) {

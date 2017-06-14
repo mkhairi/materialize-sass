@@ -38,7 +38,7 @@ namespace :javascripts do
       #only selected file
       if selected_files.include?(file_name)
         content = File.read(file)
-        fixed_content = content.gsub("$(document).ready(", "$(document).on('turbolinks:load', ")
+        fixed_content = content.gsub("$(document).ready(", "$(document).on('ready turbolinks:load', ")
         File.open(file, "w") { |f| f.puts fixed_content}
       end
     end

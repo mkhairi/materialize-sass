@@ -28,7 +28,7 @@
     });
 
     // Add active if input element has been pre-populated on document ready
-    $(document).on('turbolinks:load', function() {
+    $(document).on('ready turbolinks:load', function() {
       Materialize.updateTextFields();
     });
 
