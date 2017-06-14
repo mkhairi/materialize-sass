@@ -15,7 +15,7 @@ namespace :javascripts do
     tgt_dir = "app/assets/javascripts/materialize/"
     mkdir_p tgt_dir
     cp_r src_dir, tgt_dir
-    cp "#{source_dir}/bin/materialize.js", "app/assets/javascripts"
+    cp "#{source_dir}/dist/js/materialize.js", "app/assets/javascripts"
   end
   
   ##todo
