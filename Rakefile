@@ -101,6 +101,24 @@ namespace :stylesheets do
   task setup: [:clean, :copy, :copy_extras, :fix_urls]
 end
 
+namespace :fonts do
+  desc "Cleaning fonts directory"
+  task :clean do
+   rm_rf "app/assets/fonts"
+  end
+
+  desc "Copy #{source_dir}/fonts/"
+  task :copy do
+    src_dir = "#{source_dir}/fonts/."
+    tgt_dir = "app/assets/fonts/"
+    mkdir_p tgt_dir
+    cp_r src_dir, tgt_dir
+  end
+
+  desc "Setup fonts assets"
+  task setup: [:clean, :copy]
+end
+
 #desc "Remove minified file .min"
 #task :cleanup do
 #  Dir.glob('app/assets/**/*.min.*').each do |file|
@@ -109,4 +127,4 @@ end
 #end
 
 desc "Setup or update assets files"
-task setup: ["javascripts:setup", "stylesheets:setup"]
+task setup: ["javascripts:setup", "stylesheets:setup", "fonts:setup"]
