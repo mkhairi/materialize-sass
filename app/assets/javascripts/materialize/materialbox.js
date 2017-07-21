@@ -2,7 +2,7 @@
 
   $.fn.materialbox = function () {
 
-    return this.each(function() {
+    return this.each(function () {
 
       if ($(this).hasClass('initialized')) {
         return;
@@ -23,26 +23,22 @@
       var originInlineStyles = origin.attr('style');
       origin.wrap(placeholder);
 
-
       // Start click handler
-      origin.on('click', function() {
+      origin.on('click', function () {
         var placeholder = origin.parent('.material-placeholder');
         var windowWidth = window.innerWidth;
         var windowHeight = window.innerHeight;
         var originalWidth = origin.width();
         var originalHeight = origin.height();
 
-
         // If already modal, return to original
         if (doneAnimating === false) {
           returnToOriginal();
           return false;
-        }
-        else if (overlayActive && doneAnimating===true) {
+        } else if (overlayActive && doneAnimating === true) {
           returnToOriginal();
           return false;
         }
-
 
         // Set states
         doneAnimating = false;
@@ -68,8 +64,7 @@
             curr.css('overflow', 'visible');
             if (ancestorsChanged === undefined) {
               ancestorsChanged = curr;
-            }
-            else {
+            } else {
               ancestorsChanged = ancestorsChanged.add(curr);
             }
           }
@@ -81,19 +76,14 @@
           position: 'absolute',
           'z-index': 1000,
           'will-change': 'left, top, width, height'
-        })
-        .data('width', originalWidth)
-        .data('height', originalHeight);
+        }).data('width', originalWidth).data('height', originalHeight);
 
         // Add overlay
-        var overlay = $('<div id="materialbox-overlay"></div>')
-          .css({
-            opacity: 0
-          })
-          .click(function(){
-            if (doneAnimating === true)
-            returnToOriginal();
-          });
+        var overlay = $('<div id="materialbox-overlay"></div>').css({
+          opacity: 0
+        }).click(function () {
+          if (doneAnimating === true) returnToOriginal();
+        });
 
         // Put before in origin image to preserve z-index layering.
         origin.before(overlay);
@@ -105,11 +95,10 @@
           height: windowHeight,
           left: -1 * overlayOffset.left,
           top: -1 * overlayOffset.top
-        })
+        });
 
         // Animate Overlay
-        overlay.velocity({opacity: 1},
-                           {duration: inDuration, queue: false, easing: 'easeOutQuad'} );
+        overlay.velocity({ opacity: 1 }, { duration: inDuration, queue: false, easing: 'easeOutQuad' });
 
         // Add and animate caption if it exists
         if (origin.data('caption') !== "") {
@@ -117,7 +106,7 @@
           $photo_caption.text(origin.data('caption'));
           $('body').append($photo_caption);
           $photo_caption.css({ "display": "inline" });
-          $photo_caption.velocity({opacity: 1}, {duration: inDuration, queue: false, easing: 'easeOutQuad'});
+          $photo_caption.velocity({ opacity: 1 }, { duration: inDuration, queue: false, easing: 'easeOutQuad' });
         }
 
         // Resize Image
@@ -131,76 +120,66 @@
           ratio = originalHeight / originalWidth;
           newWidth = windowWidth * 0.9;
           newHeight = windowWidth * 0.9 * ratio;
-        }
-        else {
+        } else {
           ratio = originalWidth / originalHeight;
-          newWidth = (windowHeight * 0.9) * ratio;
+          newWidth = windowHeight * 0.9 * ratio;
           newHeight = windowHeight * 0.9;
         }
 
         // Animate image + set z-index
-        if(origin.hasClass('responsive-img')) {
-          origin.velocity({'max-width': newWidth, 'width': originalWidth}, {duration: 0, queue: false,
-            complete: function(){
-              origin.css({left: 0, top: 0})
-              .velocity(
-                {
-                  height: newHeight,
-                  width: newWidth,
-                  left: $(document).scrollLeft() + windowWidth/2 - origin.parent('.material-placeholder').offset().left - newWidth/2,
-                  top: $(document).scrollTop() + windowHeight/2 - origin.parent('.material-placeholder').offset().top - newHeight/ 2
-                },
-                {
-                  duration: inDuration,
-                  queue: false,
-                  easing: 'easeOutQuad',
-                  complete: function(){doneAnimating = true;}
+        if (origin.hasClass('responsive-img')) {
+          origin.velocity({ 'max-width': newWidth, 'width': originalWidth }, { duration: 0, queue: false,
+            complete: function () {
+              origin.css({ left: 0, top: 0 }).velocity({
+                height: newHeight,
+                width: newWidth,
+                left: $(document).scrollLeft() + windowWidth / 2 - origin.parent('.material-placeholder').offset().left - newWidth / 2,
+                top: $(document).scrollTop() + windowHeight / 2 - origin.parent('.material-placeholder').offset().top - newHeight / 2
+              }, {
+                duration: inDuration,
+                queue: false,
+                easing: 'easeOutQuad',
+                complete: function () {
+                  doneAnimating = true;
                 }
-              );
+              });
             } // End Complete
           }); // End Velocity
-        }
-        else {
-          origin.css('left', 0)
-          .css('top', 0)
-          .velocity(
-            {
-              height: newHeight,
-              width: newWidth,
-              left: $(document).scrollLeft() + windowWidth/2 - origin.parent('.material-placeholder').offset().left - newWidth/2,
-              top: $(document).scrollTop() + windowHeight/2 - origin.parent('.material-placeholder').offset().top - newHeight/ 2
-            },
-            {
-              duration: inDuration,
-              queue: false,
-              easing: 'easeOutQuad',
-              complete: function(){doneAnimating = true;}
+        } else {
+          origin.css('left', 0).css('top', 0).velocity({
+            height: newHeight,
+            width: newWidth,
+            left: $(document).scrollLeft() + windowWidth / 2 - origin.parent('.material-placeholder').offset().left - newWidth / 2,
+            top: $(document).scrollTop() + windowHeight / 2 - origin.parent('.material-placeholder').offset().top - newHeight / 2
+          }, {
+            duration: inDuration,
+            queue: false,
+            easing: 'easeOutQuad',
+            complete: function () {
+              doneAnimating = true;
             }
-            ); // End Velocity
+          }); // End Velocity
         }
 
         // Handle Exit triggers
-        $(window).on('scroll.materialbox', function() {
+        $(window).on('scroll.materialbox', function () {
           if (overlayActive) {
             returnToOriginal();
           }
         });
 
-        $(window).on('resize.materialbox', function() {
+        $(window).on('resize.materialbox', function () {
           if (overlayActive) {
             returnToOriginal();
           }
         });
 
-        $(document).on('keyup.materialbox', function(e) {
+        $(document).on('keyup.materialbox', function (e) {
           // ESC key
-          if (e.keyCode === 27 &&
-              doneAnimating === true &&
-              overlayActive) {
+          if (e.keyCode === 27 && doneAnimating === true && overlayActive) {
             returnToOriginal();
           }
         });
-
       }); // End click handler
 
 
@@ -224,10 +203,10 @@
         $(document).off('keyup.materialbox');
         $(window).off('resize.materialbox');
 
-        $('#materialbox-overlay').velocity({opacity: 0}, {
+        $('#materialbox-overlay').velocity({ opacity: 0 }, {
           duration: outDuration, // Delay prevents animation overlapping
           queue: false, easing: 'easeOutQuad',
-          complete: function(){
+          complete: function () {
             // Remove Overlay
             overlayActive = false;
             $(this).remove();
@@ -235,55 +214,50 @@
         });
 
         // Resize Image
-        origin.velocity(
-          {
-            width: originalWidth,
-            height: originalHeight,
-            left: 0,
-            top: 0
-          },
-          {
-            duration: outDuration,
-            queue: false, easing: 'easeOutQuad',
-            complete: function() {
-              placeholder.css({
-                height: '',
-                width: '',
-                position: '',
-                top: '',
-                left: ''
-              });
-
-              origin.removeAttr('style');
-              origin.attr('style', originInlineStyles);
-
-              // Remove class
-              origin.removeClass('active');
-              doneAnimating = true;
-
-              // Remove overflow overrides on ancestors
-              if (ancestorsChanged) {
-                ancestorsChanged.css('overflow', '');
-              }
-            }
-          }
-        );
-
-        // Remove Caption + reset css settings on image
-        $('.materialbox-caption').velocity({opacity: 0}, {
-          duration: outDuration, // Delay prevents animation overlapping
+        origin.velocity({
+          width: originalWidth,
+          height: originalHeight,
+          left: 0,
+          top: 0
+        }, {
+          duration: outDuration,
           queue: false, easing: 'easeOutQuad',
-          complete: function(){
-            $(this).remove();
+          complete: function () {
+            placeholder.css({
+              height: '',
+              width: '',
+              position: '',
+              top: '',
+              left: ''
+            });
+
+            origin.removeAttr('style');
+            origin.attr('style', originInlineStyles);
+
+            // Remove class
+            origin.removeClass('active');
+            doneAnimating = true;
+
+            // Remove overflow overrides on ancestors
+            if (ancestorsChanged) {
+              ancestorsChanged.css('overflow', '');
+            }
           }
         });
 
+        // Remove Caption + reset css settings on image
+        $('.materialbox-caption').velocity({ opacity: 0 }, {
+          duration: outDuration, // Delay prevents animation overlapping
+          queue: false, easing: 'easeOutQuad',
+          complete: function () {
+            $(this).remove();
+          }
+        });
       }
     });
   };
 
-  $(document).on('ready turbolinks:load', function(){
+  $(document).on('ready turbolinks:load', function () {
     $('.materialboxed').materialbox();
   });
-
-}( jQuery ));
+})(jQuery);

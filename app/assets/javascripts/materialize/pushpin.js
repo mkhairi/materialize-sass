@@ -20,9 +20,8 @@
 
     options = $.extend(defaults, options);
 
-
     $index = 0;
-    return this.each(function() {
+    return this.each(function () {
       var $uniqueId = Materialize.guid(),
           $this = $(this),
           $original_offset = $(this).offset().top;
@@ -64,8 +63,6 @@
         var $scrolled = $(window).scrollTop() + options.offset;
         updateElements($this, $scrolled);
       });
-
     });
-
   };
-}( jQuery ));
+})(jQuery);

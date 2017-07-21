@@ -2,7 +2,7 @@
 
   var methods = {
 
-    init : function(options) {
+    init: function (options) {
       var defaults = {
         indicators: true,
         height: 400,
@@ -11,7 +11,7 @@
       };
       options = $.extend(defaults, options);
 
-      return this.each(function() {
+      return this.each(function () {
 
         // For each slider, we want to keep track of
         // which slide is active and its associated content
@@ -20,26 +20,25 @@
         var $slides = $slider.find('> li');
         var $active_index = $slider.find('.active').index();
         var $active, $indicators, $interval;
-        if ($active_index != -1) { $active = $slides.eq($active_index); }
+        if ($active_index != -1) {
+          $active = $slides.eq($active_index);
+        }
 
         // Transitions the caption depending on alignment
         function captionTransition(caption, duration) {
           if (caption.hasClass("center-align")) {
-            caption.velocity({opacity: 0, translateY: -100}, {duration: duration, queue: false});
-          }
-          else if (caption.hasClass("right-align")) {
-            caption.velocity({opacity: 0, translateX: 100}, {duration: duration, queue: false});
-          }
-          else if (caption.hasClass("left-align")) {
-            caption.velocity({opacity: 0, translateX: -100}, {duration: duration, queue: false});
+            caption.velocity({ opacity: 0, translateY: -100 }, { duration: duration, queue: false });
+          } else if (caption.hasClass("right-align")) {
+            caption.velocity({ opacity: 0, translateX: 100 }, { duration: duration, queue: false });
+          } else if (caption.hasClass("left-align")) {
+            caption.velocity({ opacity: 0, translateX: -100 }, { duration: duration, queue: false });
           }
         }
 
         // This function will transition the slide to any index of the next slide
         function moveToSlide(index) {
           // Wrap around indices.
-          if (index >= $slides.length) index = 0;
-          else if (index < 0) index = $slides.length -1;
+          if (index >= $slides.length) index = 0;else if (index < 0) index = $slides.length - 1;
 
           $active_index = $slider.find('.active').index();
 
@@ -49,22 +48,20 @@
             $caption = $active.find('.caption');
 
             $active.removeClass('active');
-            $active.velocity({opacity: 0}, {duration: options.transition, queue: false, easing: 'easeOutQuad',
-                              complete: function() {
-                                $slides.not('.active').velocity({opacity: 0, translateX: 0, translateY: 0}, {duration: 0, queue: false});
-                              } });
+            $active.velocity({ opacity: 0 }, { duration: options.transition, queue: false, easing: 'easeOutQuad',
+              complete: function () {
+                $slides.not('.active').velocity({ opacity: 0, translateX: 0, translateY: 0 }, { duration: 0, queue: false });
+              } });
             captionTransition($caption, options.transition);
-
 
             // Update indicators
             if (options.indicators) {
               $indicators.eq($active_index).removeClass('active');
             }
 
-            $slides.eq(index).velocity({opacity: 1}, {duration: options.transition, queue: false, easing: 'easeOutQuad'});
-            $slides.eq(index).find('.caption').velocity({opacity: 1, translateX: 0, translateY: 0}, {duration: options.transition, delay: options.transition, queue: false, easing: 'easeOutQuad'});
+            $slides.eq(index).velocity({ opacity: 1 }, { duration: options.transition, queue: false, easing: 'easeOutQuad' });
+            $slides.eq(index).find('.caption').velocity({ opacity: 1, translateX: 0, translateY: 0 }, { duration: options.transition, delay: options.transition, queue: false, easing: 'easeOutQuad' });
             $slides.eq(index).addClass('active');
-
 
             // Update indicators
             if (options.indicators) {
@@ -79,13 +76,11 @@
           if (options.indicators) {
             // Add height if indicators are present
             $this.height(options.height + 40);
-          }
-          else {
+          } else {
             $this.height(options.height);
           }
           $slider.height(options.height);
         }
-
 
         // Set initial positions of captions
         $slides.find('.caption').each(function () {
@@ -96,7 +91,7 @@
         $slides.find('img').each(function () {
           var placeholderBase64 = 'data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
           if ($(this).attr('src') !== placeholderBase64) {
-            $(this).css('background-image', 'url("' + $(this).attr('src') + '")' );
+            $(this).css('background-image', 'url("' + $(this).attr('src') + '")');
             $(this).attr('src', placeholderBase64);
           }
         });
@@ -104,7 +99,7 @@
         // dynamically add indicators
         if (options.indicators) {
           $indicators = $('<ul class="indicators"></ul>');
-          $slides.each(function( index ) {
+          $slides.each(function (index) {
             var $indicator = $('<li class="indicator-item"></li>');
 
             // Handle clicks on indicators
@@ -115,16 +110,13 @@
 
               // reset interval
               clearInterval($interval);
-              $interval = setInterval(
-                function(){
-                  $active_index = $slider.find('.active').index();
-                  if ($slides.length == $active_index + 1) $active_index = 0; // loop to start
-                  else $active_index += 1;
+              $interval = setInterval(function () {
+                $active_index = $slider.find('.active').index();
+                if ($slides.length == $active_index + 1) $active_index = 0; // loop to start
+                else $active_index += 1;
 
-                  moveToSlide($active_index);
-
-                }, options.transition + options.interval
-              );
+                moveToSlide($active_index);
+              }, options.transition + options.interval);
             });
             $indicators.append($indicator);
           });
@@ -134,9 +126,8 @@
 
         if ($active) {
           $active.show();
-        }
-        else {
-          $slides.first().addClass('active').velocity({opacity: 1}, {duration: options.transition, queue: false, easing: 'easeOutQuad'});
+        } else {
+          $slides.first().addClass('active').velocity({ opacity: 1 }, { duration: options.transition, queue: false, easing: 'easeOutQuad' });
 
           $active_index = 0;
           $active = $slides.eq($active_index);
@@ -148,19 +139,15 @@
         }
 
         // Adjust height to current slide
-        $active.find('img').each(function() {
-          $active.find('.caption').velocity({opacity: 1, translateX: 0, translateY: 0}, {duration: options.transition, queue: false, easing: 'easeOutQuad'});
+        $active.find('img').each(function () {
+          $active.find('.caption').velocity({ opacity: 1, translateX: 0, translateY: 0 }, { duration: options.transition, queue: false, easing: 'easeOutQuad' });
         });
 
         // auto scroll
-        $interval = setInterval(
-          function(){
-            $active_index = $slider.find('.active').index();
-            moveToSlide($active_index + 1);
-
-          }, options.transition + options.interval
-        );
-
+        $interval = setInterval(function () {
+          $active_index = $slider.find('.active').index();
+          moveToSlide($active_index + 1);
+        }, options.transition + options.interval);
 
         // HammerJS, Swipe navigation
 
@@ -170,8 +157,8 @@
         var swipeRight = false;
 
         $this.hammer({
-            prevent_default: false
-        }).on('pan', function(e) {
+          prevent_default: false
+        }).on('pan', function (e) {
           if (e.gesture.pointerType === "touch") {
 
             // reset interval
@@ -185,17 +172,17 @@
             $curr_slide = $slider.find('.active');
             if (Math.abs(velocityX) > Math.abs(velocityY)) {
               $curr_slide.velocity({ translateX: x
-                  }, {duration: 50, queue: false, easing: 'easeOutQuad'});
+              }, { duration: 50, queue: false, easing: 'easeOutQuad' });
             }
 
             // Swipe Left
-            if (direction === 4 && (x > ($this.innerWidth() / 2) || velocityX < -0.65)) {
+            if (direction === 4 && (x > $this.innerWidth() / 2 || velocityX < -0.65)) {
               swipeRight = true;
             }
             // Swipe Right
-            else if (direction === 2 && (x < (-1 * $this.innerWidth() / 2) || velocityX > 0.65)) {
-              swipeLeft = true;
-            }
+            else if (direction === 2 && (x < -1 * $this.innerWidth() / 2 || velocityX > 0.65)) {
+                swipeLeft = true;
+              }
 
             // Make Slide Behind active slide visible
             var next_slide;
@@ -205,7 +192,7 @@
                 next_slide = $slides.first();
               }
               next_slide.velocity({ opacity: 1
-                  }, {duration: 300, queue: false, easing: 'easeOutQuad'});
+              }, { duration: 300, queue: false, easing: 'easeOutQuad' });
             }
             if (swipeRight) {
               next_slide = $curr_slide.prev();
@@ -213,112 +200,96 @@
                 next_slide = $slides.last();
               }
               next_slide.velocity({ opacity: 1
-                  }, {duration: 300, queue: false, easing: 'easeOutQuad'});
+              }, { duration: 300, queue: false, easing: 'easeOutQuad' });
             }
-
-
           }
-
-        }).on('panend', function(e) {
+        }).on('panend', function (e) {
           if (e.gesture.pointerType === "touch") {
 
             $curr_slide = $slider.find('.active');
             panning = false;
             curr_index = $slider.find('.active').index();
 
-            if (!swipeRight && !swipeLeft || $slides.length <=1) {
+            if (!swipeRight && !swipeLeft || $slides.length <= 1) {
               // Return to original spot
               $curr_slide.velocity({ translateX: 0
-                  }, {duration: 300, queue: false, easing: 'easeOutQuad'});
-            }
-            else if (swipeLeft) {
+              }, { duration: 300, queue: false, easing: 'easeOutQuad' });
+            } else if (swipeLeft) {
               moveToSlide(curr_index + 1);
-              $curr_slide.velocity({translateX: -1 * $this.innerWidth() }, {duration: 300, queue: false, easing: 'easeOutQuad',
-                                    complete: function() {
-                                      $curr_slide.velocity({opacity: 0, translateX: 0}, {duration: 0, queue: false});
-                                    } });
-            }
-            else if (swipeRight) {
+              $curr_slide.velocity({ translateX: -1 * $this.innerWidth() }, { duration: 300, queue: false, easing: 'easeOutQuad',
+                complete: function () {
+                  $curr_slide.velocity({ opacity: 0, translateX: 0 }, { duration: 0, queue: false });
+                } });
+            } else if (swipeRight) {
               moveToSlide(curr_index - 1);
-              $curr_slide.velocity({translateX: $this.innerWidth() }, {duration: 300, queue: false, easing: 'easeOutQuad',
-                                    complete: function() {
-                                      $curr_slide.velocity({opacity: 0, translateX: 0}, {duration: 0, queue: false});
-                                    } });
+              $curr_slide.velocity({ translateX: $this.innerWidth() }, { duration: 300, queue: false, easing: 'easeOutQuad',
+                complete: function () {
+                  $curr_slide.velocity({ opacity: 0, translateX: 0 }, { duration: 0, queue: false });
+                } });
             }
             swipeLeft = false;
             swipeRight = false;
 
             // Restart interval
             clearInterval($interval);
-            $interval = setInterval(
-              function(){
-                $active_index = $slider.find('.active').index();
-                if ($slides.length == $active_index + 1) $active_index = 0; // loop to start
-                else $active_index += 1;
-
-                moveToSlide($active_index);
-
-              }, options.transition + options.interval
-            );
-          }
-        });
-
-        $this.on('sliderPause', function() {
-          clearInterval($interval);
-        });
-
-        $this.on('sliderStart', function() {
-          clearInterval($interval);
-          $interval = setInterval(
-            function(){
+            $interval = setInterval(function () {
               $active_index = $slider.find('.active').index();
               if ($slides.length == $active_index + 1) $active_index = 0; // loop to start
               else $active_index += 1;
 
               moveToSlide($active_index);
-
-            }, options.transition + options.interval
-          );
+            }, options.transition + options.interval);
+          }
         });
 
-        $this.on('sliderNext', function() {
+        $this.on('sliderPause', function () {
+          clearInterval($interval);
+        });
+
+        $this.on('sliderStart', function () {
+          clearInterval($interval);
+          $interval = setInterval(function () {
+            $active_index = $slider.find('.active').index();
+            if ($slides.length == $active_index + 1) $active_index = 0; // loop to start
+            else $active_index += 1;
+
+            moveToSlide($active_index);
+          }, options.transition + options.interval);
+        });
+
+        $this.on('sliderNext', function () {
           $active_index = $slider.find('.active').index();
           moveToSlide($active_index + 1);
         });
 
-        $this.on('sliderPrev', function() {
+        $this.on('sliderPrev', function () {
           $active_index = $slider.find('.active').index();
           moveToSlide($active_index - 1);
         });
-
       });
-
-
-
     },
-    pause : function() {
+    pause: function () {
       $(this).trigger('sliderPause');
     },
-    start : function() {
+    start: function () {
       $(this).trigger('sliderStart');
     },
-    next : function() {
+    next: function () {
       $(this).trigger('sliderNext');
     },
-    prev : function() {
+    prev: function () {
       $(this).trigger('sliderPrev');
     }
   };
 
-
-  $.fn.slider = function(methodOrOptions) {
-    if ( methods[methodOrOptions] ) {
-      return methods[ methodOrOptions ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-    } else if ( typeof methodOrOptions === 'object' || ! methodOrOptions ) {
+  $.fn.slider = function (methodOrOptions) {
+    if (methods[methodOrOptions]) {
+      return methods[methodOrOptions].apply(this, Array.prototype.slice.call(arguments, 1));
+    } else if (typeof methodOrOptions === 'object' || !methodOrOptions) {
       // Default to "init"
-      return methods.init.apply( this, arguments );
+      return methods.init.apply(this, arguments);
     } else {
-      $.error( 'Method ' +  methodOrOptions + ' does not exist on jQuery.tooltip' );
+      $.error('Method ' + methodOrOptions + ' does not exist on jQuery.tooltip');
     }
   }; // Plugin end
-}( jQuery ));
+})(jQuery);
