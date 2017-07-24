@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($) {
+(function ($, Vel) {
   'use strict';
 
   var _defaults = {
@@ -176,7 +176,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'handleModalCloseClick',
       value: function handleModalCloseClick(e) {
-        if (e.target && e.target.classList.contains('modal-close')) {
+        var $closeTrigger = $(e.target).closest('.modal-close');
+        if (e.target && $closeTrigger.length) {
           this.close();
         }
       }
@@ -393,4 +394,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       $.error('Method ' + methodOrOptions + ' does not exist on jQuery.modal');
     }
   };
-})(jQuery);
+})(jQuery, Materialize.Vel);

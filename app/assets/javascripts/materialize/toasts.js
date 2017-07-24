@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($) {
+(function ($, Vel) {
   'use strict';
 
   var _defaults = {
@@ -351,4 +351,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   window.Materialize.toast = function (message, displayLength, className, completeCallback) {
     return new Toast(message, displayLength, className, completeCallback);
   };
-})(jQuery);
+})(jQuery, Materialize.Vel);

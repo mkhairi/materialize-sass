@@ -7,6 +7,13 @@
   }
 })(window);
 
+if (typeof exports !== 'undefined' && !exports.nodeType) {
+  if (typeof module !== 'undefined' && !module.nodeType && module.exports) {
+    exports = module.exports = Materialize;
+  }
+  exports.default = Materialize;
+}
+
 /*
  * raf.js
  * https://github.com/ngryman/raf.js
@@ -154,4 +161,10 @@ if (jQuery) {
   Vel = $.Velocity;
 } else {
   Vel = Velocity;
+}
+
+if (Vel) {
+  Materialize.Vel = Vel;
+} else {
+  Materialize.Vel = Velocity;
 }
