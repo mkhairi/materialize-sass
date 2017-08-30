@@ -9,9 +9,9 @@ namespace :javascripts do
    rm_rf "app/assets/javascripts/materialize"
   end
   
-  desc "Copy #{source_dir}/js/"
+  desc "Copy #{source_dir}/dist/src/js"
   task :copy do
-    src_dir = "#{source_dir}/js/."
+    src_dir = "#{source_dir}/dist/src/js/."
     tgt_dir = "app/assets/javascripts/materialize/"
     mkdir_p tgt_dir
     cp_r src_dir, tgt_dir

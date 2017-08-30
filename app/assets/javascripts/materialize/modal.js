@@ -112,7 +112,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.handleModalCloseClickBound = this.handleModalCloseClick.bind(this);
 
         if (Modal._count === 1) {
-          document.addEventListener('click', this.handleTriggerClick);
+          document.body.addEventListener('click', this.handleTriggerClick);
         }
         this.$overlay[0].addEventListener('click', this.handleOverlayClickBound);
         this.$el[0].addEventListener('click', this.handleModalCloseClickBound);
@@ -126,7 +126,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       key: 'removeEventHandlers',
       value: function removeEventHandlers() {
         if (Modal._count === 0) {
-          document.removeEventListener('click', this.handleTriggerClick);
+          document.body.removeEventListener('click', this.handleTriggerClick);
         }
         this.$overlay[0].removeEventListener('click', this.handleOverlayClickBound);
         this.$el[0].removeEventListener('click', this.handleModalCloseClickBound);
@@ -267,7 +267,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if (typeof _this2.options.complete === 'function') {
               _this2.options.complete.call(_this2, _this2.$el);
             }
-            _this2.$overlay[0].remove();
+            _this2.$overlay[0].parentNode.removeChild(_this2.$overlay[0]);
           }
         };
 
@@ -325,7 +325,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         this.isOpen = false;
         this.$el[0].classList.remove('open');
-        document.body.style.overflow = null;
+        document.body.style.overflow = '';
 
         if (this.options.dismissible) {
           document.removeEventListener('keydown', this.handleKeydownBound);
@@ -368,7 +368,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    */
   Modal._count = 0;
 
-  window.Materialize.Modal = Modal;
+  Materialize.Modal = Modal;
 
   $.fn.modal = function (methodOrOptions) {
     // Call plugin method if valid method name is passed in

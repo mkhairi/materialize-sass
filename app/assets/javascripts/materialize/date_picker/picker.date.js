@@ -1035,7 +1035,9 @@
             }
 
             // Materialize modified
-            if (override == "raw") return _.node('div', focusedYear);
+            if (override === 'raw' && selectedObject != null) {
+                return _.node('div', selectedObject.year);
+            }
 
             // Otherwise just return the year focused
             return _.node('div', focusedYear, settings.klass.year);
