@@ -351,4 +351,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   Materialize.toast = function (message, displayLength, className, completeCallback) {
     return new Toast(message, displayLength, className, completeCallback);
   };
+
+  Materialize.flash_message = function(flash_element, displayLength, className, completeCallback) {
+    var flash_message = $("." + flash_element);
+    var message = flash_message.text();
+    Materialize.toast(message, displayLength, className, completeCallback);
+  };
 })(jQuery, Materialize.Vel);
