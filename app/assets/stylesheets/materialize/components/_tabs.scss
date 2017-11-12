@@ -64,7 +64,7 @@
 
     &.disabled a,
     &.disabled a:hover {
-      color: rgba($tabs-text-color, .7);
+      color: rgba($tabs-text-color, .4);
       cursor: default;
     }
   }
@@ -77,7 +77,7 @@
   }
 }
 
-// Fixed sideNav hide on smaller
+// Fixed Sidenav hide on smaller
 @media #{$medium-and-down} {
   .tabs {
     display: flex;
