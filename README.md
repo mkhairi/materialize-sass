@@ -6,14 +6,6 @@ example: http://materialize.labs.my/
 
 source: https://github.com/mkhairi/materialize-rails
 
-## Dependencies
-
-**Rails 5.1+**
-The Rails JavaScript helpers has been rewritten in a new gem called rails-ujs and they use vanilla JavaScript, so jQuery is not a dependency of Rails anymore. Since materializecss relies on it, install it with ```bin/yarn add jquery``` or via ```gem 'jquery-rails'```  and add ```//= require jquery``` to ```application.js```. 
-
-**NOTE:** Ensure that the `sass-rails` gem is presented in your Gemfile.
-
-
 ## Installation
 
 In your Gemfile you need to add the `materialize-sass` gem:
@@ -71,48 +63,13 @@ https://github.com/mkhairi/materialize-sass/blob/master/app/assets/stylesheets/m
 
 Require Materialize javascripts in `app/assets/javascripts/application.js`:
 
-For turbolinks 5 users
 ```js
-//= require jquery
-//= require turbolinks
 //= require materialize-sprockets
 ```
 
-For turbolinks classic users
+### c. Icons
 
-Add [`jquery-turbolinks`](https://github.com/kossnocorp/jquery.turbolinks) gem to Gemfile
-
-``` gem 'jquery-turbolinks' ```
-
-```js
-//= require jquery
-//= require jquery.turbolinks
-//= require materialize
-//= require turbolinks
-```
-
-For non turbolinks users
-```js
-//= require jquery
-//= require materialize
-```
-
-### c. Extras
-
-[noUiSlider](http://materializecss.com/forms.html#range)
-
-in your application.scss
-```scss
-@import "materialize/extras/nouislider";
-```
-in your application.js
-```js
-//= require materialize/extras/nouislider
-```
-
-### d. Icons
-
-Include this line in the <head>portion of your HTML code
+Include this line in the portion of your HTML code
 
 ``` <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> ```
 

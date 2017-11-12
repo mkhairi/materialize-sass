@@ -1,54 +1,115 @@
-(function ($) {
+(function($) {
+  'use strict';
 
-  $.fn.parallax = function () {
-    var window_width = $(window).width();
-    // Parallax Scripts
-    return this.each(function (i) {
-      var $this = $(this);
-      $this.addClass('parallax');
+  let _defaults = {
+  };
 
-      function updateParallax(initial) {
-        var container_height;
-        if (window_width < 601) {
-          container_height = $this.height() > 0 ? $this.height() : $this.children("img").height();
-        } else {
-          container_height = $this.height() > 0 ? $this.height() : 500;
-        }
-        var $img = $this.children("img").first();
-        var img_height = $img.height();
-        var parallax_dist = img_height - container_height;
-        var bottom = $this.offset().top + container_height;
-        var top = $this.offset().top;
-        var scrollTop = $(window).scrollTop();
-        var windowHeight = window.innerHeight;
-        var windowBottom = scrollTop + windowHeight;
-        var percentScrolled = (windowBottom - top) / (container_height + windowHeight);
-        var parallax = Math.round(parallax_dist * percentScrolled);
+  class Parallax {
 
-        if (initial) {
-          $img.css('display', 'block');
-        }
-        if (bottom > scrollTop && top < scrollTop + windowHeight) {
-          $img.css('transform', "translate3D(-50%," + parallax + "px, 0)");
-        }
+    constructor(el, options) {
+      // If exists, destroy and reinitialize
+      if (!!el.M_Parallax) {
+        el.M_Parallax.destroy();
       }
 
-      // Wait for image load
-      $this.children("img").one("load", function () {
-        updateParallax(true);
-      }).each(function () {
-        if (this.complete) $(this).trigger("load");
-      });
+      this.el = el;
+      this.$el = $(el);
+      this.el.M_Parallax = this;
 
-      $(window).scroll(function () {
-        window_width = $(window).width();
-        updateParallax(false);
-      });
+      this.options = $.extend({}, Parallax.defaults, options);
 
-      $(window).resize(function () {
-        window_width = $(window).width();
-        updateParallax(false);
+      this.$img = this.$el.find('img').first();
+      this._updateParallax();
+      this._setupEventHandlers();
+      this._setupStyles();
+
+      Parallax._parallaxes.push(this);
+    }
+
+    static get defaults() {
+      return _defaults;
+    }
+
+    static init($els, options) {
+      let arr = [];
+      $els.each(function() {
+        arr.push(new Parallax(this, options));
       });
-    });
-  };
-})(jQuery);
+      return arr;
+    }
+
+    /**
+     * Get Instance
+     */
+    static getInstance(el) {
+      let domElem = !!el.jquery ? el[0] : el;
+      return domElem.M_Parallax;
+    }
+
+    /**
+     * Teardown component
+     */
+    destroy() {
+
+    }
+
+    static _handleScroll() {
+      for(let i = 0; i < Parallax._parallaxes.length; i++) {
+        let parallaxInstance = Parallax._parallaxes[i];
+        parallaxInstance._updateParallax.call(parallaxInstance);
+      }
+    }
+
+    _setupEventHandlers() {
+      this._handleImageLoadBound = this._handleImageLoad.bind(this);
+      this.$img[0].addEventListener('load', this._handleImageLoadBound);
+
+      if (Parallax._parallaxes.length === 0) {
+        Parallax._handleScrollThrottled = M.throttle(Parallax._handleScroll, 5);
+        window.addEventListener('scroll', Parallax._handleScrollThrottled);
+      }
+    }
+
+    _setupStyles() {
+      this.$img[0].style.opacity = 1;
+    }
+
+    _handleImageLoad() {
+      this._updateParallax();
+      this.$img.each(function() {
+        let el = this;
+        if (el.complete) $(el).trigger("load");
+      });
+    }
+
+    _updateParallax() {
+      let containerHeight = this.$el.height() > 0 ? this.el.parentNode.offsetHeight : 500;
+      let imgHeight = this.$img[0].offsetHeight;
+      let parallaxDist = imgHeight - containerHeight;
+      let bottom = this.$el.offset().top + containerHeight;
+      let top = this.$el.offset().top;
+      let scrollTop = M.getDocumentScrollTop();
+      let windowHeight = window.innerHeight;
+      let windowBottom = scrollTop + windowHeight;
+      let percentScrolled = (windowBottom - top) / (containerHeight + windowHeight);
+      let parallax = parallaxDist * percentScrolled;
+
+      if (bottom > scrollTop && top < scrollTop + windowHeight) {
+        this.$img[0].style.transform = `translate3D(-50%, ${parallax}px, 0)`;
+      }
+    }
+  }
+
+  /**
+   * @static
+   * @memberof Parallax
+   */
+  Parallax._parallaxes = [];
+
+  M.Parallax = Parallax;
+
+  if (M.jQueryLoaded) {
+    M.initializeJqueryWrapper(Parallax, 'parallax', 'M_Parallax');
+  }
+
+})(cash);
