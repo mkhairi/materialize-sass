@@ -107,9 +107,9 @@ namespace :fonts do
    rm_rf "app/assets/fonts"
   end
 
-  desc "Copy #{source_dir}/fonts/"
+  desc "Copy #{source_dir}/dist/fonts/"
   task :copy do
-    src_dir = "#{source_dir}/fonts/."
+    src_dir = "#{source_dir}/dist/fonts/."
     tgt_dir = "app/assets/fonts/"
     mkdir_p tgt_dir
     cp_r src_dir, tgt_dir
