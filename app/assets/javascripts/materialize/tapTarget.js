@@ -1,22 +1,26 @@
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 (function ($) {
   'use strict';
 
-  let _defaults = {
-  };
-
+  var _defaults = {};
 
   /**
    * @class
    *
    */
-  class FeatureDiscovery {
+
+  var FeatureDiscovery = function () {
     /**
      * Construct FeatureDiscovery instance
      * @constructor
      * @param {Element} el
      * @param {Object} options
      */
-    constructor(el, options) {
+    function FeatureDiscovery(el, options) {
+      _classCallCheck(this, FeatureDiscovery);
 
       // If exists, destroy and reinitialize
       if (!!el.M_FeatureDiscovery) {
@@ -43,260 +47,301 @@
       this._setupEventHandlers();
     }
 
-    static get defaults() {
-      return _defaults;
-    }
+    _createClass(FeatureDiscovery, [{
+      key: 'destroy',
 
-    static init($els, options) {
-      let arr = [];
-      $els.each(function() {
-        arr.push(new FeatureDiscovery(this, options));
-      });
-      return arr;
-    }
 
-    /**
-     * Get Instance
-     */
-    static getInstance(el) {
-      let domElem = !!el.jquery ? el[0] : el;
-      return domElem.M_FeatureDiscovery;
-    }
+      /**
+       * Teardown component
+       */
+      value: function destroy() {
+        this._removeEventHandlers();
+        this.el.FeatureDiscovery = undefined;
+      }
 
-    /**
-     * Teardown component
-     */
-    destroy() {
-      this._removeEventHandlers();
-      this.el.FeatureDiscovery = undefined;
-    }
+      /**
+       * Setup Event Handlers
+       */
 
-    /**
-     * Setup Event Handlers
-     */
-    _setupEventHandlers() {
-      this._handleDocumentClickBound = this._handleDocumentClick.bind(this);
-      this._handleTargetClickBound = this._handleTargetClick.bind(this);
-      this._handleOriginClickBound = this._handleOriginClick.bind(this);
+    }, {
+      key: '_setupEventHandlers',
+      value: function _setupEventHandlers() {
+        this._handleDocumentClickBound = this._handleDocumentClick.bind(this);
+        this._handleTargetClickBound = this._handleTargetClick.bind(this);
+        this._handleOriginClickBound = this._handleOriginClick.bind(this);
 
-      this.el.addEventListener('click', this._handleTargetClickBound);
-      this.originEl.addEventListener('click', this._handleOriginClickBound);
+        this.el.addEventListener('click', this._handleTargetClickBound);
+        this.originEl.addEventListener('click', this._handleOriginClickBound);
 
-      // Resize
-      let throttledResize = M.throttle(this._handleResize, 200);
-      this._handleThrottledResizeBound = throttledResize.bind(this);
+        // Resize
+        var throttledResize = M.throttle(this._handleResize, 200);
+        this._handleThrottledResizeBound = throttledResize.bind(this);
 
-      window.addEventListener('resize', this._handleThrottledResizeBound);
-    }
+        window.addEventListener('resize', this._handleThrottledResizeBound);
+      }
 
-    /**
-     * Remove Event Handlers
-     */
-    _removeEventHandlers() {
-      this.el.removeEventListener('click', this._handleTargetClickBound);
-      this.originEl.removeEventListener('click', this._handleOriginClickBound);
-      window.removeEventListener('resize', this._handleThrottledResizeBound);
-    }
+      /**
+       * Remove Event Handlers
+       */
 
-    /**
-     * Handle Target Click
-     * @param {Event} e
-     */
-    _handleTargetClick(e) {
-      this.open();
-    }
+    }, {
+      key: '_removeEventHandlers',
+      value: function _removeEventHandlers() {
+        this.el.removeEventListener('click', this._handleTargetClickBound);
+        this.originEl.removeEventListener('click', this._handleOriginClickBound);
+        window.removeEventListener('resize', this._handleThrottledResizeBound);
+      }
 
-    /**
-     * Handle Origin Click
-     * @param {Event} e
-     */
-    _handleOriginClick(e) {
-      this.close();
-    }
+      /**
+       * Handle Target Click
+       * @param {Event} e
+       */
 
-    /**
-     * Handle Resize
-     * @param {Event} e
-     */
-    _handleResize(e) {
-      this._calculatePositioning();
-    }
+    }, {
+      key: '_handleTargetClick',
+      value: function _handleTargetClick(e) {
+        this.open();
+      }
 
-    /**
-     * Handle Resize
-     * @param {Event} e
-     */
-    _handleDocumentClick(e) {
-      if (!$(e.target).closest('.tap-target-wrapper').length) {
+      /**
+       * Handle Origin Click
+       * @param {Event} e
+       */
+
+    }, {
+      key: '_handleOriginClick',
+      value: function _handleOriginClick(e) {
         this.close();
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    }
-
-    /**
-     * Setup feature discovery
-     */
-    _setup() {
-      // Creating tap target
-      this.wrapper = this.$el.parent()[0];
-      this.waveEl = $(this.wrapper).find('.tap-target-wave')[0];
-      this.originEl = $(this.wrapper).find('.tap-target-origin')[0];
-      this.contentEl = this.$el.find('.tap-target-content')[0];
-
-      // Creating wrapper
-      if (!$(this.wrapper).hasClass('.tap-target-wrapper')) {
-        this.wrapper = document.createElement('div');
-        this.wrapper.classList.add('tap-target-wrapper');
-        this.$el.before($(this.wrapper));
-        this.wrapper.append(this.el);
       }
 
-      // Creating content
-      if (!this.contentEl) {
-        this.contentEl = document.createElement('div');
-        this.contentEl.classList.add('tap-target-content');
-        this.$el.append(this.contentEl);
+      /**
+       * Handle Resize
+       * @param {Event} e
+       */
+
+    }, {
+      key: '_handleResize',
+      value: function _handleResize(e) {
+        this._calculatePositioning();
       }
 
-      // Creating foreground wave
-      if (!this.waveEl) {
-        this.waveEl = document.createElement('div');
-        this.waveEl.classList.add('tap-target-wave');
+      /**
+       * Handle Resize
+       * @param {Event} e
+       */
 
-        // Creating origin
-        if (!this.originEl) {
-          this.originEl = this.$origin.clone(true, true);
-          this.originEl.addClass('tap-target-origin');
-          this.originEl.removeAttr('id');
-          this.originEl.removeAttr('style');
-          this.originEl = this.originEl[0];
-          this.waveEl.append(this.originEl);
+    }, {
+      key: '_handleDocumentClick',
+      value: function _handleDocumentClick(e) {
+        if (!$(e.target).closest('.tap-target-wrapper').length) {
+          this.close();
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+
+      /**
+       * Setup feature discovery
+       */
+
+    }, {
+      key: '_setup',
+      value: function _setup() {
+        // Creating tap target
+        this.wrapper = this.$el.parent()[0];
+        this.waveEl = $(this.wrapper).find('.tap-target-wave')[0];
+        this.originEl = $(this.wrapper).find('.tap-target-origin')[0];
+        this.contentEl = this.$el.find('.tap-target-content')[0];
+
+        // Creating wrapper
+        if (!$(this.wrapper).hasClass('.tap-target-wrapper')) {
+          this.wrapper = document.createElement('div');
+          this.wrapper.classList.add('tap-target-wrapper');
+          this.$el.before($(this.wrapper));
+          this.wrapper.append(this.el);
         }
 
-        this.wrapper.append(this.waveEl);
-      }
-    }
+        // Creating content
+        if (!this.contentEl) {
+          this.contentEl = document.createElement('div');
+          this.contentEl.classList.add('tap-target-content');
+          this.$el.append(this.contentEl);
+        }
 
-    /**
-     * Calculate positioning
-     */
-    _calculatePositioning() {
-      // Element or parent is fixed position?
-      let isFixed = this.$origin.css('position') === 'fixed';
-      if (!isFixed) {
-        let parents = this.$origin.parents();
-        for (let i = 0; i < parents.length; i++) {
-          isFixed = $(parents[i]).css('position') == 'fixed';
-          if (isFixed) {
-            break;
+        // Creating foreground wave
+        if (!this.waveEl) {
+          this.waveEl = document.createElement('div');
+          this.waveEl.classList.add('tap-target-wave');
+
+          // Creating origin
+          if (!this.originEl) {
+            this.originEl = this.$origin.clone(true, true);
+            this.originEl.addClass('tap-target-origin');
+            this.originEl.removeAttr('id');
+            this.originEl.removeAttr('style');
+            this.originEl = this.originEl[0];
+            this.waveEl.append(this.originEl);
+          }
+
+          this.wrapper.append(this.waveEl);
+        }
+      }
+
+      /**
+       * Calculate positioning
+       */
+
+    }, {
+      key: '_calculatePositioning',
+      value: function _calculatePositioning() {
+        // Element or parent is fixed position?
+        var isFixed = this.$origin.css('position') === 'fixed';
+        if (!isFixed) {
+          var parents = this.$origin.parents();
+          for (var i = 0; i < parents.length; i++) {
+            isFixed = $(parents[i]).css('position') == 'fixed';
+            if (isFixed) {
+              break;
+            }
           }
         }
+
+        // Calculating origin
+        var originWidth = this.$origin.outerWidth();
+        var originHeight = this.$origin.outerHeight();
+        var originTop = isFixed ? this.$origin.offset().top - M.getDocumentScrollTop() : this.$origin.offset().top;
+        var originLeft = isFixed ? this.$origin.offset().left - M.getDocumentScrollLeft() : this.$origin.offset().left;
+
+        // Calculating screen
+        var windowWidth = window.innerWidth;
+        var windowHeight = window.innerHeight;
+        var centerX = windowWidth / 2;
+        var centerY = windowHeight / 2;
+        var isLeft = originLeft <= centerX;
+        var isRight = originLeft > centerX;
+        var isTop = originTop <= centerY;
+        var isBottom = originTop > centerY;
+        var isCenterX = originLeft >= windowWidth * 0.25 && originLeft <= windowWidth * 0.75;
+
+        // Calculating tap target
+        var tapTargetWidth = this.$el.outerWidth();
+        var tapTargetHeight = this.$el.outerHeight();
+        var tapTargetTop = originTop + originHeight / 2 - tapTargetHeight / 2;
+        var tapTargetLeft = originLeft + originWidth / 2 - tapTargetWidth / 2;
+        var tapTargetPosition = isFixed ? 'fixed' : 'absolute';
+
+        // Calculating content
+        var tapTargetTextWidth = isCenterX ? tapTargetWidth : tapTargetWidth / 2 + originWidth;
+        var tapTargetTextHeight = tapTargetHeight / 2;
+        var tapTargetTextTop = isTop ? tapTargetHeight / 2 : 0;
+        var tapTargetTextBottom = 0;
+        var tapTargetTextLeft = isLeft && !isCenterX ? tapTargetWidth / 2 - originWidth : 0;
+        var tapTargetTextRight = 0;
+        var tapTargetTextPadding = originWidth;
+        var tapTargetTextAlign = isBottom ? 'bottom' : 'top';
+
+        // Calculating wave
+        var tapTargetWaveWidth = originWidth > originHeight ? originWidth * 2 : originWidth * 2;
+        var tapTargetWaveHeight = tapTargetWaveWidth;
+        var tapTargetWaveTop = tapTargetHeight / 2 - tapTargetWaveHeight / 2;
+        var tapTargetWaveLeft = tapTargetWidth / 2 - tapTargetWaveWidth / 2;
+
+        // Setting tap target
+        var tapTargetWrapperCssObj = {};
+        tapTargetWrapperCssObj.top = isTop ? tapTargetTop + 'px' : '';
+        tapTargetWrapperCssObj.right = isRight ? windowWidth - tapTargetLeft - tapTargetWidth + 'px' : '';
+        tapTargetWrapperCssObj.bottom = isBottom ? windowHeight - tapTargetTop - tapTargetHeight + 'px' : '';
+        tapTargetWrapperCssObj.left = isLeft ? tapTargetLeft + 'px' : '';
+        tapTargetWrapperCssObj.position = tapTargetPosition;
+        $(this.wrapper).css(tapTargetWrapperCssObj);
+
+        // Setting content
+        $(this.contentEl).css({
+          width: tapTargetTextWidth + 'px',
+          height: tapTargetTextHeight + 'px',
+          top: tapTargetTextTop + 'px',
+          right: tapTargetTextRight + 'px',
+          bottom: tapTargetTextBottom + 'px',
+          left: tapTargetTextLeft + 'px',
+          padding: tapTargetTextPadding + 'px',
+          verticalAlign: tapTargetTextAlign
+        });
+
+        // Setting wave
+        $(this.waveEl).css({
+          top: tapTargetWaveTop + 'px',
+          left: tapTargetWaveLeft + 'px',
+          width: tapTargetWaveWidth + 'px',
+          height: tapTargetWaveHeight + 'px'
+        });
       }
 
-      // Calculating origin
-      let originWidth = this.$origin.outerWidth();
-      let originHeight = this.$origin.outerHeight();
-      let originTop = isFixed ? this.$origin.offset().top - M.getDocumentScrollTop() : this.$origin.offset().top;
-      let originLeft = isFixed ? this.$origin.offset().left - M.getDocumentScrollLeft() : this.$origin.offset().left;
+      /**
+       * Open Feature Discovery
+       */
 
-      // Calculating screen
-      let windowWidth = window.innerWidth;
-      let windowHeight = window.innerHeight;
-      let centerX = windowWidth / 2;
-      let centerY = windowHeight / 2;
-      let isLeft = originLeft <= centerX;
-      let isRight = originLeft > centerX;
-      let isTop = originTop <= centerY;
-      let isBottom = originTop > centerY;
-      let isCenterX = originLeft >= windowWidth*0.25 && originLeft <= windowWidth*0.75;
+    }, {
+      key: 'open',
+      value: function open() {
+        if (this.isOpen) {
+          return;
+        }
 
-      // Calculating tap target
-      let tapTargetWidth = this.$el.outerWidth();
-      let tapTargetHeight = this.$el.outerHeight();
-      let tapTargetTop = originTop + originHeight/2 - tapTargetHeight/2;
-      let tapTargetLeft = originLeft + originWidth/2 - tapTargetWidth/2;
-      let tapTargetPosition = isFixed ? 'fixed' : 'absolute';
+        this.isOpen = true;
+        this.wrapper.classList.add('open');
 
-      // Calculating content
-      let tapTargetTextWidth = isCenterX ? tapTargetWidth : tapTargetWidth/2 + originWidth;
-      let tapTargetTextHeight = tapTargetHeight/2;
-      let tapTargetTextTop = isTop ? tapTargetHeight/2 : 0;
-      let tapTargetTextBottom = 0;
-      let tapTargetTextLeft = isLeft && !isCenterX ? tapTargetWidth/2 - originWidth : 0;
-      let tapTargetTextRight = 0;
-      let tapTargetTextPadding = originWidth;
-      let tapTargetTextAlign = isBottom ? 'bottom' : 'top';
-
-      // Calculating wave
-      let tapTargetWaveWidth = originWidth > originHeight ? originWidth*2 : originWidth*2;
-      let tapTargetWaveHeight = tapTargetWaveWidth;
-      let tapTargetWaveTop = tapTargetHeight/2 - tapTargetWaveHeight/2;
-      let tapTargetWaveLeft = tapTargetWidth/2 - tapTargetWaveWidth/2;
-
-      // Setting tap target
-      let tapTargetWrapperCssObj = {};
-      tapTargetWrapperCssObj.top = isTop ? tapTargetTop + 'px' : '';
-      tapTargetWrapperCssObj.right = isRight ? (windowWidth - tapTargetLeft - tapTargetWidth) + 'px' : '';
-      tapTargetWrapperCssObj.bottom = isBottom ? (windowHeight - tapTargetTop - tapTargetHeight) + 'px' : '';
-      tapTargetWrapperCssObj.left = isLeft ? tapTargetLeft + 'px' : '';
-      tapTargetWrapperCssObj.position = tapTargetPosition;
-      $(this.wrapper).css(tapTargetWrapperCssObj);
-
-      // Setting content
-      $(this.contentEl).css({
-        width: tapTargetTextWidth + 'px',
-        height: tapTargetTextHeight + 'px',
-        top: tapTargetTextTop + 'px',
-        right: tapTargetTextRight + 'px',
-        bottom: tapTargetTextBottom + 'px',
-        left: tapTargetTextLeft + 'px',
-        padding: tapTargetTextPadding + 'px',
-        verticalAlign: tapTargetTextAlign
-      });
-
-      // Setting wave
-      $(this.waveEl).css({
-        top: tapTargetWaveTop + 'px',
-        left: tapTargetWaveLeft + 'px',
-        width: tapTargetWaveWidth + 'px',
-        height: tapTargetWaveHeight + 'px'
-      });
-    }
-
-    /**
-     * Open Feature Discovery
-     */
-    open() {
-      if (this.isOpen) {
-        return;
+        document.body.addEventListener('click', this._handleDocumentClickBound, true);
       }
 
-      this.isOpen = true;
-      this.wrapper.classList.add('open');
+      /**
+       * Close Feature Discovery
+       */
 
-      document.body.addEventListener('click', this._handleDocumentClickBound, true);
-    }
+    }, {
+      key: 'close',
+      value: function close() {
+        if (!this.isOpen) {
+          return;
+        }
 
-    /**
-     * Close Feature Discovery
-     */
-    close() {
-      if (!this.isOpen) {
-        return;
+        this.isOpen = false;
+        this.wrapper.classList.remove('open');
+
+        document.body.removeEventListener('click', this._handleDocumentClickBound, true);
+      }
+    }], [{
+      key: 'init',
+      value: function init($els, options) {
+        var arr = [];
+        $els.each(function () {
+          arr.push(new FeatureDiscovery(this, options));
+        });
+        return arr;
       }
 
-      this.isOpen = false;
-      this.wrapper.classList.remove('open');
+      /**
+       * Get Instance
+       */
 
-      document.body.removeEventListener('click', this._handleDocumentClickBound, true);
-    }
-  }
+    }, {
+      key: 'getInstance',
+      value: function getInstance(el) {
+        var domElem = !!el.jquery ? el[0] : el;
+        return domElem.M_FeatureDiscovery;
+      }
+    }, {
+      key: 'defaults',
+      get: function () {
+        return _defaults;
+      }
+    }]);
+
+    return FeatureDiscovery;
+  }();
 
   M.FeatureDiscovery = FeatureDiscovery;
 
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(FeatureDiscovery, 'featureDiscovery', 'M_FeatureDiscovery');
   }
-
-}( cash ));
+})(cash);

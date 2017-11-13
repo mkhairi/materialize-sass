@@ -1,6 +1,6 @@
 // Required for Meteor package, the use of window prevents export by Meteor
-(function(window){
-  if(window.Package){
+(function (window) {
+  if (window.Package) {
     M = {};
   } else {
     window.M = {};
@@ -10,14 +10,13 @@
   M.jQueryLoaded = !!window.jQuery;
 })(window);
 
-
 // AMD
-if ( typeof define === "function" && define.amd ) {
-	define( "M", [], function() {
-		return M;
-	} );
+if (typeof define === "function" && define.amd) {
+  define("M", [], function () {
+    return M;
+  });
 
-// Common JS
+  // Common JS
 } else if (typeof exports !== 'undefined' && !exports.nodeType) {
   if (typeof module !== 'undefined' && !module.nodeType && module.exports) {
     exports = module.exports = M;
@@ -39,33 +38,33 @@ M.keys = {
  * @param {string} pluginName  jQuery plugin name
  * @param {string} classRef  Class reference name
  */
-M.initializeJqueryWrapper = function(plugin, pluginName, classRef) {
-  jQuery.fn[pluginName] = function(methodOrOptions) {
+M.initializeJqueryWrapper = function (plugin, pluginName, classRef) {
+  jQuery.fn[pluginName] = function (methodOrOptions) {
     // Call plugin method if valid method name is passed in
     if (plugin.prototype[methodOrOptions]) {
-      let params = Array.prototype.slice.call( arguments, 1 );
+      var params = Array.prototype.slice.call(arguments, 1);
 
       // Getter methods
-      if (methodOrOptions.slice(0,3) === 'get') {
-        let instance = this.first()[0][classRef];
+      if (methodOrOptions.slice(0, 3) === 'get') {
+        var instance = this.first()[0][classRef];
         return instance[methodOrOptions].apply(instance, params);
 
-      // Void methods
+        // Void methods
       } else {
-        return this.each(function() {
-          let instance = this[classRef];
+        return this.each(function () {
+          var instance = this[classRef];
           instance[methodOrOptions].apply(instance, params);
         });
       }
 
-    // Initialize plugin if options or no argument is passed in
-    } else if ( typeof methodOrOptions === 'object' || ! methodOrOptions ) {
+      // Initialize plugin if options or no argument is passed in
+    } else if (typeof methodOrOptions === 'object' || !methodOrOptions) {
       plugin.init(this, arguments[0]);
       return this;
 
-    // Return error if an unrecognized  method name is passed in
+      // Return error if an unrecognized  method name is passed in
     } else {
-      jQuery.error(`Method ${methodOrOptions} does not exist on jQuery.${pluginName}`);
+      jQuery.error("Method " + methodOrOptions + " does not exist on jQuery." + pluginName);
     }
   };
 };
@@ -75,41 +74,37 @@ M.initializeJqueryWrapper = function(plugin, pluginName, classRef) {
  * @param {jQuery} obj  jQuery object to be parsed
  * @returns {string}
  */
-M.objectSelectorString = function(obj) {
-  let tagStr = obj.prop('tagName') || '';
-  let idStr = obj.attr('id') || '';
-  let classStr = obj.attr('class') || '';
-  return (tagStr + idStr + classStr).replace(/\s/g,'');
+M.objectSelectorString = function (obj) {
+  var tagStr = obj.prop('tagName') || '';
+  var idStr = obj.attr('id') || '';
+  var classStr = obj.attr('class') || '';
+  return (tagStr + idStr + classStr).replace(/\s/g, '');
 };
 
-
 // Unique Random ID
-M.guid = (function() {
+M.guid = function () {
   function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
   }
-  return function() {
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-           s4() + '-' + s4() + s4() + s4();
+  return function () {
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
   };
-})();
+}();
 
 /**
  * Escapes hash from special characters
  * @param {string} hash  String returned from this.hash
  * @returns {string}
  */
-M.escapeHash = function(hash) {
-  return hash.replace( /(:|\.|\[|\]|,|=)/g, "\\$1" );
+M.escapeHash = function (hash) {
+  return hash.replace(/(:|\.|\[|\]|,|=)/g, "\\$1");
 };
 
-M.elementOrParentIsFixed = function(element) {
-  let $element = $(element);
-  let $checkElements = $element.add($element.parents());
-  let isFixed = false;
-  $checkElements.each(function(){
+M.elementOrParentIsFixed = function (element) {
+  var $element = $(element);
+  var $checkElements = $element.add($element.parents());
+  var isFixed = false;
+  $checkElements.each(function () {
     if ($(this).css("position") === "fixed") {
       isFixed = true;
       return false;
@@ -141,49 +136,44 @@ M.elementOrParentIsFixed = function(element) {
  * @param {Number} offset  offset from edge that counts as exceeding
  * @returns {Edges}
  */
-M.checkWithinContainer = function(container, bounding, offset) {
-  let edges = {
+M.checkWithinContainer = function (container, bounding, offset) {
+  var edges = {
     top: false,
     right: false,
     bottom: false,
     left: false
   };
 
-  let containerRect = container.getBoundingClientRect();
+  var containerRect = container.getBoundingClientRect();
 
-  let scrollLeft = container.scrollLeft;
-  let scrollTop = container.scrollTop;
+  var scrollLeft = container.scrollLeft;
+  var scrollTop = container.scrollTop;
 
-  let scrolledX = bounding.left - scrollLeft;
-  let scrolledY = bounding.top - scrollTop;
+  var scrolledX = bounding.left - scrollLeft;
+  var scrolledY = bounding.top - scrollTop;
 
   // Check for container and viewport for each edge
-  if (scrolledX < containerRect.left + offset ||
-      scrolledX < offset) {
+  if (scrolledX < containerRect.left + offset || scrolledX < offset) {
     edges.left = true;
   }
 
-  if (scrolledX + bounding.width > containerRect.right - offset ||
-      scrolledX + bounding.width > window.innerWidth - offset) {
+  if (scrolledX + bounding.width > containerRect.right - offset || scrolledX + bounding.width > window.innerWidth - offset) {
     edges.right = true;
   }
 
-  if (scrolledY < containerRect.top + offset ||
-      scrolledY < offset) {
+  if (scrolledY < containerRect.top + offset || scrolledY < offset) {
     edges.top = true;
   }
 
-  if (scrolledY + bounding.height > containerRect.bottom - offset ||
-      scrolledY + bounding.height > window.innerHeight - offset) {
+  if (scrolledY + bounding.height > containerRect.bottom - offset || scrolledY + bounding.height > window.innerHeight - offset) {
     edges.bottom = true;
   }
 
   return edges;
 };
 
-
-M.checkPossibleAlignments = function(el, container, bounding, offset) {
-  let canAlign = {
+M.checkPossibleAlignments = function (el, container, bounding, offset) {
+  var canAlign = {
     top: true,
     right: true,
     bottom: true,
@@ -194,53 +184,44 @@ M.checkPossibleAlignments = function(el, container, bounding, offset) {
     spaceOnLeft: null
   };
 
-  let containerAllowsOverflow = getComputedStyle(container).overflow === 'visible';
-  let containerRect = container.getBoundingClientRect();
-  let elOffsetRect = el.getBoundingClientRect();
+  var containerAllowsOverflow = getComputedStyle(container).overflow === 'visible';
+  var containerRect = container.getBoundingClientRect();
+  var elOffsetRect = el.getBoundingClientRect();
 
-  let scrollLeft = container.scrollLeft;
-  let scrollTop = container.scrollTop;
+  var scrollLeft = container.scrollLeft;
+  var scrollTop = container.scrollTop;
 
-  let scrolledX = bounding.left - scrollLeft;
-  let scrolledY = bounding.top - scrollTop;
+  var scrolledX = bounding.left - scrollLeft;
+  var scrolledY = bounding.top - scrollTop;
 
   // Check for container and viewport for left
-  canAlign.spaceOnRight = !containerAllowsOverflow ? container.offsetWidth - (scrolledX + bounding.width) :
-    window.innerWidth - (elOffsetRect.left + bounding.width);
-  if ((!containerAllowsOverflow && scrolledX + bounding.width > container.offsetWidth) ||
-      containerAllowsOverflow && (elOffsetRect.left + bounding.width > window.innerWidth)) {
+  canAlign.spaceOnRight = !containerAllowsOverflow ? container.offsetWidth - (scrolledX + bounding.width) : window.innerWidth - (elOffsetRect.left + bounding.width);
+  if (!containerAllowsOverflow && scrolledX + bounding.width > container.offsetWidth || containerAllowsOverflow && elOffsetRect.left + bounding.width > window.innerWidth) {
     canAlign.left = false;
   }
 
   // Check for container and viewport for Right
-  canAlign.spaceOnLeft = !containerAllowsOverflow ? scrolledX - bounding.width + elOffsetRect.width :
-    elOffsetRect.right - bounding.width;
-  if ((!containerAllowsOverflow && scrolledX - bounding.width + elOffsetRect.width < 0) ||
-      containerAllowsOverflow && (elOffsetRect.right - bounding.width < 0)) {
+  canAlign.spaceOnLeft = !containerAllowsOverflow ? scrolledX - bounding.width + elOffsetRect.width : elOffsetRect.right - bounding.width;
+  if (!containerAllowsOverflow && scrolledX - bounding.width + elOffsetRect.width < 0 || containerAllowsOverflow && elOffsetRect.right - bounding.width < 0) {
     canAlign.right = false;
   }
 
   // Check for container and viewport for Top
-  canAlign.spaceOnBottom = !containerAllowsOverflow ? containerRect.height - (scrolledY + bounding.height + offset) :
-    window.innerHeight - (elOffsetRect.top + bounding.height + offset);
-  if ((!containerAllowsOverflow && scrolledY + bounding.height + offset > containerRect.height) ||
-      containerAllowsOverflow && (elOffsetRect.top + bounding.height + offset > window.innerHeight)) {
+  canAlign.spaceOnBottom = !containerAllowsOverflow ? containerRect.height - (scrolledY + bounding.height + offset) : window.innerHeight - (elOffsetRect.top + bounding.height + offset);
+  if (!containerAllowsOverflow && scrolledY + bounding.height + offset > containerRect.height || containerAllowsOverflow && elOffsetRect.top + bounding.height + offset > window.innerHeight) {
     canAlign.top = false;
   }
 
   // Check for container and viewport for Bottom
-  canAlign.spaceOnTop = !containerAllowsOverflow ? scrolledY - (bounding.height + offset) :
-    elOffsetRect.bottom - (bounding.height + offset);
-  if ((!containerAllowsOverflow && scrolledY - bounding.height - offset < 0) ||
-      containerAllowsOverflow && (elOffsetRect.bottom - bounding.height - offset < 0)) {
+  canAlign.spaceOnTop = !containerAllowsOverflow ? scrolledY - (bounding.height + offset) : elOffsetRect.bottom - (bounding.height + offset);
+  if (!containerAllowsOverflow && scrolledY - bounding.height - offset < 0 || containerAllowsOverflow && elOffsetRect.bottom - bounding.height - offset < 0) {
     canAlign.bottom = false;
   }
 
   return canAlign;
 };
 
-
-M.getOverflowParent = function(element) {
+M.getOverflowParent = function (element) {
   if (element == null) {
     return null;
   }
@@ -252,14 +233,13 @@ M.getOverflowParent = function(element) {
   }
 };
 
-
 /**
  * Gets id of component from a trigger
  * @param {Element} trigger  trigger
  * @returns {string}
  */
-M.getIdFromTrigger = function(trigger) {
-  let id = trigger.getAttribute('data-target');
+M.getIdFromTrigger = function (trigger) {
+  var id = trigger.getAttribute('data-target');
   if (!id) {
     id = trigger.getAttribute('href');
     if (id) {
@@ -271,12 +251,11 @@ M.getIdFromTrigger = function(trigger) {
   return id;
 };
 
-
 /**
  * Multi browser support for document scroll top
  * @returns {Number}
  */
-M.getDocumentScrollTop = function() {
+M.getDocumentScrollTop = function () {
   return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
 };
 
@@ -284,10 +263,9 @@ M.getDocumentScrollTop = function() {
  * Multi browser support for document scroll left
  * @returns {Number}
  */
-M.getDocumentScrollLeft = function() {
+M.getDocumentScrollLeft = function () {
   return window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0;
 };
-
 
 /**
  * @typedef {Object} Edges
@@ -305,17 +283,15 @@ M.getDocumentScrollLeft = function() {
  * @property {Number} height
  */
 
-
 /**
  * Get time in ms
  * @license https://raw.github.com/jashkenas/underscore/master/LICENSE
  * @type {function}
  * @return {number}
  */
-let getTime = (Date.now || function () {
+var getTime = Date.now || function () {
   return new Date().getTime();
-});
-
+};
 
 /**
  * Returns a function, that, when invoked, will only be triggered at most once
@@ -329,21 +305,23 @@ let getTime = (Date.now || function () {
  * @param {Object=} options
  * @returns {Function}
  */
-M.throttle = function(func, wait, options) {
-  let context, args, result;
-  let timeout = null;
-  let previous = 0;
+M.throttle = function (func, wait, options) {
+  var context = void 0,
+      args = void 0,
+      result = void 0;
+  var timeout = null;
+  var previous = 0;
   options || (options = {});
-  let later = function () {
+  var later = function () {
     previous = options.leading === false ? 0 : getTime();
     timeout = null;
     result = func.apply(context, args);
     context = args = null;
   };
   return function () {
-    let now = getTime();
+    var now = getTime();
     if (!previous && options.leading === false) previous = now;
-    let remaining = wait - (now - previous);
+    var remaining = wait - (now - previous);
     context = this;
     args = arguments;
     if (remaining <= 0) {
@@ -359,10 +337,9 @@ M.throttle = function(func, wait, options) {
   };
 };
 
-
 // Velocity has conflicts when loaded with jQuery, this will check for it
 // First, check if in noConflict mode
-let Vel;
+var Vel = void 0;
 if (M.jQueryLoaded) {
   Vel = jQuery.Velocity;
 } else {

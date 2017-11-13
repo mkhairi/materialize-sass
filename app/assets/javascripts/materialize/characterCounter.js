@@ -1,22 +1,26 @@
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 (function ($) {
   'use strict';
 
-  let _defaults = {
-  };
-
+  var _defaults = {};
 
   /**
    * @class
    *
    */
-  class CharacterCounter {
+
+  var CharacterCounter = function () {
     /**
      * Construct CharacterCounter instance
      * @constructor
      * @param {Element} el
      * @param {Object} options
      */
-    constructor(el, options) {
+    function CharacterCounter(el, options) {
+      _classCallCheck(this, CharacterCounter);
 
       // If exists, destroy and reinitialize
       if (!!el.M_CharacterCounter) {
@@ -38,113 +42,139 @@
       this._setupEventHandlers();
     }
 
-    static get defaults() {
-      return _defaults;
-    }
+    _createClass(CharacterCounter, [{
+      key: 'destroy',
 
-    static init($els, options) {
-      let arr = [];
-      $els.each(function() {
-        arr.push(new CharacterCounter(this, options));
-      });
-      return arr;
-    }
 
-    /**
-     * Get Instance
-     */
-    static getInstance(el) {
-      let domElem = !!el.jquery ? el[0] : el;
-      return domElem.M_CharacterCounter;
-    }
+      /**
+       * Teardown component
+       */
+      value: function destroy() {
+        this._removeEventHandlers();
+        this.el.CharacterCounter = undefined;
+        this._removeCounter();
+      }
 
-    /**
-     * Teardown component
-     */
-    destroy() {
-      this._removeEventHandlers();
-      this.el.CharacterCounter = undefined;
-      this._removeCounter();
-    }
+      /**
+       * Setup Event Handlers
+       */
 
-    /**
-     * Setup Event Handlers
-     */
-    _setupEventHandlers() {
-      this._handleUpdateCounterBound = this.updateCounter.bind(this);
+    }, {
+      key: '_setupEventHandlers',
+      value: function _setupEventHandlers() {
+        this._handleUpdateCounterBound = this.updateCounter.bind(this);
 
-      this.el.addEventListener('focus', this._handleUpdateCounterBound, true);
-      this.el.addEventListener('input', this._handleUpdateCounterBound, true);
-    }
+        this.el.addEventListener('focus', this._handleUpdateCounterBound, true);
+        this.el.addEventListener('input', this._handleUpdateCounterBound, true);
+      }
 
-    /**
-     * Remove Event Handlers
-     */
-    _removeEventHandlers() {
-      this.el.removeEventListener('focus', this._handleUpdateCounterBound, true);
-      this.el.removeEventListener('input', this._handleUpdateCounterBound, true);
-    }
+      /**
+       * Remove Event Handlers
+       */
 
-    /**
-     * Setup counter element
-     */
-    _setupCounter() {
-      this.counterEl = document.createElement('span');
-      $(this.counterEl)
-        .addClass('character-counter')
-        .css({
+    }, {
+      key: '_removeEventHandlers',
+      value: function _removeEventHandlers() {
+        this.el.removeEventListener('focus', this._handleUpdateCounterBound, true);
+        this.el.removeEventListener('input', this._handleUpdateCounterBound, true);
+      }
+
+      /**
+       * Setup counter element
+       */
+
+    }, {
+      key: '_setupCounter',
+      value: function _setupCounter() {
+        this.counterEl = document.createElement('span');
+        $(this.counterEl).addClass('character-counter').css({
           float: 'right',
           'font-size': '12px',
           height: 1
         });
 
-      this.$el.parent().append(this.counterEl);
-    }
-
-    /**
-     * Remove counter element
-     */
-    _removeCounter() {
-      $(this.counterEl).remove();
-    }
-
-    /**
-     * Update counter
-     */
-    updateCounter() {
-      let maxLength = +this.$el.attr('data-length'),
-      actualLength  = this.el.value.length;
-      this.isValidLength = actualLength <= maxLength;
-      let counterString = actualLength;
-
-      if (maxLength) {
-        counterString += '/' + maxLength;
-        this._validateInput();
+        this.$el.parent().append(this.counterEl);
       }
 
-      $(this.counterEl).html(counterString);
-    }
+      /**
+       * Remove counter element
+       */
 
-    /**
-     * Add validation classes
-     */
-    _validateInput() {
-      if (this.isValidLength && this.isInvalid) {
-        this.isInvalid = false;
-        this.$el.removeClass('invalid');
+    }, {
+      key: '_removeCounter',
+      value: function _removeCounter() {
+        $(this.counterEl).remove();
       }
-      else if(!this.isValidLength && !this.isInvalid){
-        this.isInvalid = true;
-        this.$el.removeClass('valid');
-        this.$el.addClass('invalid');
+
+      /**
+       * Update counter
+       */
+
+    }, {
+      key: 'updateCounter',
+      value: function updateCounter() {
+        var maxLength = +this.$el.attr('data-length'),
+            actualLength = this.el.value.length;
+        this.isValidLength = actualLength <= maxLength;
+        var counterString = actualLength;
+
+        if (maxLength) {
+          counterString += '/' + maxLength;
+          this._validateInput();
+        }
+
+        $(this.counterEl).html(counterString);
       }
-    }
-  }
+
+      /**
+       * Add validation classes
+       */
+
+    }, {
+      key: '_validateInput',
+      value: function _validateInput() {
+        if (this.isValidLength && this.isInvalid) {
+          this.isInvalid = false;
+          this.$el.removeClass('invalid');
+        } else if (!this.isValidLength && !this.isInvalid) {
+          this.isInvalid = true;
+          this.$el.removeClass('valid');
+          this.$el.addClass('invalid');
+        }
+      }
+    }], [{
+      key: 'init',
+      value: function init($els, options) {
+        var arr = [];
+        $els.each(function () {
+          arr.push(new CharacterCounter(this, options));
+        });
+        return arr;
+      }
+
+      /**
+       * Get Instance
+       */
+
+    }, {
+      key: 'getInstance',
+      value: function getInstance(el) {
+        var domElem = !!el.jquery ? el[0] : el;
+        return domElem.M_CharacterCounter;
+      }
+    }, {
+      key: 'defaults',
+      get: function () {
+        return _defaults;
+      }
+    }]);
+
+    return CharacterCounter;
+  }();
 
   M.CharacterCounter = CharacterCounter;
 
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(CharacterCounter, 'characterCounter', 'M_CharacterCounter');
   }
-
-}( cash ));
+})(cash);
