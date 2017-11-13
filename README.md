@@ -6,6 +6,11 @@ example: http://materialize.labs.my/
 
 source: https://github.com/mkhairi/materialize-rails
 
+# Notices
+This master branch now v1.0.0.alpha1
+
+Documentation for previous releases (v0.100.*) are available [this branch.](https://github.com/mkhairi/materialize-sass/tree/v0.100)
+
 ## Installation
 
 In your Gemfile you need to add the `materialize-sass` gem:
