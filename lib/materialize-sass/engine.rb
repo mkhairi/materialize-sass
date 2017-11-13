@@ -8,7 +8,6 @@ module Materialize
 
         unless Sprockets::Rails::VERSION.starts_with?('3')
           app.config.assets.precompile << %r(material-design-icons/Material-Design-Icons\.(?:eot|svg|ttf|woff|woff2?)$)
-          app.config.assets.precompile << %r(roboto/Roboto-[\w-]+\.(?:eot|svg|ttf|woff|woff2?)$)
         end
       end
     end
