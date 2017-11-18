@@ -1,13 +1,11 @@
-module Materialize
-  module Sass
-    class Engine < ::Rails::Engine
-      initializer 'materialize-sass.assets.precompile' do |app|
-        %w(stylesheets javascripts fonts images).each do |sub|
-          app.config.assets.paths << root.join('app/assets', sub).to_s
-        end
+require 'autoprefixer-rails'
 
-        unless Sprockets::Rails::VERSION.starts_with?('3')
-          app.config.assets.precompile << %r(material-design-icons/Material-Design-Icons\.(?:eot|svg|ttf|woff|woff2?)$)
+module Materialize
+  module Rails
+    class Engine < ::Rails::Engine
+      initializer 'materialize-sass.assets' do |app|
+        %w(stylesheets javascripts).each do |sub|
+          app.config.assets.paths << root.join('assets', sub).to_s
         end
       end
     end

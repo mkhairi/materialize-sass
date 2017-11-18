@@ -4,14 +4,16 @@ module Materialize
   module Sass
     # give credit to bootstrap-sass
     class << self
-
+      # Inspired by Kaminari
       def load!
-        #register_compass_extension if compass?
         if rails?
           register_rails_engine
+        elsif hanami?
+          register_hanami
         elsif sprockets?
           register_sprockets
         end
+
         configure_sass
       end
 
@@ -29,7 +31,7 @@ module Materialize
       end
 
       def assets_path
-        @assets_path ||= File.join gem_path, 'app/assets'
+        @assets_path ||= File.join gem_path, 'assets'
       end
 
       # Environment detection helpers
@@ -37,31 +39,21 @@ module Materialize
         defined?(::Sprockets)
       end
 
-      #def compass?
-      #  defined?(::Compass)
-      #end
-
       def rails?
         defined?(::Rails)
+      end
+
+      def hanami?
+        defined?(::Hanami)
       end
 
       private
 
       def configure_sass
         require 'sass'
-        ::Sass.load_paths << stylesheets_path
-        #::Sass::Script::Number.precision = [8, ::Sass::Script::Number.precision].max
-      end
 
-      #def register_compass_extension
-      #  ::Compass::Frameworks.register(
-      #      'materialize',
-      #      :version               => Materialize::Sass::VERSION,
-      #      :path                  => gem_path,
-      #      :stylesheets_directory => stylesheets_path,
-      #      :templates_directory   => File.join(gem_path, 'templates')
-      #  )
-      #end
+        ::Sass.load_paths << stylesheets_path
+      end
 
       def register_rails_engine
         require 'materialize-sass/engine'
@@ -72,6 +64,9 @@ module Materialize
         Sprockets.append_path(javascripts_path)
       end
 
+      def register_hanami
+        Hanami::Assets.sources << assets_path
+      end
     end
   end
 end
