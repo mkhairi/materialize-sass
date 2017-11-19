@@ -62,7 +62,7 @@ $secondary-color: color("yellow", "base") !default;
 or
 
 You can import each component just like in this file below:
-https://github.com/mkhairi/materialize-sass/blob/master/app/assets/stylesheets/materialize.scss
+https://github.com/mkhairi/materialize-sass/blob/master/assets/stylesheets/materialize.scss
 
 ### b. JavaScript
 
