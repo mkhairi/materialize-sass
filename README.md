@@ -69,6 +69,14 @@ https://github.com/mkhairi/materialize-sass/blob/master/assets/stylesheets/mater
 Require Materialize javascripts in `app/assets/javascripts/application.js`:
 
 ```js
+//= require materialize
+```
+
+or 
+
+Require materialize-sprockets to provides individual Materialize components for ease of debugging
+
+```js
 //= require materialize-sprockets
 ```
 
@@ -76,15 +84,21 @@ Require Materialize javascripts in `app/assets/javascripts/application.js`:
 
 Include this line in the portion of your HTML code
 
-``` <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> ```
+```html
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+```
 
 or import this line in your application.scss
 
-``` @import "https://fonts.googleapis.com/icon?family=Material+Icons"; ```
+```css
+  @import "https://fonts.googleapis.com/icon?family=Material+Icons";
+```
 
 or install this gem for offline icons
 
-``` gem 'material_icons' ```
+```ruby
+  gem 'material_icons' 
+```
 
 see [docs](https://github.com/Angelmmiguel/material_icons)
 
