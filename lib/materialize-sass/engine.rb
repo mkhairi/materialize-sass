@@ -1,4 +1,5 @@
 require 'autoprefixer-rails'
+require "materialize-sass/helpers"
 
 module Materialize
   module Rails
@@ -7,6 +8,7 @@ module Materialize
         %w(stylesheets javascripts).each do |sub|
           app.config.assets.paths << root.join('assets', sub).to_s
         end
+        ActionController::Base.send(:helper, Materialize::Helpers)
       end
     end
   end
