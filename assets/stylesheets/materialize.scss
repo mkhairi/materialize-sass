@@ -1,8 +1,8 @@
 @charset "UTF-8";
 
-// Mixins
-@import "materialize/components/mixins";
-@import "materialize/components/color";
+// Color
+@import "materialize/components/color-variables";
+@import "materialize/components/color-classes";
 
 // Variables;
 @import "materialize/components/variables";
