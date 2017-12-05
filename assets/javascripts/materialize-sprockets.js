@@ -1,6 +1,6 @@
 //= require ./materialize/cash
-//= require ./materialize/velocity.min
 //= require ./materialize/global
+//= require ./materialize/anime.min
 //= require ./materialize/collapsible
 //= require ./materialize/dropdown
 //= require ./materialize/modal
