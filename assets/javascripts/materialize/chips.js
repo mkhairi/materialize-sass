@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($) {
   'use strict';
 
   var _defaults = {
@@ -59,8 +59,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.$el.addClass('chips input-field');
       this.chipsData = [];
       this.$chips = $();
-      this.$input = this.$el.find('input');
-      this.$input.addClass('input');
+      this._setupInput();
       this.hasAutocomplete = Object.keys(this.options.autocompleteOptions).length > 0;
 
       // Set input id
@@ -272,7 +271,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
 
         // move input to end
-        this.$el.append(this.$input);
+        this.$el.append(this.$input[0]);
       }
 
       /**
@@ -291,6 +290,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         };
 
         this.autocomplete = M.Autocomplete.init(this.$input, this.options.autocompleteOptions)[0];
+      }
+
+      /**
+       * Setup Input
+       */
+
+    }, {
+      key: '_setupInput',
+      value: function _setupInput() {
+        this.$input = this.$el.find('input');
+        if (!this.$input.length) {
+          this.$input = $('<input></input>');
+          this.$el.append(this.$input);
+        }
+
+        this.$input.addClass('input');
       }
 
       /**
@@ -374,7 +389,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'deleteChip',
       value: function deleteChip(chipIndex) {
-        // let chip = this.chips[chipIndex];
+        var $chip = this.$chips.eq(chipIndex);
         this.$chips.eq(chipIndex).remove();
         this.$chips = this.$chips.filter(function (el) {
           return $(el).index() >= 0;
@@ -384,7 +399,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // fire chipDelete callback
         if (typeof this.options.onChipDelete === 'function') {
-          this.options.onChipDelete.call(this, this.$el, this.$chip);
+          this.options.onChipDelete.call(this, this.$el, $chip[0]);
         }
       }
 
@@ -402,20 +417,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // fire chipSelect callback
         if (typeof this.options.onChipSelect === 'function') {
-          this.options.onChipSelect.call(this, this.$el, this.$chip);
+          this.options.onChipSelect.call(this, this.$el, $chip[0]);
         }
-      }
-
-      /**
-       * Deselect chip
-       * @param {Number} chip
-       */
-
-    }, {
-      key: 'deselectChip',
-      value: function deselectChip(chipIndex) {
-        var $chip = this.$chips.eq(chipIndex);
-        this._selectedChip = null;
       }
     }], [{
       key: 'init',

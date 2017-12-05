@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($, anim) {
   'use strict';
 
   var _defaults = {
@@ -57,7 +57,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        */
       this.isOpen = false;
 
-      this.focusedIndex = null;
+      this.focusedIndex = -1;
       this.filterQuery = [];
 
       // Move dropdown-content after dropdown-trigger
@@ -289,7 +289,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_focusFocusedItem',
       value: function _focusFocusedItem() {
-        this.dropdownEl.children[this.focusedIndex].focus();
+        if (this.focusedIndex >= 0 && this.focusedIndex < this.dropdownEl.children.length) {
+          this.dropdownEl.children[this.focusedIndex].focus();
+        }
       }
     }, {
       key: '_getDropdownPosition',
@@ -382,19 +384,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.dropdownEl.style.width = positionInfo.width + 'px';
         this.dropdownEl.style.transformOrigin = (positionInfo.horizontalAlignment === 'left' ? '0' : '100%') + ' ' + (positionInfo.verticalAlignment === 'top' ? '0' : '100%');
 
-        Vel(this.dropdownEl, {
-          opacity: [1, 'easeOutQuad'],
-          scaleX: [1, .3],
-          scaleY: [1, .3] }, {
+        anim.remove(this.dropdownEl);
+        anim({
+          targets: this.dropdownEl,
+          opacity: {
+            value: [0, 1],
+            easing: 'easeOutQuad'
+          },
+          scaleX: [.3, 1],
+          scaleY: [.3, 1],
           duration: this.options.inDuration,
-          queue: false,
           easing: 'easeOutQuint',
-          complete: function () {
-            _this2._focusFocusedItem();
+          complete: function (anim) {
+            _this2.dropdownEl.focus();
 
             // onOpenEnd callback
             if (typeof _this2.options.onOpenEnd === 'function') {
-              _this2.options.onOpenEnd.call(_this2, _this2.el);
+              var elem = anim.animatables[0].target;
+              _this2.options.onOpenEnd.call(elem, _this2.el);
             }
           }
         });
@@ -409,18 +416,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function _animateOut() {
         var _this3 = this;
 
-        Vel(this.dropdownEl, {
-          opacity: [0, 'easeOutQuint'],
-          scaleX: [.3, 1],
-          scaleY: [.3, 1] }, {
+        anim.remove(this.dropdownEl);
+        anim({
+          targets: this.dropdownEl,
+          opacity: {
+            value: 0,
+            easing: 'easeOutQuint'
+          },
+          scaleX: .3,
+          scaleY: .3,
           duration: this.options.outDuration,
-          queue: false,
           easing: 'easeOutQuint',
-          complete: function () {
+          complete: function (anim) {
             _this3._resetDropdownStyles();
 
             // onCloseEnd callback
             if (typeof _this3.options.onCloseEnd === 'function') {
+              var elem = anim.animatables[0].target;
               _this3.options.onCloseEnd.call(_this3, _this3.el);
             }
           }
@@ -439,20 +451,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
         this.isOpen = true;
 
-        // Highlight focused item
-        if (this.focusedIndex === null) {
-          this.focusedIndex = 0;
-        }
-
         // onOpenStart callback
         if (typeof this.options.onOpenStart === 'function') {
           this.options.onOpenStart.call(this, this.el);
         }
 
-        // Stop any previous animation
-        Vel(this.dropdownEl, 'stop');
+        // Reset styles
         this._resetDropdownStyles();
-        Vel.hook(this.dropdownEl, 'display', 'block');
+        this.dropdownEl.style.display = 'block';
 
         // Set width before calculating positionInfo
         var idealWidth = this.options.constrainWidth ? this.el.getBoundingClientRect().width : this.dropdownEl.getBoundingClientRect().width;
@@ -474,6 +480,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           return;
         }
         this.isOpen = false;
+        this.focusedIndex = -1;
 
         // onCloseStart callback
         if (typeof this.options.onCloseStart === 'function') {
@@ -527,4 +534,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(Dropdown, 'dropdown', 'M_Dropdown');
   }
-})(cash, M.Vel);
+})(cash, M.anime);

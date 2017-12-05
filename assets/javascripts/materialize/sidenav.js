@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($, anim) {
   'use strict';
 
   var _defaults = {
@@ -181,7 +181,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       /**
        * Set variables needed at the beggining of drag
-       * and stop any current Velocity transition.
+       * and stop any current transition.
        * @param {Event} e
        */
 
@@ -195,8 +195,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this._time = Date.now();
         this._width = this.el.getBoundingClientRect().width;
         this._overlay.style.display = 'block';
-        Vel(this.el, 'stop');
-        Vel(this._overlay, 'stop');
+        anim.remove(this.el);
+        anim.remove(this._overlay);
       }
 
       /**
@@ -425,8 +425,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // Handle fixed Sidenav
         if (this.isFixed && window.innerWidth > 992) {
-          Vel(this.el, 'stop');
-          Vel(this.el, { translateX: 0 }, { duration: 0, queue: false });
+          anim.remove(this.el);
+          anim({
+            targets: this.el,
+            translateX: 0,
+            duration: 0,
+            easing: 'easeOutQuad'
+          });
           this._enableBodyScrolling();
           this._overlay.style.display = 'none';
 
@@ -485,13 +490,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           slideOutPercent = this.options.edge === 'left' ? slideOutPercent + this.percentOpen : slideOutPercent - this.percentOpen;
         }
 
-        Vel(this.el, 'stop');
-        Vel(this.el, { 'translateX': [0, slideOutPercent * 100 + '%'] }, { duration: this.options.inDuration, queue: false, easing: 'easeOutQuad', complete: function () {
+        anim.remove(this.el);
+        anim({
+          targets: this.el,
+          translateX: [slideOutPercent * 100 + '%', 0],
+          duration: this.options.inDuration,
+          easing: 'easeOutQuad',
+          complete: function () {
             // Run onOpenEnd callback
             if (typeof _this.options.onOpenEnd === 'function') {
               _this.options.onOpenEnd.call(_this, _this.el);
             }
-          } });
+          }
+        });
       }
     }, {
       key: '_animateOverlayIn',
@@ -500,11 +511,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (this.isDragged) {
           start = this.percentOpen;
         } else {
-          Vel.hook(this._overlay, 'display', 'block');
+          $(this._overlay).css({
+            display: 'block'
+          });
         }
 
-        Vel(this._overlay, 'stop');
-        Vel(this._overlay, { opacity: [1, start] }, { duration: this.options.inDuration, queue: false, easing: 'easeOutQuad' });
+        anim.remove(this._overlay);
+        anim({
+          targets: this._overlay,
+          opacity: [start, 1],
+          duration: this.options.inDuration,
+          easing: 'easeOutQuad'
+        });
       }
     }, {
       key: '_animateOut',
@@ -523,19 +541,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           slideOutPercent = this.options.edge === 'left' ? endPercent + this.percentOpen : endPercent - this.percentOpen;
         }
 
-        Vel(this.el, 'stop');
-        Vel(this.el, { 'translateX': [endPercent * 105 + '%', slideOutPercent * 100 + '%'] }, { duration: this.options.outDuration, queue: false, easing: 'easeOutQuad', complete: function () {
+        anim.remove(this.el);
+        anim({
+          targets: this.el,
+          translateX: [slideOutPercent * 100 + '%', endPercent * 105 + '%'],
+          duration: this.options.outDuration,
+          easing: 'easeOutQuad',
+          complete: function () {
             // Run onOpenEnd callback
             if (typeof _this2.options.onCloseEnd === 'function') {
               _this2.options.onCloseEnd.call(_this2, _this2.el);
             }
-          } });
+          }
+        });
       }
     }, {
       key: '_animateOverlayOut',
       value: function _animateOverlayOut() {
-        Vel(this._overlay, 'stop');
-        Vel(this._overlay, 'fadeOut', { duration: this.options.outDuration, queue: false, easing: 'easeOutQuad' });
+        var _this3 = this;
+
+        anim.remove(this._overlay);
+        anim({
+          targets: this._overlay,
+          opacity: 0,
+          duration: this.options.outDuration,
+          easing: 'easeOutQuad',
+          complete: function () {
+            $(_this3._overlay).css('display', 'none');
+          }
+        });
       }
     }], [{
       key: 'init',
@@ -581,4 +615,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(Sidenav, 'sidenav', 'M_Sidenav');
   }
-})(cash, M.Vel);
+})(cash, M.anime);

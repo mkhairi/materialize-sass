@@ -32,7 +32,7 @@
   var frag;
   function parseHTML(str) {
     if (!frag) {
-      frag = doc.implementation.createHTMLDocument();
+      frag = doc.implementation.createHTMLDocument(null);
       var base = frag.createElement("base");
       base.href = doc.location.href;
       frag.head.appendChild(base);
@@ -558,9 +558,7 @@
 
     on: function (eventName, delegate, callback, runOnce) {
       // jshint ignore:line
-
       var originalCallback;
-
       if (!isString(eventName)) {
         for (var key in eventName) {
           this.on(key, delegate, eventName[key]);
@@ -582,11 +580,11 @@
         originalCallback = callback;
         callback = function (e) {
           var t = e.target;
-
           while (!matches(t, delegate)) {
-            if (t === this) {
+            if (t === this || t === null) {
               return t = false;
             }
+
             t = t.parentNode;
           }
 

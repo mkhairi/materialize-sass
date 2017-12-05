@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($, anim) {
   'use strict';
 
   var _defaults = {
@@ -137,19 +137,45 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var $collapsibleLi = this.$el.children('li').eq(index);
         if ($collapsibleLi.length) {
           var $body = $collapsibleLi.children('.collapsible-body');
-          Vel($body[0], 'stop');
-          Vel($body[0], 'slideDown', { duration: this.options.inDuration, easing: 'easeInOutCubic', queue: false,
-            complete: function () {
-              $body[0].style.height = '';
-              $body[0].style.overflow = '';
-              $body[0].style.padding = '';
-              $body[0].style.margin = '';
+
+          anim.remove($body[0]);
+          $body.css({
+            display: 'block',
+            overflow: 'hidden',
+            height: 0,
+            paddingTop: '',
+            paddingBottom: ''
+          });
+
+          var pTop = $body.css('padding-top');
+          var pBottom = $body.css('padding-bottom');
+          var finalHeight = $body[0].scrollHeight;
+          $body.css({
+            paddingTop: 0,
+            paddingBottom: 0
+          });
+
+          anim({
+            targets: $body[0],
+            height: finalHeight,
+            paddingTop: pTop,
+            paddingBottom: pBottom,
+            duration: this.options.inDuration,
+            easing: 'easeInOutCubic',
+            complete: function (anim) {
+              $body.css({
+                overflow: '',
+                paddingTop: '',
+                paddingBottom: '',
+                height: ''
+              });
 
               // onOpenEnd callback
               if (typeof _this.options.onOpenEnd === 'function') {
                 _this.options.onOpenEnd.call(_this, $collapsibleLi[0]);
               }
-            } });
+            }
+          });
         }
       }
 
@@ -166,19 +192,29 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var $collapsibleLi = this.$el.children('li').eq(index);
         if ($collapsibleLi.length) {
           var $body = $collapsibleLi.children('.collapsible-body');
-          Vel($body[0], 'stop');
-          Vel($body[0], 'slideUp', { duration: this.options.outDuration, easing: 'easeInOutCubic', queue: false,
+          anim.remove($body[0]);
+          $body.css('overflow', 'hidden');
+          anim({
+            targets: $body[0],
+            height: 0,
+            paddingTop: 0,
+            paddingBottom: 0,
+            duration: this.options.outDuration,
+            easing: 'easeInOutCubic',
             complete: function () {
-              $body[0].style.height = '';
-              $body[0].style.overflow = '';
-              $body[0].style.padding = '';
-              $body[0].style.margin = '';
+              $body.css({
+                height: '',
+                overflow: '',
+                padding: '',
+                display: ''
+              });
 
               // onCloseEnd callback
               if (typeof _this2.options.onCloseEnd === 'function') {
                 _this2.options.onCloseEnd.call(_this2, $collapsibleLi[0]);
               }
-            } });
+            }
+          });
         }
       }
 
@@ -272,4 +308,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(Collapsible, 'collapsible', 'M_Collapsible');
   }
-})(cash, M.Vel);
+})(cash, M.anime);

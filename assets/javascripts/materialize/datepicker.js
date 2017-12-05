@@ -2,17 +2,13 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($) {
   'use strict';
 
   var _defaults = {
 
     // the default output format for the input field value
-    format: 'YYYY-MM-DD',
-
-    // the toString function which gets passed a current date object and format
-    // and returns a string
-    toString: null,
+    format: 'mmm dd, yyyy',
 
     // Used to create date object from current input string
     parse: null,
@@ -108,6 +104,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       this.options = $.extend({}, Datepicker.defaults, options);
 
+      // Remove time component from minDate and maxDate options
+      if (this.options.minDate) this.options.minDate.setHours(0, 0, 0, 0);
+      if (this.options.maxDate) this.options.maxDate.setHours(0, 0, 0, 0);
+
       this.id = M.guid();
 
       this._setupVariables();
@@ -177,14 +177,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'toString',
       value: function toString(format) {
+        var _this2 = this;
+
         format = format || this.options.format;
         if (!Datepicker._isDate(this.date)) {
           return '';
         }
-        if (this.options.toString) {
-          return this.options.toString(this.date, format);
-        }
-        return this.date.toDateString();
+
+        var formatArray = format.split(/(d{1,4}|m{1,4}|y{4}|yy|!.)/g);
+        var formattedDate = formatArray.map(function (label) {
+          if (_this2.formats[label]) {
+            return _this2.formats[label]();
+          } else {
+            return label;
+          }
+        }).join('');
+        return formattedDate;
       }
     }, {
       key: 'setDate',
@@ -218,7 +226,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.gotoDate(this.date);
 
         if (!preventOnSelect && typeof this.options.onSelect === 'function') {
-          this.options.onSelect.call(this, this.getDate());
+          this.options.onSelect.call(this, this.date);
         }
       }
     }, {
@@ -473,7 +481,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           arr.push('<option value="' + (year === refYear ? i - c : 12 + i - c) + '"' + (i === month ? ' selected="selected"' : '') + (isMinYear && i < opts.minMonth || isMaxYear && i > opts.maxMonth ? 'disabled="disabled"' : '') + '>' + opts.i18n.months[i] + '</option>');
         }
 
-        // monthHtml = '<div class="pika-label">' + opts.i18n.months[month] + '<select class="pika-select pika-select-month" tabindex="-1">' + arr.join('') + '</select></div>';
         monthHtml = '<select class="pika-select pika-select-month" tabindex="-1">' + arr.join('') + '</select>';
 
         if ($.isArray(opts.yearRange)) {
@@ -489,7 +496,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             arr.push('<option value="' + i + '"' + (i === year ? ' selected="selected"' : '') + '>' + i + '</option>');
           }
         }
-        // yearHtml = '<div class="pika-label">' + year + opts.yearSuffix + '<select class="pika-select pika-select-year" tabindex="-1">' + arr.join('') + '</select></div>';
+
         yearHtml = '<select class="pika-select pika-select-year" tabindex="-1">' + arr.join('') + '</select>';
 
         var leftArrow = '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"/><path d="M0-.5h24v24H0z" fill="none"/></svg>';
@@ -560,8 +567,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.calendarEl.innerHTML = html;
 
         // Init Materialize Select
-        new M.Select(this.calendarEl.querySelector('.pika-select-year'), { classes: 'select-year' });
-        new M.Select(this.calendarEl.querySelector('.pika-select-month'), { classes: 'select-month' });
+        var yearSelect = this.calendarEl.querySelector('.pika-select-year');
+        var monthSelect = this.calendarEl.querySelector('.pika-select-month');
+        new M.Select(yearSelect, { classes: 'select-year' });
+        new M.Select(monthSelect, { classes: 'select-month' });
+
+        // Add change handlers for select
+        yearSelect.addEventListener('change', this._handleYearChange.bind(this));
+        monthSelect.addEventListener('change', this._handleMonthChange.bind(this));
 
         if (typeof this.options.onDraw === 'function') {
           this.options.onDraw(this);
@@ -582,6 +595,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this._finishSelectionBound = this._finishSelection.bind(this);
         this._handleTodayClickBound = this._handleTodayClick.bind(this);
         this._handleClearClickBound = this._handleClearClick.bind(this);
+        this._handleMonthChange = this._handleMonthChange.bind(this);
 
         this.el.addEventListener('click', this._handleInputClickBound);
         this.el.addEventListener('keydown', this._handleInputKeydownBound);
@@ -594,6 +608,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_setupVariables',
       value: function _setupVariables() {
+        var _this3 = this;
+
         this.$modalEl = $(Datepicker._template);
         this.modalEl = this.$modalEl[0];
 
@@ -604,6 +620,34 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.clearBtn = this.modalEl.querySelector('.datepicker-clear');
         this.todayBtn = this.modalEl.querySelector('.datepicker-today');
         this.doneBtn = this.modalEl.querySelector('.datepicker-done');
+
+        this.formats = {
+
+          dd: function () {
+            return _this3.date.getDate();
+          },
+          ddd: function () {
+            return _this3.options.i18n.weekdaysShort[_this3.date.getDay()];
+          },
+          dddd: function () {
+            return _this3.options.i18n.weekdays[_this3.date.getDay()];
+          },
+          mm: function () {
+            return _this3.date.getMonth() + 1;
+          },
+          mmm: function () {
+            return _this3.options.i18n.monthsShort[_this3.date.getMonth()];
+          },
+          mmmm: function () {
+            return _this3.options.i18n.monthsShort[_this3.date.getMonth()];
+          },
+          yy: function () {
+            return _this3.date.getFullYear().slice(2);
+          },
+          yyyy: function () {
+            return _this3.date.getFullYear();
+          }
+        };
       }
 
       /**
@@ -674,50 +718,42 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.setInputValue();
         this.close();
       }
+    }, {
+      key: '_handleMonthChange',
+      value: function _handleMonthChange(e) {
+        this.gotoMonth(e.target.value);
+      }
+    }, {
+      key: '_handleYearChange',
+      value: function _handleYearChange(e) {
+        this.gotoYear(e.target.value);
+      }
 
-      // _onChange(e) {
-      //   e = e || window.event;
-      //   let target = e.target || e.srcElement;
-      //   if (!target) {
-      //     return;
-      //   }
-      //   if (hasClass(target, 'pika-select-month')) {
-      //     self.gotoMonth(target.value);
-      //   }
-      //   else if (hasClass(target, 'pika-select-year')) {
-      //     self.gotoYear(target.value);
-      //   }
-      // }
+      /**
+       * change view to a specific month (zero-index, e.g. 0: January)
+       */
 
-      // _onKeyChange(e) {
-      //   e = e || window.event;
+    }, {
+      key: 'gotoMonth',
+      value: function gotoMonth(month) {
+        if (!isNaN(month)) {
+          this.calendars[0].month = parseInt(month, 10);
+          this.adjustCalendars();
+        }
+      }
 
-      //   if (self.isVisible()) {
+      /**
+       * change view to a specific full year (e.g. "2012")
+       */
 
-      //     switch(e.keyCode){
-      //     case 13:
-      //     case 27:
-      //       if (opts.field) {
-      //         opts.field.blur();
-      //       }
-      //       break;
-      //     case 37:
-      //       e.preventDefault();
-      //       self.adjustDate('subtract', 1);
-      //       break;
-      //     case 38:
-      //       self.adjustDate('subtract', 7);
-      //       break;
-      //     case 39:
-      //       self.adjustDate('add', 1);
-      //       break;
-      //     case 40:
-      //       self.adjustDate('add', 7);
-      //       break;
-      //     }
-      //   }
-      // }
-
+    }, {
+      key: 'gotoYear',
+      value: function gotoYear(year) {
+        if (!isNaN(year)) {
+          this.calendars[0].year = parseInt(year, 10);
+          this.adjustCalendars();
+        }
+      }
     }, {
       key: '_handleInputChange',
       value: function _handleInputChange(e) {
@@ -740,26 +776,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         //   self.show();
         // }
       }
-
-      // _onInputBlur() {
-      //   // IE allows pika div to gain focus; catch blur the input field
-      //   let pEl = document.activeElement;
-      //   do {
-      //     if (hasClass(pEl, 'pika-single')) {
-      //       return;
-      //     }
-      //   }
-      //   while ((pEl = pEl.parentNode));
-
-      //   if (!self._c) {
-      //     self._b = sto(function() {
-      //       self.hide();
-      //     }, 50);
-      //   }
-      //   self._c = false;
-      // }
-
-
     }, {
       key: 'renderDayName',
       value: function renderDayName(opts, day, abbr) {
@@ -895,4 +911,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(Datepicker, 'datepicker', 'M_Datepicker');
   }
-})(cash, M.Vel);
+})(cash);

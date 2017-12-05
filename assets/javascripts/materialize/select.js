@@ -42,8 +42,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.isMultiple = this.$el.prop('multiple');
 
       // Setup
-      this.valuesSelected = [];
-      this.$selectedOptions = $();
+      this._keysSelected = {};
+      this._valueDict = {}; // Maps key to original and generated option element.
       this._setupDropdown();
 
       this._setupEventHandlers();
@@ -120,14 +120,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function _handleOptionClick(e) {
         e.preventDefault();
         var option = $(e.target).closest('li')[0];
-        var optionIndex = $(this.dropdownOptions).find('li:not(.optgroup)').index(option);
-        if (!$(option).hasClass('disabled') && !$(option).hasClass('optgroup')) {
+        var key = option.id;
+        if (!$(option).hasClass('disabled') && !$(option).hasClass('optgroup') && key.length) {
           var selected = true;
 
           if (this.isMultiple) {
             var checkbox = $(option).find('input[type="checkbox"]');
             checkbox.prop('checked', !checkbox.prop('checked'));
-            selected = this._toggleEntryFromArray(optionIndex);
+            selected = this._toggleEntryFromArray(key);
           } else {
             $(this.dropdownOptions).find('li').removeClass('active');
             $(option).toggleClass('active');
@@ -135,7 +135,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }
 
           this._activateOption($(this.dropdownOptions), option);
-          this.$el.find('option').eq(optionIndex).prop('selected', selected);
+          $(this._valueDict[key].el).prop('selected', selected);
           this.$el.trigger('change');
         }
 
@@ -165,7 +165,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var _this3 = this;
 
         this.wrapper = document.createElement('div');
-        this.wrapper.classList.add();
         $(this.wrapper).addClass('select-wrapper' + ' ' + this.options.classes);
         this.$el.before($(this.wrapper));
         this.wrapper.appendChild(this.el);
@@ -192,9 +191,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 optionEl = _this3._appendOptionWithIcon(_this3.$el, el);
               }
 
-              if ($(el).prop('selected')) {
-                _this3.$selectedOptions.add(optionEl);
-              }
+              _this3._addOptionToValueDict(el, optionEl);
             } else if ($(el).is('optgroup')) {
               // Optgroup.
               var selectOptions = $(el).children('option');
@@ -202,9 +199,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
               selectOptions.each(function (el) {
                 var optionEl = _this3._appendOptionWithIcon(_this3.$el, el, 'optgroup-option');
-                if ($(el).prop('selected')) {
-                  _this3.$selectedOptions.add(optionEl);
-                }
+                _this3._addOptionToValueDict(el, optionEl);
               });
             }
           });
@@ -226,7 +221,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this._setValueToInput();
 
         // Add caret
-        var dropdownIcon = $('<svg class="caret" fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+        var dropdownIcon = $('<svg class="caret" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
         this.$el.before(dropdownIcon[0]);
 
         // Initialize dropdown
@@ -240,6 +235,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // Add initial selections
         this._setSelectedStates();
+      }
+
+      /**
+       * Add option to value dict
+       * @param {Element} el  original option element
+       * @param {Element} optionEl  generated option element
+       */
+
+    }, {
+      key: '_addOptionToValueDict',
+      value: function _addOptionToValueDict(el, optionEl) {
+        var index = Object.keys(this._valueDict).length;
+        var key = this.dropdownOptions.id + index;
+        var obj = {};
+        optionEl.id = key;
+
+        obj.el = el;
+        obj.optionEl = optionEl;
+        this._valueDict[key] = obj;
       }
 
       /**
@@ -292,26 +306,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       /**
        * Toggle entry from option
-       * @param {Number} entryIndex
+       * @param {String} key  Option key
        * @return {Boolean}  if entry was added or removed
        */
 
     }, {
       key: '_toggleEntryFromArray',
-      value: function _toggleEntryFromArray(entryIndex) {
-        var index = this.valuesSelected.indexOf(entryIndex),
-            notAdded = index === -1;
-
+      value: function _toggleEntryFromArray(key) {
+        var notAdded = !this._keysSelected.hasOwnProperty(key);
         if (notAdded) {
-          this.valuesSelected.push(entryIndex);
+          this._keysSelected[key] = true;
         } else {
-          this.valuesSelected.splice(index, 1);
+          delete this._keysSelected[key];
         }
 
-        $(this.dropdownOptions).find('li:not(.optgroup)').eq(entryIndex).toggleClass('active');
+        $(this._valueDict[key].optionEl).toggleClass('active');
 
         // use notAdded instead of true (to detect if the option is selected or not)
-        this.$el.find('option').eq(entryIndex).prop('selected', notAdded);
+        $(this._valueDict[key].el).prop('selected', notAdded);
 
         return notAdded;
       }
@@ -326,7 +338,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var value = '';
         var options = this.$el.find('option');
 
-        options.each(function (el, i) {
+        options.each(function (el) {
           if ($(el).prop('selected')) {
             var text = $(el).text();
             value === '' ? value += text : value += ', ' + text;
@@ -350,22 +362,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_setSelectedStates',
       value: function _setSelectedStates() {
-        var _this4 = this;
+        this._keysSelected = {};
 
-        this.valuesSelected = [];
-        var $onlyOptions = $(this.dropdownOptions).find('li:not(.optgroup)');
-        this.$el.find('option').each(function (el, i) {
-          var option = $onlyOptions.eq(i);
-
-          if ($(el).prop('selected')) {
-            option.find('input[type="checkbox"]').prop("checked", true);
-            _this4._activateOption($(_this4.dropdownOptions), option);
-            _this4.valuesSelected.push(i);
+        for (var key in this._valueDict) {
+          var option = this._valueDict[key];
+          if ($(option.el).prop('selected')) {
+            $(option.optionEl).find('input[type="checkbox"]').prop("checked", true);
+            this._activateOption($(this.dropdownOptions), $(option.optionEl));
+            this._keysSelected[key] = true;
           } else {
-            option.find('input[type="checkbox"]').prop("checked", false);
-            option.removeClass('selected');
+            $(option.optionEl).find('input[type="checkbox"]').prop("checked", false);
+            $(option.optionEl).removeClass('selected');
           }
-        });
+        }
       }
 
       /**
@@ -385,6 +394,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var option = $(newOption);
           option.addClass('selected');
         }
+      }
+
+      /**
+       * Get Selected Values
+       * @return {Array}  Array of selected values
+       */
+
+    }, {
+      key: 'getSelectedValues',
+      value: function getSelectedValues() {
+        var selectedValues = [];
+        for (var key in this._keysSelected) {
+          selectedValues.push(this._valueDict[key].el.value);
+        }
+        return selectedValues;
       }
     }], [{
       key: 'init',

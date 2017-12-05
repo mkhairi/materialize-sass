@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($, anim) {
   'use strict';
 
   var _defaults = {
@@ -196,13 +196,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         });
 
         // Animate overlay
-        Vel(this.$overlay[0], { opacity: this.options.opacity }, { duration: this.options.inDuration, queue: false, ease: 'easeOutCubic' });
+        anim({
+          targets: this.$overlay[0],
+          opacity: this.options.opacity,
+          duration: this.options.inDuration,
+          easing: 'easeOutQuad'
+        });
 
         // Define modal animation options
-        var enterVelocityOptions = {
+        var enterAnimOptions = {
+          targets: this.el,
           duration: this.options.inDuration,
-          queue: false,
-          ease: 'easeOutCubic',
+          easing: 'easeOutCubic',
           // Handle modal ready callback
           complete: function () {
             if (typeof _this.options.ready === 'function') {
@@ -213,14 +218,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // Bottom sheet animation
         if (this.el.classList.contains('bottom-sheet')) {
-          Vel(this.el, { bottom: 0, opacity: 1 }, enterVelocityOptions);
+          $.extend(enterAnimOptions, {
+            bottom: 0,
+            opacity: 1
+          });
+          anim(enterAnimOptions);
 
           // Normal modal animation
         } else {
-          Vel.hook(this.el, 'scaleX', 0.8);
-          Vel.hook(this.el, 'scaleY', 0.8);
-          this.el.style.top = this.options.startingTop;
-          Vel(this.el, { top: this.options.endingTop, opacity: 1, scaleX: 1, scaleY: 1 }, enterVelocityOptions);
+          $.extend(enterAnimOptions, {
+            top: [this.options.startingTop, this.options.endingTop],
+            opacity: 1,
+            scaleX: [.8, 1],
+            scaleY: [.8, 1]
+          });
+          anim(enterAnimOptions);
         }
       }
 
@@ -234,19 +246,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var _this2 = this;
 
         // Animate overlay
-        Vel(this.$overlay[0], { opacity: 0 }, { duration: this.options.outDuration, queue: false, ease: 'easeOutQuart' });
+        anim({
+          targets: this.$overlay[0],
+          opacity: 0,
+          duration: this.options.outDuration,
+          easing: 'easeOutQuart'
+        });
 
         // Define modal animation options
-        var exitVelocityOptions = {
+        var exitAnimOptions = {
+          targets: this.el,
           duration: this.options.outDuration,
-          queue: false,
-          ease: 'easeOutCubic',
+          easing: 'easeOutCubic',
           // Handle modal ready callback
           complete: function () {
             _this2.el.style.display = 'none';
             // Call complete callback
             if (typeof _this2.options.complete === 'function') {
-              _this2.options.complete.call(_this2, _this2.$el);
+              _this2.options.complete.call(_this2, _this2.el);
             }
             _this2.$overlay.remove();
           }
@@ -254,11 +271,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // Bottom sheet animation
         if (this.el.classList.contains('bottom-sheet')) {
-          Vel(this.el, { bottom: '-100%', opacity: 0 }, exitVelocityOptions);
+          $.extend(exitAnimOptions, {
+            bottom: '-100%',
+            opacity: 0
+          });
+          anim(exitAnimOptions);
 
           // Normal modal animation
         } else {
-          Vel(this.el, { top: this.options.startingTop, opacity: 0, scaleX: 0.8, scaleY: 0.8 }, exitVelocityOptions);
+          $.extend(exitAnimOptions, {
+            top: [this.options.endingTop, this.options.startingTop],
+            opacity: 0,
+            scaleX: 0.8,
+            scaleY: 0.8
+          });
+          anim(exitAnimOptions);
         }
       }
 
@@ -281,13 +308,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         body.appendChild(this.$overlay[0]);
 
         // Set opening trigger, undefined indicates modal was opened by javascript
-        this._openingTrigger = !!$trigger ? $trigger : undefined;
+        this._openingTrigger = !!$trigger ? $trigger[0] : undefined;
 
         if (this.options.dismissible) {
           this._handleKeydownBound = this._handleKeydown.bind(this);
           document.addEventListener('keydown', this._handleKeydownBound);
         }
 
+        anim.remove(this.el);
+        anim.remove(this.$overlay[0]);
         this._animateIn();
         return this;
       }
@@ -311,6 +340,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           document.removeEventListener('keydown', this._handleKeydownBound);
         }
 
+        anim.remove(this.el);
+        anim.remove(this.$overlay[0]);
         this._animateOut();
         return this;
       }
@@ -363,4 +394,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(Modal, 'modal', 'M_Modal');
   }
-})(cash, M.Vel);
+})(cash, M.anime);

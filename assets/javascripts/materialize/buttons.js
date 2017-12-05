@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($, anim) {
   'use strict';
 
   var _defaults = {
@@ -51,6 +51,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.$menu = this.$el.children('ul').first();
       this.$floatingBtns = this.$el.find('ul .btn-floating');
       this.$floatingBtnsReverse = this.$el.find('ul .btn-floating').reverse();
+      this.offsetY = 0;
+      this.offsetX = 0;
       if (this.options.direction === 'top') {
         this.$el.addClass('direction-top');
         this.offsetY = 40;
@@ -187,15 +189,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateInFAB',
       value: function _animateInFAB() {
+        var _this = this;
+
         this.$el.addClass('active');
-        Vel.hook(this.$floatingBtns, 'scaleX', 0.4);
-        Vel.hook(this.$floatingBtns, 'scaleY', 0.4);
-        Vel.hook(this.$floatingBtns, 'translateY', this.offsetY + 'px');
-        Vel.hook(this.$floatingBtns, 'translateX', this.offsetX + 'px');
 
         var time = 0;
-        this.$floatingBtnsReverse.each(function () {
-          Vel(this, { opacity: "1", scaleX: 1, scaleY: 1, translateY: 0, translateX: 0 }, { duration: 80, delay: time });
+        this.$floatingBtnsReverse.each(function (el) {
+          anim({
+            targets: el,
+            opacity: 1,
+            scale: [.4, 1],
+            translateY: [_this.offsetY, 0],
+            translateX: [_this.offsetX, 0],
+            duration: 275,
+            delay: time,
+            easing: 'easeInOutQuad'
+          });
           time += 40;
         });
       }
@@ -207,9 +216,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateOutFAB',
       value: function _animateOutFAB() {
-        this.$el.removeClass('active');
-        Vel(this.$floatingBtns, 'stop');
-        Vel(this.$floatingBtns, { opacity: "0", scaleX: .4, scaleY: .4, translateY: this.offsetY, translateX: this.offsetX }, { duration: 80 });
+        var _this2 = this;
+
+        this.$floatingBtnsReverse.each(function (el) {
+          anim.remove(el);
+          anim({
+            targets: el,
+            opacity: 0,
+            scale: .4,
+            translateY: _this2.offsetY,
+            translateX: _this2.offsetX,
+            duration: 175,
+            easing: 'easeOutQuad',
+            complete: function () {
+              _this2.$el.removeClass('active');
+            }
+          });
+        });
       }
 
       /**
@@ -219,7 +242,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateInToolbar',
       value: function _animateInToolbar() {
-        var _this = this;
+        var _this3 = this;
 
         var scaleFactor = void 0;
         var windowWidth = window.innerWidth;
@@ -255,18 +278,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         });
 
         setTimeout(function () {
-          _this.$el.css({
+          _this3.$el.css({
             transform: '',
             transition: 'transform .2s cubic-bezier(0.550, 0.085, 0.680, 0.530), background-color 0s linear .2s'
           });
-          _this.$anchor.css({
+          _this3.$anchor.css({
             overflow: 'visible',
             transform: '',
             transition: 'transform .2s'
           });
 
           setTimeout(function () {
-            _this.$el.css({
+            _this3.$el.css({
               overflow: 'hidden',
               'background-color': fabColor
             });
@@ -274,14 +297,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               transform: 'scale(' + scaleFactor + ')',
               transition: 'transform .2s cubic-bezier(0.550, 0.055, 0.675, 0.190)'
             });
-            _this.$menu.children('li').children('a').css({
+            _this3.$menu.children('li').children('a').css({
               opacity: 1
             });
 
             // Scroll to close.
-            _this._handleDocumentClickBound = _this._handleDocumentClick.bind(_this);
-            window.addEventListener('scroll', _this._handleCloseBound, true);
-            document.body.addEventListener('click', _this._handleDocumentClickBound, true);
+            _this3._handleDocumentClickBound = _this3._handleDocumentClick.bind(_this3);
+            window.addEventListener('scroll', _this3._handleCloseBound, true);
+            document.body.addEventListener('click', _this3._handleDocumentClickBound, true);
           }, 100);
         }, 0);
       }
@@ -293,7 +316,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateOutToolbar',
       value: function _animateOutToolbar() {
-        var _this2 = this;
+        var _this4 = this;
 
         var windowWidth = window.innerWidth;
         var windowHeight = window.innerHeight;
@@ -324,26 +347,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           backdrop.remove();
 
           // Set initial state.
-          _this2.$el.css({
+          _this4.$el.css({
             'text-align': '',
             width: '',
             bottom: '',
             left: '',
             overflow: '',
             'background-color': '',
-            transform: 'translate3d(' + -_this2.offsetX + 'px,0,0)'
+            transform: 'translate3d(' + -_this4.offsetX + 'px,0,0)'
           });
-          _this2.$anchor.css({
+          _this4.$anchor.css({
             overflow: '',
-            transform: 'translate3d(0,' + _this2.offsetY + 'px,0)'
+            transform: 'translate3d(0,' + _this4.offsetY + 'px,0)'
           });
 
           setTimeout(function () {
-            _this2.$el.css({
+            _this4.$el.css({
               transform: 'translate3d(0,0,0)',
               transition: 'transform .2s'
             });
-            _this2.$anchor.css({
+            _this4.$anchor.css({
               transform: 'translate3d(0,0,0)',
               transition: 'transform .2s cubic-bezier(0.550, 0.055, 0.675, 0.190)'
             });
@@ -385,4 +408,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(FloatingActionButton, 'floatingActionButton', 'M_FloatingActionButton');
   }
-})(cash, M.Vel);
+})(cash, M.anime);

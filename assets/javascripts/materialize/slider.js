@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($, anim) {
   'use strict';
 
   var _defaults = {
@@ -79,7 +79,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.$active.css('display', 'block');
       } else {
         this.$slides.first().addClass('active');
-        Vel(this.$slides.first()[0], { opacity: 1 }, { duration: this.options.duration, queue: false, easing: 'easeOutQuad' });
+        anim({
+          targets: this.$slides.first()[0],
+          opacity: 1,
+          duration: this.options.duration,
+          easing: 'easeOutQuad'
+        });
 
         this.activeIndex = 0;
         this.$active = this.$slides.eq(this.activeIndex);
@@ -92,7 +97,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       // Adjust height to current slide
       this.$active.find('img').each(function (el) {
-        Vel(_this.$active.find('.caption')[0], { opacity: 1, translateX: 0, translateY: 0 }, { duration: _this.options.duration, queue: false, easing: 'easeOutQuad' });
+        anim({
+          targets: _this.$active.find('.caption')[0],
+          opacity: 1,
+          translateX: 0,
+          translateY: 0,
+          duration: _this.options.duration,
+          easing: 'easeOutQuad'
+        });
       });
 
       this._setupEventHandlers();
@@ -185,19 +197,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateCaptionIn',
       value: function _animateCaptionIn(caption, duration) {
-        var velocityOptions = {
-          opacity: 0
+        var animOptions = {
+          targets: caption,
+          opacity: 0,
+          duration: duration,
+          easing: 'easeOutQuad'
         };
 
         if ($(caption).hasClass('center-align')) {
-          velocityOptions.translateY = -100;
+          animOptions.translateY = -100;
         } else if ($(caption).hasClass('right-align')) {
-          velocityOptions.translateX = 100;
+          animOptions.translateX = 100;
         } else if ($(caption).hasClass('left-align')) {
-          velocityOptions.translateX = -100;
+          animOptions.translateX = -100;
         }
 
-        Vel(caption, velocityOptions, { duration: duration, queue: false });
+        anim(animOptions);
       }
 
       /**
@@ -266,14 +281,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (this.activeIndex != index) {
           this.$active = this.$slides.eq(this.activeIndex);
           var $caption = this.$active.find('.caption');
-
           this.$active.removeClass('active');
-          Vel(this.$active[0], { opacity: 0 }, { duration: this.options.duration, queue: false, easing: 'easeOutQuad',
+
+          anim({
+            targets: this.$active[0],
+            opacity: 0,
+            duration: this.options.duration,
+            easing: 'easeOutQuad',
             complete: function () {
               _this5.$slides.not('.active').each(function (el) {
-                Vel(el, { opacity: 0, translateX: 0, translateY: 0 }, { duration: 0, queue: false });
+                anim({
+                  targets: el,
+                  opacity: 0,
+                  translateX: 0,
+                  translateY: 0,
+                  duration: 0,
+                  easing: 'easeOutQuad'
+                });
               });
-            }.bind(this)
+            }
           });
 
           this._animateCaptionIn($caption[0], this.options.duration);
@@ -284,8 +310,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             this.$indicators.eq(index).addClass('active');
           }
 
-          Vel(this.$slides.eq(index)[0], { opacity: 1 }, { duration: this.options.duration, queue: false, easing: 'easeOutQuad' });
-          Vel(this.$slides.eq(index).find('.caption')[0], { opacity: 1, translateX: 0, translateY: 0 }, { duration: this.options.duration, delay: this.options.duration, queue: false, easing: 'easeOutQuad' });
+          anim({
+            targets: this.$slides.eq(index)[0],
+            opacity: 1,
+            duration: this.options.duration,
+            easing: 'easeOutQuad'
+          });
+
+          anim({
+            targets: this.$slides.eq(index).find('.caption')[0],
+            opacity: 1,
+            translateX: 0,
+            translateY: 0,
+            duration: this.options.duration,
+            delay: this.options.duration,
+            easing: 'easeOutQuad'
+          });
 
           this.$slides.eq(index).addClass('active');
           this.activeIndex = index;
@@ -380,4 +420,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(Slider, 'slider', 'M_Slider');
   }
-})(cash, M.Vel);
+})(cash, M.anime);

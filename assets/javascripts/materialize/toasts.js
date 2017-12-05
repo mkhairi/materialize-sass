@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($, anim) {
   'use strict';
 
   var _defaults = {
@@ -92,10 +92,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       key: '_animateIn',
       value: function _animateIn() {
         // Animate toast in
-        Vel(this.el, { top: 0, opacity: 1 }, {
+        anim({
+          targets: this.el,
+          top: 0,
+          opacity: 1,
           duration: 300,
-          easing: 'easeOutCubic',
-          queue: false
+          easing: 'easeOutCubic'
         });
       }
 
@@ -142,10 +144,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.el.style.opacity = 0;
         }
 
-        Vel(this.el, { opacity: 0, marginTop: '-40px' }, {
+        anim({
+          targets: this.el,
+          opacity: 0,
+          marginTop: -40,
           duration: this.options.outDuration,
           easing: 'easeOutExpo',
-          queue: false,
           complete: function () {
             // Call the optional callback
             if (typeof _this2.options.completeCallback === 'function') {
@@ -347,4 +351,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   M.toast = function (options) {
     return new Toast(options);
   };
-})(cash, M.Vel);
+})(cash, M.anime);

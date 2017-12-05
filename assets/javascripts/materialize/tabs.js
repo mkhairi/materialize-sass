@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($, anim) {
   'use strict';
 
   var _defaults = {
@@ -41,7 +41,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.el = el;
 
       /**
-       * Options for the carousel
+       * Options for the Tabs
        * @member Tabs#options
        * @prop {Number} duration
        * @prop {Function} onShow
@@ -182,14 +182,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             });
           }
         } else {
-          if (this.$content !== undefined) {
+          if (this.$content.length) {
             this.$content[0].style.display = 'block';
             this.$content.addClass('active');
             if (typeof this.options.onShow === 'function') {
               this.options.onShow.call(this, this.$content[0]);
             }
 
-            if ($oldContent !== undefined && !$oldContent.is(this.$content)) {
+            if ($oldContent.length && !$oldContent.is(this.$content)) {
               $oldContent[0].style.display = 'none';
               $oldContent.removeClass('active');
             }
@@ -263,7 +263,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var _this3 = this;
 
         // Change swipeable according to responsive threshold
-        if (window.innerWidth > options.responsiveThreshold) {
+        if (window.innerWidth > this.options.responsiveThreshold) {
           this.options.swipeable = false;
         }
 
@@ -290,7 +290,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             _this3.$activeTabLink.addClass('active');
             _this3._animateIndicator(prevIndex);
             if (typeof _this3.options.onShow === "function") {
-              _this3.options.onShow.call(_this3, _this3.$content);
+              _this3.options.onShow.call(_this3, _this3.$content[0]);
             }
           }
         });
@@ -360,7 +360,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       /**
        * Finds right attribute for indicator based on active tab.
-       * @param {jQuery} el
+       * @param {cash} el
        */
 
     }, {
@@ -371,13 +371,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       /**
        * Finds left attribute for indicator based on active tab.
-       * @param {jQuery} el
+       * @param {cash} el
        */
 
     }, {
       key: '_calcLeftPos',
       value: function _calcLeftPos(el) {
         return Math.floor(el.position().left);
+      }
+    }, {
+      key: 'updateTabIndicator',
+      value: function updateTabIndicator() {
+        this._animateIndicator(this.index);
       }
 
       /**
@@ -388,25 +393,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateIndicator',
       value: function _animateIndicator(prevIndex) {
-        var velOptions = {
-          duration: this.options.duration,
-          queue: false,
-          easing: 'easeOutQuad'
-        };
-        var velOptionsLeft = void 0,
-            velOptionsRight = void 0;
+        var leftDelay = 0,
+            rightDelay = 0;
 
         if (this.index - prevIndex >= 0) {
-          velOptionsLeft = $.extend({}, velOptions, { delay: 90 });
-          velOptionsRight = velOptions;
+          leftDelay = 90;
         } else {
-          velOptionsLeft = velOptions;
-          velOptionsRight = $.extend({}, velOptions, { delay: 90 });
+          rightDelay = 90;
         }
 
-        // Animate with velocity
-        Vel(this._indicator, { left: this._calcLeftPos(this.$activeTabLink) }, velOptionsLeft);
-        Vel(this._indicator, { right: this._calcRightPos(this.$activeTabLink) }, velOptionsRight);
+        // Animate
+        var animOptions = {
+          targets: this._indicator,
+          left: {
+            value: this._calcLeftPos(this.$activeTabLink),
+            delay: leftDelay
+          },
+          right: {
+            value: this._calcRightPos(this.$activeTabLink),
+            delay: rightDelay
+          },
+          duration: this.options.duration,
+          easing: 'easeOutQuad'
+        };
+        anim.remove(this._indicator);
+        anim(animOptions);
       }
 
       /**
@@ -419,6 +430,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function select(tabId) {
         var tab = this.$tabLinks.filter('[href="#' + tabId + '"]');
         if (tab.length) {
+          4;
           tab.trigger('click');
         }
       }
@@ -457,4 +469,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(Tabs, 'tabs', 'M_Tabs');
   }
-})(cash, M.Vel);
+})(cash, M.anime);

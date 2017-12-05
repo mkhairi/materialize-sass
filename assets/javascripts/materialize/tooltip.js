@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($, anim) {
   'use strict';
 
   var _defaults = {
@@ -10,8 +10,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     enterDelay: 0,
     html: null,
     margin: 5,
-    inDuration: 300,
-    outDuration: 250,
+    inDuration: 250,
+    outDuration: 200,
     position: 'bottom',
     transitionMovement: 10
   };
@@ -170,8 +170,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         this.xMovement = 0, this.yMovement = 0;
 
-        targetTop = origin.offsetTop;
-        targetLeft = origin.offsetLeft;
+        targetTop = origin.getBoundingClientRect().top + M.getDocumentScrollTop();
+        targetLeft = origin.getBoundingClientRect().left + M.getDocumentScrollLeft();
 
         if (this.options.position === 'top') {
           targetTop += -tooltipHeight - margin;
@@ -234,29 +234,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function _animateIn() {
         this._positionTooltip();
         this.tooltipEl.style.visibility = 'visible';
-        Vel(this.tooltipEl, 'stop');
-        Vel(this.tooltipEl, {
+        anim.remove(this.tooltipEl);
+        anim({
+          targets: this.tooltipEl,
           opacity: 1,
           translateX: this.xMovement,
-          translateY: this.yMovement
-        }, {
+          translateY: this.yMovement,
           duration: this.options.inDuration,
-          easing: 'easeOutCubic',
-          queue: false
+          easing: 'easeOutCubic'
         });
       }
     }, {
       key: '_animateOut',
       value: function _animateOut() {
-        Vel(this.tooltipEl, 'stop');
-        Vel(this.tooltipEl, {
+        anim.remove(this.tooltipEl);
+        anim({
+          targets: this.tooltipEl,
           opacity: 0,
           translateX: 0,
-          translateY: 0
-        }, {
+          translateY: 0,
           duration: this.options.outDuration,
-          easing: 'easeOutCubic',
-          queue: false
+          easing: 'easeOutCubic'
         });
       }
     }, {
@@ -322,4 +320,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(Tooltip, 'tooltip', 'M_Tooltip');
   }
-})(cash, M.Vel);
+})(cash, M.anime);

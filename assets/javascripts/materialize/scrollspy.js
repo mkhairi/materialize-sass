@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($, anim) {
   'use strict';
 
   var _defaults = {
@@ -120,7 +120,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           if ($trigger.is('a[href="#' + scrollspy.$el.attr('id') + '"]')) {
             e.preventDefault();
             var offset = scrollspy.$el.offset().top + 1;
-            Vel(document.body, 'scroll', { duration: 400, offset: offset - scrollspy.options.scrollOffset, easing: 'easeOutCubic' });
+
+            anim({
+              targets: [document.documentElement, document.body],
+              scrollTop: offset - scrollspy.options.scrollOffset,
+              duration: 400,
+              easing: 'easeOutCubic'
+            });
             break;
           }
         }
@@ -319,4 +325,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(ScrollSpy, 'scrollSpy', 'M_ScrollSpy');
   }
-})(cash, M.Vel);
+})(cash, M.anime);

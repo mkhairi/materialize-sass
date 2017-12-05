@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-(function ($, Vel) {
+(function ($, anim) {
   'use strict';
 
   var _defaults = {};
@@ -66,12 +66,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       key: '_setupEventHandlers',
       value: function _setupEventHandlers() {
         this._handleRangeChangeBound = this._handleRangeChange.bind(this);
+        this._handleRangeFocusBound = this._handleRangeFocus.bind(this);
         this._handleRangeMousedownTouchstartBound = this._handleRangeMousedownTouchstart.bind(this);
         this._handleRangeInputMousemoveTouchmoveBound = this._handleRangeInputMousemoveTouchmove.bind(this);
         this._handleRangeMouseupTouchendBound = this._handleRangeMouseupTouchend.bind(this);
         this._handleRangeBlurMouseoutTouchleaveBound = this._handleRangeBlurMouseoutTouchleave.bind(this);
 
         this.el.addEventListener('change', this._handleRangeChangeBound);
+        this.el.addEventListener('focus', this._handleRangeFocusBound);
 
         this.el.addEventListener('mousedown', this._handleRangeMousedownTouchstartBound);
         this.el.addEventListener('touchstart', this._handleRangeMousedownTouchstartBound);
@@ -96,6 +98,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       key: '_removeEventHandlers',
       value: function _removeEventHandlers() {
         this.el.removeEventListener('change', this._handleRangeChangeBound);
+        this.el.removeEventListener('focus', this._handleRangeFocusBound);
 
         this.el.removeEventListener('mousedown', this._handleRangeMousedownTouchstartBound);
         this.el.removeEventListener('touchstart', this._handleRangeMousedownTouchstartBound);
@@ -128,6 +131,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         var offsetLeft = this._calcRangeOffset();
         $(this.thumb).addClass('active').css('left', offsetLeft + 'px');
+      }
+
+      /**
+       * Handle Range Focus
+       * @param {Event} e
+       */
+
+    }, {
+      key: '_handleRangeFocus',
+      value: function _handleRangeFocus() {
+        if (M.tabPressed) {
+          this.$el.addClass('focused');
+        }
       }
 
       /**
@@ -191,17 +207,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       key: '_handleRangeBlurMouseoutTouchleave',
       value: function _handleRangeBlurMouseoutTouchleave() {
         if (!this._mousedown) {
+          this.$el.removeClass('focused');
           var paddingLeft = parseInt(this.$el.css('padding-left'));
           var marginLeft = 7 + paddingLeft + 'px';
 
           if ($(this.thumb).hasClass('active')) {
-            Vel(this.thumb, 'stop');
-            Vel(this.thumb, {
-              height: '0px',
-              width: '0px',
-              top: '10px',
-              marginLeft: marginLeft
-            }, { duration: 100 });
+            anim.remove(this.thumb);
+            anim({
+              targets: this.thumb,
+              height: 0,
+              width: 0,
+              top: 10,
+              easing: 'easeOutQuad',
+              marginLeft: marginLeft,
+              duration: 100
+            });
           }
           $(this.thumb).removeClass('active');
         }
@@ -241,12 +261,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function _showRangeBubble() {
         var paddingLeft = parseInt($(this.thumb).parent().css('padding-left'));
         var marginLeft = -7 + paddingLeft + 'px'; // TODO: fix magic number?
-        Vel(this.thumb, {
-          height: "30px",
-          width: "30px",
-          top: "-30px",
-          marginLeft: marginLeft
-        }, { duration: 300, easing: 'easeOutExpo' });
+        anim.remove(this.thumb);
+        anim({
+          targets: this.thumb,
+          height: 30,
+          width: 30,
+          top: -30,
+          marginLeft: marginLeft,
+          duration: 300,
+          easing: 'easeOutQuint'
+        });
       }
 
       /**
@@ -301,5 +325,5 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     M.initializeJqueryWrapper(Range, 'range', 'M_Range');
   }
 
-  Range.init($('input[type=range'));
-})(cash, M.Vel);
+  Range.init($('input[type=range]'));
+})(cash, M.anime);
