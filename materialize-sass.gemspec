@@ -23,6 +23,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
 
   #runtime dependencies
-  spec.add_runtime_dependency 'sass', '~> 3.5', '>= 3.5.2'
-  spec.add_runtime_dependency 'autoprefixer-rails', '~> 6.0', '>= 6.0.3'
+  spec.add_runtime_dependency 'sass', '>= 3.5.2'
+  spec.add_runtime_dependency 'autoprefixer-rails', '>= 6.0.3'
 end
