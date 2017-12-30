@@ -65,24 +65,22 @@ M.initializeJqueryWrapper = function (plugin, pluginName, classRef) {
       if (methodOrOptions.slice(0, 3) === 'get') {
         var instance = this.first()[0][classRef];
         return instance[methodOrOptions].apply(instance, params);
-
-        // Void methods
-      } else {
-        return this.each(function () {
-          var instance = this[classRef];
-          instance[methodOrOptions].apply(instance, params);
-        });
       }
+
+      // Void methods
+      return this.each(function () {
+        var instance = this[classRef];
+        instance[methodOrOptions].apply(instance, params);
+      });
 
       // Initialize plugin if options or no argument is passed in
     } else if (typeof methodOrOptions === 'object' || !methodOrOptions) {
       plugin.init(this, arguments[0]);
       return this;
-
-      // Return error if an unrecognized  method name is passed in
-    } else {
-      jQuery.error("Method " + methodOrOptions + " does not exist on jQuery." + pluginName);
     }
+
+    // Return error if an unrecognized  method name is passed in
+    jQuery.error("Method " + methodOrOptions + " does not exist on jQuery." + pluginName);
   };
 };
 
@@ -245,9 +243,9 @@ M.getOverflowParent = function (element) {
 
   if (element === document.body || getComputedStyle(element).overflow !== 'visible') {
     return element;
-  } else {
-    return M.getOverflowParent(element.parentElement);
   }
+
+  return M.getOverflowParent(element.parentElement);
 };
 
 /**

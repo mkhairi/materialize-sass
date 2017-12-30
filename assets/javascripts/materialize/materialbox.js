@@ -1,13 +1,23 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($, anim) {
   'use strict';
 
   var _defaults = {
     inDuration: 275,
-    outDuration: 200
+    outDuration: 200,
+    onOpenStart: null,
+    onOpenEnd: null,
+    onCloseStart: null,
+    onCloseEnd: null
   };
 
   /**
@@ -15,7 +25,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var Materialbox = function () {
+  var Materialbox = function (_Component) {
+    _inherits(Materialbox, _Component);
+
     /**
      * Construct Materialbox instance
      * @constructor
@@ -25,36 +37,36 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function Materialbox(el, options) {
       _classCallCheck(this, Materialbox);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Materialbox) {
-        el.M_Materialbox.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Materialbox.__proto__ || Object.getPrototypeOf(Materialbox)).call(this, Materialbox, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Materialbox = this;
+      _this.el.M_Materialbox = _this;
 
       /**
        * Options for the modal
        * @member Materialbox#options
        * @prop {Number} [inDuration=275] - Length in ms of enter transition
        * @prop {Number} [outDuration=200] - Length in ms of exit transition
+       * @prop {Function} onOpenStart - Callback function called before materialbox is opened
+       * @prop {Function} onOpenEnd - Callback function called after materialbox is opened
+       * @prop {Function} onCloseStart - Callback function called before materialbox is closed
+       * @prop {Function} onCloseEnd - Callback function called after materialbox is closed
        */
-      this.options = $.extend({}, Materialbox.defaults, options);
+      _this.options = $.extend({}, Materialbox.defaults, options);
 
-      this.overlayActive = false;
-      this.doneAnimating = true;
-      this.placeholder = $('<div></div>').addClass('material-placeholder');
-      this.originalWidth = 0;
-      this.originalHeight = 0;
-      this.originInlineStyles = this.$el.attr('style');
-      this.caption = this.el.getAttribute('data-caption') || "";
+      _this.overlayActive = false;
+      _this.doneAnimating = true;
+      _this.placeholder = $('<div></div>').addClass('material-placeholder');
+      _this.originalWidth = 0;
+      _this.originalHeight = 0;
+      _this.originInlineStyles = _this.$el.attr('style');
+      _this.caption = _this.el.getAttribute('data-caption') || "";
 
       // Wrap
-      this.$el.before(this.placeholder);
-      this.placeholder.append(this.$el);
+      _this.$el.before(_this.placeholder);
+      _this.placeholder.append(_this.$el);
 
-      this._setupEventHandlers();
+      _this._setupEventHandlers();
+      return _this;
     }
 
     _createClass(Materialbox, [{
@@ -174,7 +186,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateImageIn',
       value: function _animateImageIn() {
-        var _this = this;
+        var _this2 = this;
 
         var animOptions = {
           targets: this.el,
@@ -185,7 +197,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           duration: this.options.inDuration,
           easing: 'easeOutQuad',
           complete: function () {
-            _this.doneAnimating = true;
+            _this2.doneAnimating = true;
+
+            // onOpenEnd callback
+            if (typeof _this2.options.onOpenEnd === 'function') {
+              _this2.options.onOpenEnd.call(_this2, _this2.el);
+            }
           }
         };
 
@@ -207,7 +224,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateImageOut',
       value: function _animateImageOut() {
-        var _this2 = this;
+        var _this3 = this;
 
         var animOptions = {
           targets: this.el,
@@ -218,7 +235,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           duration: this.options.outDuration,
           easing: 'easeOutQuad',
           complete: function () {
-            _this2.placeholder.css({
+            _this3.placeholder.css({
               height: '',
               width: '',
               position: '',
@@ -226,16 +243,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               left: ''
             });
 
-            _this2.$el.removeAttr('style');
-            _this2.$el.attr('style', _this2.originInlineStyles);
+            _this3.$el.removeAttr('style');
+            _this3.$el.attr('style', _this3.originInlineStyles);
 
             // Remove class
-            _this2.$el.removeClass('active');
-            _this2.doneAnimating = true;
+            _this3.$el.removeClass('active');
+            _this3.doneAnimating = true;
 
             // Remove overflow overrides on ancestors
-            if (_this2.ancestorsChanged.length) {
-              _this2.ancestorsChanged.css('overflow', '');
+            if (_this3.ancestorsChanged.length) {
+              _this3.ancestorsChanged.css('overflow', '');
+            }
+
+            // onCloseEnd callback
+            if (typeof _this3.options.onCloseEnd === 'function') {
+              _this3.options.onCloseEnd.call(_this3, _this3.el);
             }
           }
         };
@@ -262,7 +284,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'open',
       value: function open() {
-        var _this3 = this;
+        var _this4 = this;
 
         this._updateVars();
         this.originalWidth = this.el.getBoundingClientRect().width;
@@ -272,6 +294,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.doneAnimating = false;
         this.$el.addClass('active');
         this.overlayActive = true;
+
+        // onOpenStart callback
+        if (typeof this.options.onOpenStart === 'function') {
+          this.options.onOpenStart.call(this, this.el);
+        }
 
         // Set positioning for placeholder
         this.placeholder.css({
@@ -295,8 +322,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.$overlay = $('<div id="materialbox-overlay"></div>').css({
           opacity: 0
         }).one('click', function () {
-          if (_this3.doneAnimating) {
-            _this3.close();
+          if (_this4.doneAnimating) {
+            _this4.close();
           }
         });
 
@@ -378,10 +405,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'close',
       value: function close() {
-        var _this4 = this;
+        var _this5 = this;
 
         this._updateVars();
         this.doneAnimating = false;
+
+        // onCloseStart callback
+        if (typeof this.options.onCloseStart === 'function') {
+          this.options.onCloseStart.call(this, this.el);
+        }
 
         anim.remove(this.el);
         anim.remove(this.$overlay[0]);
@@ -401,8 +433,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           duration: this.options.outDuration,
           easing: 'easeOutQuad',
           complete: function () {
-            _this4.overlayActive = false;
-            _this4.$overlay.remove();
+            _this5.overlayActive = false;
+            _this5.$overlay.remove();
           }
         });
 
@@ -416,19 +448,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             duration: this.options.outDuration,
             easing: 'easeOutQuad',
             complete: function () {
-              _this4.$photoCaption.remove();
+              _this5.$photoCaption.remove();
             }
           });
         }
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Materialbox(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Materialbox.__proto__ || Object.getPrototypeOf(Materialbox), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -449,7 +477,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Materialbox;
-  }();
+  }(Component);
 
   M.Materialbox = Materialbox;
 

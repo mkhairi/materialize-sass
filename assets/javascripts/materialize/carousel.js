@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($) {
   'use strict';
@@ -21,7 +27,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var Carousel = function () {
+  var Carousel = function (_Component) {
+    _inherits(Carousel, _Component);
+
     /**
      * Construct Carousel instance
      * @constructor
@@ -29,18 +37,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @param {Object} options
      */
     function Carousel(el, options) {
-      var _this = this;
-
       _classCallCheck(this, Carousel);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Carousel) {
-        el.M_Carousel.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Carousel.__proto__ || Object.getPrototypeOf(Carousel)).call(this, Carousel, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Carousel = this;
+      _this.el.M_Carousel = _this;
 
       /**
        * Options for the carousel
@@ -54,36 +55,36 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @prop {Boolean} noWrap
        * @prop {Function} onCycleTo
        */
-      this.options = $.extend({}, Carousel.defaults, options);
+      _this.options = $.extend({}, Carousel.defaults, options);
 
       // Setup
-      this.hasMultipleSlides = this.$el.find('.carousel-item').length > 1;
-      this.showIndicators = this.options.indicators && this.hasMultipleSlides;
-      this.noWrap = this.options.noWrap || !this.hasMultipleSlides;
-      this.pressed = false;
-      this.dragged = false;
-      this.offset = this.target = 0;
-      this.images = [];
-      this.itemWidth = this.$el.find('.carousel-item').first().innerWidth();
-      this.itemHeight = this.$el.find('.carousel-item').first().innerHeight();
-      this.dim = this.itemWidth * 2 + this.options.padding || 1; // Make sure dim is non zero for divisions.
-      this._autoScrollBound = this._autoScroll.bind(this);
-      this._trackBound = this._track.bind(this);
+      _this.hasMultipleSlides = _this.$el.find('.carousel-item').length > 1;
+      _this.showIndicators = _this.options.indicators && _this.hasMultipleSlides;
+      _this.noWrap = _this.options.noWrap || !_this.hasMultipleSlides;
+      _this.pressed = false;
+      _this.dragged = false;
+      _this.offset = _this.target = 0;
+      _this.images = [];
+      _this.itemWidth = _this.$el.find('.carousel-item').first().innerWidth();
+      _this.itemHeight = _this.$el.find('.carousel-item').first().innerHeight();
+      _this.dim = _this.itemWidth * 2 + _this.options.padding || 1; // Make sure dim is non zero for divisions.
+      _this._autoScrollBound = _this._autoScroll.bind(_this);
+      _this._trackBound = _this._track.bind(_this);
 
       // Full Width carousel setup
-      if (this.options.fullWidth) {
-        this.options.dist = 0;
-        this._setCarouselHeight();
+      if (_this.options.fullWidth) {
+        _this.options.dist = 0;
+        _this._setCarouselHeight();
 
         // Offset fixed items when indicators.
-        if (this.showIndicators) {
-          this.$el.find('.carousel-fixed-item').addClass('with-indicators');
+        if (_this.showIndicators) {
+          _this.$el.find('.carousel-fixed-item').addClass('with-indicators');
         }
       }
 
       // Iterate through slides
-      this.$indicators = $('<ul class="indicators"></ul>');
-      this.$el.find('.carousel-item').each(function (el, i) {
+      _this.$indicators = $('<ul class="indicators"></ul>');
+      _this.$el.find('.carousel-item').each(function (el, i) {
         _this.images.push(el);
         if (_this.showIndicators) {
           var $indicator = $('<li class="indicator-item"></li>');
@@ -96,13 +97,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           _this.$indicators.append($indicator);
         }
       });
-      if (this.showIndicators) {
-        this.$el.append(this.$indicators);
+      if (_this.showIndicators) {
+        _this.$el.append(_this.$indicators);
       }
-      this.count = this.images.length;
+      _this.count = _this.images.length;
 
       // Setup cross browser string
-      this.xform = 'transform';
+      _this.xform = 'transform';
       ['webkit', 'Moz', 'O', 'ms'].every(function (prefix) {
         var e = prefix + 'Transform';
         if (typeof document.body.style[e] !== 'undefined') {
@@ -112,8 +113,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         return true;
       });
 
-      this._setupEventHandlers();
-      this._scroll(this.offset);
+      _this._setupEventHandlers();
+      _this._scroll(_this.offset);
+      return _this;
     }
 
     _createClass(Carousel, [{
@@ -699,9 +701,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (index > this.count || index < 0) {
           if (this.noWrap) {
             return;
-          } else {
-            index = this._wrap(index);
           }
+
+          index = this._wrap(index);
         }
         this._cycleTo(index);
       }
@@ -722,9 +724,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (index > this.count || index < 0) {
           if (this.noWrap) {
             return;
-          } else {
-            index = this._wrap(index);
           }
+
+          index = this._wrap(index);
         }
 
         this._cycleTo(index);
@@ -746,21 +748,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (n > this.count || n < 0) {
           if (this.noWrap) {
             return;
-          } else {
-            n = this._wrap(n);
           }
+
+          n = this._wrap(n);
         }
 
         this._cycleTo(n, callback);
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Carousel(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Carousel.__proto__ || Object.getPrototypeOf(Carousel), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -781,7 +779,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Carousel;
-  }();
+  }(Component);
 
   M.Carousel = Carousel;
 

@@ -1,33 +1,45 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($) {
   'use strict';
 
-  var _defaults = {};
+  var _defaults = {
+    responsiveThreshold: 0 // breakpoint for swipeable
+  };
 
-  var Parallax = function () {
+  var Parallax = function (_Component) {
+    _inherits(Parallax, _Component);
+
     function Parallax(el, options) {
       _classCallCheck(this, Parallax);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Parallax) {
-        el.M_Parallax.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Parallax.__proto__ || Object.getPrototypeOf(Parallax)).call(this, Parallax, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Parallax = this;
+      _this.el.M_Parallax = _this;
 
-      this.options = $.extend({}, Parallax.defaults, options);
+      /**
+       * Options for the Parallax
+       * @member Parallax#options
+       * @prop {Number} responsiveThreshold
+       */
+      _this.options = $.extend({}, Parallax.defaults, options);
 
-      this.$img = this.$el.find('img').first();
-      this._updateParallax();
-      this._setupEventHandlers();
-      this._setupStyles();
+      _this.$img = _this.$el.find('img').first();
+      _this._enabled = window.innerWidth > _this.options.responsiveThreshold;
+      _this._updateParallax();
+      _this._setupEventHandlers();
+      _this._setupStyles();
 
-      Parallax._parallaxes.push(this);
+      Parallax._parallaxes.push(_this);
+      return _this;
     }
 
     _createClass(Parallax, [{
@@ -37,7 +49,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       /**
        * Teardown component
        */
-      value: function destroy() {}
+      value: function destroy() {
+        Parallax._parallaxes.splice(Parallax._parallaxes.indexOf(this), 1);
+        this.$img[0].style.transform = '';
+        this._removeEventHandlers();
+
+        this.$el[0].M_Parallax = undefined;
+      }
     }, {
       key: '_setupEventHandlers',
       value: function _setupEventHandlers() {
@@ -47,6 +65,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (Parallax._parallaxes.length === 0) {
           Parallax._handleScrollThrottled = M.throttle(Parallax._handleScroll, 5);
           window.addEventListener('scroll', Parallax._handleScrollThrottled);
+
+          Parallax._handleWindowResizeThrottled = M.throttle(Parallax._handleWindowResize, 5);
+          window.addEventListener('resize', Parallax._handleWindowResizeThrottled);
+        }
+      }
+    }, {
+      key: '_removeEventHandlers',
+      value: function _removeEventHandlers() {
+        this.$img[0].removeEventListener('load', this._handleImageLoadBound);
+
+        if (Parallax._parallaxes.length === 0) {
+          window.removeEventListener('scroll', Parallax._handleScrollThrottled);
+          window.removeEventListener('resize', Parallax._handleWindowResizeThrottled);
         }
       }
     }, {
@@ -77,18 +108,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var percentScrolled = (windowBottom - top) / (containerHeight + windowHeight);
         var parallax = parallaxDist * percentScrolled;
 
-        if (bottom > scrollTop && top < scrollTop + windowHeight) {
+        if (!this._enabled) {
+          this.$img[0].style.transform = '';
+        } else if (bottom > scrollTop && top < scrollTop + windowHeight) {
           this.$img[0].style.transform = 'translate3D(-50%, ' + parallax + 'px, 0)';
         }
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Parallax(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Parallax.__proto__ || Object.getPrototypeOf(Parallax), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -110,6 +139,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       }
     }, {
+      key: '_handleWindowResize',
+      value: function _handleWindowResize() {
+        for (var i = 0; i < Parallax._parallaxes.length; i++) {
+          var parallaxInstance = Parallax._parallaxes[i];
+          parallaxInstance._enabled = window.innerWidth > parallaxInstance.options.responsiveThreshold;
+        }
+      }
+    }, {
       key: 'defaults',
       get: function () {
         return _defaults;
@@ -117,7 +154,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Parallax;
-  }();
+  }(Component);
 
   /**
    * @static

@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($, anim) {
   'use strict';
@@ -23,23 +29,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @class
    */
 
-  var Dropdown = function () {
+  var Dropdown = function (_Component) {
+    _inherits(Dropdown, _Component);
+
     function Dropdown(el, options) {
       _classCallCheck(this, Dropdown);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Dropdown) {
-        el.M_Dropdown.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Dropdown.__proto__ || Object.getPrototypeOf(Dropdown)).call(this, Dropdown, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Dropdown = this;
-      Dropdown._dropdowns.push(this);
+      _this.el.M_Dropdown = _this;
+      Dropdown._dropdowns.push(_this);
 
-      this.id = M.getIdFromTrigger(el);
-      this.dropdownEl = document.getElementById(this.id);
-      this.$dropdownEl = $(this.dropdownEl);
+      _this.id = M.getIdFromTrigger(el);
+      _this.dropdownEl = document.getElementById(_this.id);
+      _this.$dropdownEl = $(_this.dropdownEl);
 
       /**
        * Options for the dropdown
@@ -49,26 +52,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @prop {Function} onCloseStart - Function called when sidenav starts exiting
        * @prop {Function} onCloseEnd - Function called when sidenav finishes exiting
        */
-      this.options = $.extend({}, Dropdown.defaults, options);
+      _this.options = $.extend({}, Dropdown.defaults, options);
 
       /**
        * Describes open/close state of dropdown
        * @type {Boolean}
        */
-      this.isOpen = false;
+      _this.isOpen = false;
 
-      this.focusedIndex = -1;
-      this.filterQuery = [];
+      _this.focusedIndex = -1;
+      _this.filterQuery = [];
 
       // Move dropdown-content after dropdown-trigger
-      this.$el.after(this.dropdownEl);
+      _this.$el.after(_this.dropdownEl);
 
-      this._makeDropdownFocusable();
-      this._resetFilterQueryBound = this._resetFilterQuery.bind(this);
-      this._handleDocumentClickBound = this._handleDocumentClick.bind(this);
-      this._handleDropdownKeydownBound = this._handleDropdownKeydown.bind(this);
-      this._handleTriggerKeydownBound = this._handleTriggerKeydown.bind(this);
-      this._setupEventHandlers();
+      _this._makeDropdownFocusable();
+      _this._resetFilterQueryBound = _this._resetFilterQuery.bind(_this);
+      _this._handleDocumentClickBound = _this._handleDocumentClick.bind(_this);
+      _this._handleDropdownKeydownBound = _this._handleDropdownKeydown.bind(_this);
+      _this._handleTriggerKeydownBound = _this._handleTriggerKeydown.bind(_this);
+      _this._setupEventHandlers();
+      return _this;
     }
 
     _createClass(Dropdown, [{
@@ -173,20 +177,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_handleDocumentClick',
       value: function _handleDocumentClick(e) {
-        var _this = this;
+        var _this2 = this;
 
         var $target = $(e.target);
         if (this.options.closeOnClick && $target.closest('.dropdown-content').length) {
           setTimeout(function () {
-            _this.close();
+            _this2.close();
           }, 0);
         } else if ($target.closest('.dropdown-trigger').length) {
           setTimeout(function () {
-            _this.close();
+            _this2.close();
           }, 0);
         } else if (!$target.closest('.dropdown-content').length) {
           setTimeout(function () {
-            _this.close();
+            _this2.close();
           }, 0);
         }
       }
@@ -375,7 +379,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateIn',
       value: function _animateIn(positionInfo) {
-        var _this2 = this;
+        var _this3 = this;
 
         // Place dropdown
         this.dropdownEl.style.left = positionInfo.x + 'px';
@@ -396,12 +400,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           duration: this.options.inDuration,
           easing: 'easeOutQuint',
           complete: function (anim) {
-            _this2.dropdownEl.focus();
+            _this3.dropdownEl.focus();
 
             // onOpenEnd callback
-            if (typeof _this2.options.onOpenEnd === 'function') {
+            if (typeof _this3.options.onOpenEnd === 'function') {
               var elem = anim.animatables[0].target;
-              _this2.options.onOpenEnd.call(elem, _this2.el);
+              _this3.options.onOpenEnd.call(elem, _this3.el);
             }
           }
         });
@@ -414,7 +418,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateOut',
       value: function _animateOut() {
-        var _this3 = this;
+        var _this4 = this;
 
         anim.remove(this.dropdownEl);
         anim({
@@ -428,12 +432,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           duration: this.options.outDuration,
           easing: 'easeOutQuint',
           complete: function (anim) {
-            _this3._resetDropdownStyles();
+            _this4._resetDropdownStyles();
 
             // onCloseEnd callback
-            if (typeof _this3.options.onCloseEnd === 'function') {
+            if (typeof _this4.options.onCloseEnd === 'function') {
               var elem = anim.animatables[0].target;
-              _this3.options.onCloseEnd.call(_this3, _this3.el);
+              _this4.options.onCloseEnd.call(_this4, _this4.el);
             }
           }
         });
@@ -493,12 +497,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Dropdown(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Dropdown.__proto__ || Object.getPrototypeOf(Dropdown), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -519,7 +519,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Dropdown;
-  }();
+  }(Component);
 
   /**
    * @static

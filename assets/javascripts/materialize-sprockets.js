@@ -1,4 +1,5 @@
 //= require ./materialize/cash
+//= require ./materialize/component
 //= require ./materialize/global
 //= require ./materialize/anime.min
 //= require ./materialize/collapsible

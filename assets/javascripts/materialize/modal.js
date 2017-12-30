@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($, anim) {
   'use strict';
@@ -9,8 +15,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     opacity: 0.5,
     inDuration: 250,
     outDuration: 250,
-    ready: undefined,
-    complete: undefined,
+    onOpenStart: null,
+    onOpenEnd: null,
+    onCloseStart: null,
+    onCloseEnd: null,
     dismissible: true,
     startingTop: '4%',
     endingTop: '10%'
@@ -21,7 +29,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var Modal = function () {
+  var Modal = function (_Component) {
+    _inherits(Modal, _Component);
+
     /**
      * Construct Modal instance and set up overlay
      * @constructor
@@ -31,14 +41,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function Modal(el, options) {
       _classCallCheck(this, Modal);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Modal) {
-        el.M_Modal.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Modal.__proto__ || Object.getPrototypeOf(Modal)).call(this, Modal, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Modal = this;
+      _this.el.M_Modal = _this;
 
       /**
        * Options for the modal
@@ -46,29 +51,32 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @prop {Number} [opacity=0.5] - Opacity of the modal overlay
        * @prop {Number} [inDuration=250] - Length in ms of enter transition
        * @prop {Number} [outDuration=250] - Length in ms of exit transition
-       * @prop {Function} ready - Callback function called when modal is finished entering
-       * @prop {Function} complete - Callback function called when modal is finished exiting
+       * @prop {Function} onOpenStart - Callback function called before modal is opened
+       * @prop {Function} onOpenEnd - Callback function called after modal is opened
+       * @prop {Function} onCloseStart - Callback function called before modal is closed
+       * @prop {Function} onCloseEnd - Callback function called after modal is closed
        * @prop {Boolean} [dismissible=true] - Allow modal to be dismissed by keyboard or overlay click
        * @prop {String} [startingTop='4%'] - startingTop
        * @prop {String} [endingTop='10%'] - endingTop
        */
-      this.options = $.extend({}, Modal.defaults, options);
+      _this.options = $.extend({}, Modal.defaults, options);
 
       /**
        * Describes open/close state of modal
        * @type {Boolean}
        */
-      this.isOpen = false;
+      _this.isOpen = false;
 
-      this.id = this.$el.attr('id');
-      this._openingTrigger = undefined;
-      this.$overlay = $('<div class="modal-overlay"></div>');
+      _this.id = _this.$el.attr('id');
+      _this._openingTrigger = undefined;
+      _this.$overlay = $('<div class="modal-overlay"></div>');
 
       Modal._increment++;
       Modal._count++;
-      this.$overlay[0].style.zIndex = 1000 + Modal._increment * 2;
-      this.el.style.zIndex = 1000 + Modal._increment * 2 + 1;
-      this._setupEventHandlers();
+      _this.$overlay[0].style.zIndex = 1000 + Modal._increment * 2;
+      _this.el.style.zIndex = 1000 + Modal._increment * 2 + 1;
+      _this._setupEventHandlers();
+      return _this;
     }
 
     _createClass(Modal, [{
@@ -183,7 +191,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateIn',
       value: function _animateIn() {
-        var _this = this;
+        var _this2 = this;
 
         // Set initial styles
         $.extend(this.el.style, {
@@ -208,10 +216,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           targets: this.el,
           duration: this.options.inDuration,
           easing: 'easeOutCubic',
-          // Handle modal ready callback
+          // Handle modal onOpenEnd callback
           complete: function () {
-            if (typeof _this.options.ready === 'function') {
-              _this.options.ready.call(_this, _this.el, _this._openingTrigger);
+            if (typeof _this2.options.onOpenEnd === 'function') {
+              _this2.options.onOpenEnd.call(_this2, _this2.el, _this2._openingTrigger);
             }
           }
         };
@@ -243,7 +251,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateOut',
       value: function _animateOut() {
-        var _this2 = this;
+        var _this3 = this;
 
         // Animate overlay
         anim({
@@ -260,12 +268,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           easing: 'easeOutCubic',
           // Handle modal ready callback
           complete: function () {
-            _this2.el.style.display = 'none';
-            // Call complete callback
-            if (typeof _this2.options.complete === 'function') {
-              _this2.options.complete.call(_this2, _this2.el);
+            _this3.el.style.display = 'none';
+            _this3.$overlay.remove();
+
+            // Call onCloseEnd callback
+            if (typeof _this3.options.onCloseEnd === 'function') {
+              _this3.options.onCloseEnd.call(_this3, _this3.el);
             }
-            _this2.$overlay.remove();
           }
         };
 
@@ -302,10 +311,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
 
         this.isOpen = true;
+
+        // onOpenStart callback
+        if (typeof this.options.onOpenStart === 'function') {
+          this.options.onOpenStart.call(this, this.el, this._openingTrigger);
+        }
+
         var body = document.body;
         body.style.overflow = 'hidden';
         this.el.classList.add('open');
-        body.appendChild(this.$overlay[0]);
+        this.el.insertAdjacentElement('afterend', this.$overlay[0]);
 
         // Set opening trigger, undefined indicates modal was opened by javascript
         this._openingTrigger = !!$trigger ? $trigger[0] : undefined;
@@ -333,6 +348,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
 
         this.isOpen = false;
+
+        // Call onCloseStart callback
+        if (typeof this.options.onCloseStart === 'function') {
+          this.options.onCloseStart.call(this, this.el);
+        }
+
         this.el.classList.remove('open');
         document.body.style.overflow = '';
 
@@ -347,12 +368,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Modal(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Modal.__proto__ || Object.getPrototypeOf(Modal), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -373,7 +390,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Modal;
-  }();
+  }(Component);
 
   /**
    * @static

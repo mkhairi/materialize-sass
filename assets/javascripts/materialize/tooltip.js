@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($, anim) {
   'use strict';
@@ -21,7 +27,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var Tooltip = function () {
+  var Tooltip = function (_Component) {
+    _inherits(Tooltip, _Component);
+
     /**
      * Construct Tooltip instance
      * @constructor
@@ -31,20 +39,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function Tooltip(el, options) {
       _classCallCheck(this, Tooltip);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Tooltip) {
-        el.M_Tooltip.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Tooltip.__proto__ || Object.getPrototypeOf(Tooltip)).call(this, Tooltip, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Tooltip = this;
-      this.options = $.extend({}, Tooltip.defaults, options);
+      _this.el.M_Tooltip = _this;
+      _this.options = $.extend({}, Tooltip.defaults, options);
 
-      this.isOpen = false;
-      this.isHovered = false;
-      this._appendTooltipEl();
-      this._setupEventHandlers();
+      _this.isOpen = false;
+      _this.isHovered = false;
+      _this._appendTooltipEl();
+      _this._setupEventHandlers();
+      return _this;
     }
 
     _createClass(Tooltip, [{
@@ -116,22 +120,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
       /**
-        * Create timeout which delays when the tooltip closes
-        */
+       * Create timeout which delays when the tooltip closes
+       */
 
     }, {
       key: '_setExitDelayTimeout',
       value: function _setExitDelayTimeout() {
-        var _this = this;
+        var _this2 = this;
 
         clearTimeout(this._exitDelayTimeout);
 
         this._exitDelayTimeout = setTimeout(function () {
-          if (_this.isHovered) {
+          if (_this2.isHovered) {
             return;
-          } else {
-            _this._animateOut();
           }
+
+          _this2._animateOut();
         }, this.options.exitDelay);
       }
 
@@ -142,16 +146,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_setEnterDelayTimeout',
       value: function _setEnterDelayTimeout() {
-        var _this2 = this;
+        var _this3 = this;
 
         clearTimeout(this._enterDelayTimeout);
 
         this._enterDelayTimeout = setTimeout(function () {
-          if (!_this2.isHovered) {
+          if (!_this3.isHovered) {
             return;
-          } else {
-            _this2._animateIn();
           }
+
+          _this3._animateIn();
         }, this.options.enterDelay);
       }
     }, {
@@ -227,7 +231,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           newY -= newY + height - window.innerHeight;
         }
 
-        return { x: newX + scrollLeft, y: newY + scrollTop };
+        return {
+          x: newX + scrollLeft,
+          y: newY + scrollTop
+        };
       }
     }, {
       key: '_animateIn',
@@ -287,12 +294,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Tooltip(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Tooltip.__proto__ || Object.getPrototypeOf(Tooltip), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -313,7 +316,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Tooltip;
-  }();
+  }(Component);
 
   M.Tooltip = Tooltip;
 

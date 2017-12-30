@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($, anim) {
   'use strict';
@@ -20,7 +26,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @class
    */
 
-  var Sidenav = function () {
+  var Sidenav = function (_Component) {
+    _inherits(Sidenav, _Component);
+
     /**
      * Construct Sidenav instance and set up overlay
      * @constructor
@@ -30,15 +38,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function Sidenav(el, options) {
       _classCallCheck(this, Sidenav);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Sidenav) {
-        el.M_Sidenav.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Sidenav.__proto__ || Object.getPrototypeOf(Sidenav)).call(this, Sidenav, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Sidenav = this;
-      this.id = this.$el.attr('id');
+      _this.el.M_Sidenav = _this;
+      _this.id = _this.$el.attr('id');
 
       /**
        * Options for the Sidenav
@@ -52,33 +55,34 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @prop {Function} onCloseStart - Function called when sidenav starts exiting
        * @prop {Function} onCloseEnd - Function called when sidenav finishes exiting
        */
-      this.options = $.extend({}, Sidenav.defaults, options);
+      _this.options = $.extend({}, Sidenav.defaults, options);
 
       /**
        * Describes open/close state of Sidenav
        * @type {Boolean}
        */
-      this.isOpen = false;
+      _this.isOpen = false;
 
       /**
        * Describes if Sidenav is fixed
        * @type {Boolean}
        */
-      this.isFixed = this.el.classList.contains('sidenav-fixed');
+      _this.isFixed = _this.el.classList.contains('sidenav-fixed');
 
       /**
        * Describes if Sidenav is being draggeed
        * @type {Boolean}
        */
-      this.isDragged = false;
+      _this.isDragged = false;
 
-      this._createOverlay();
-      this._createDragTarget();
-      this._setupEventHandlers();
-      this._setupClasses();
-      this._setupFixed();
+      _this._createOverlay();
+      _this._createDragTarget();
+      _this._setupEventHandlers();
+      _this._setupClasses();
+      _this._setupFixed();
 
-      Sidenav._sidenavs.push(this);
+      Sidenav._sidenavs.push(_this);
+      return _this;
     }
 
     _createClass(Sidenav, [{
@@ -483,7 +487,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateSidenavIn',
       value: function _animateSidenavIn() {
-        var _this = this;
+        var _this2 = this;
 
         var slideOutPercent = this.options.edge === 'left' ? -1 : 1;
         if (this.isDragged) {
@@ -498,8 +502,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           easing: 'easeOutQuad',
           complete: function () {
             // Run onOpenEnd callback
-            if (typeof _this.options.onOpenEnd === 'function') {
-              _this.options.onOpenEnd.call(_this, _this.el);
+            if (typeof _this2.options.onOpenEnd === 'function') {
+              _this2.options.onOpenEnd.call(_this2, _this2.el);
             }
           }
         });
@@ -533,7 +537,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateSidenavOut',
       value: function _animateSidenavOut() {
-        var _this2 = this;
+        var _this3 = this;
 
         var endPercent = this.options.edge === 'left' ? -1 : 1;
         var slideOutPercent = 0;
@@ -549,8 +553,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           easing: 'easeOutQuad',
           complete: function () {
             // Run onOpenEnd callback
-            if (typeof _this2.options.onCloseEnd === 'function') {
-              _this2.options.onCloseEnd.call(_this2, _this2.el);
+            if (typeof _this3.options.onCloseEnd === 'function') {
+              _this3.options.onCloseEnd.call(_this3, _this3.el);
             }
           }
         });
@@ -558,7 +562,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_animateOverlayOut',
       value: function _animateOverlayOut() {
-        var _this3 = this;
+        var _this4 = this;
 
         anim.remove(this._overlay);
         anim({
@@ -567,18 +571,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           duration: this.options.outDuration,
           easing: 'easeOutQuad',
           complete: function () {
-            $(_this3._overlay).css('display', 'none');
+            $(_this4._overlay).css('display', 'none');
           }
         });
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Sidenav(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Sidenav.__proto__ || Object.getPrototypeOf(Sidenav), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -599,7 +599,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Sidenav;
-  }();
+  }(Component);
 
   /**
    * @static

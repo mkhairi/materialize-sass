@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($) {
   'use strict';
@@ -21,7 +27,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var Autocomplete = function () {
+  var Autocomplete = function (_Component) {
+    _inherits(Autocomplete, _Component);
+
     /**
      * Construct Autocomplete instance
      * @constructor
@@ -31,14 +39,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function Autocomplete(el, options) {
       _classCallCheck(this, Autocomplete);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Autocomplete) {
-        el.M_Autocomplete.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Autocomplete.__proto__ || Object.getPrototypeOf(Autocomplete)).call(this, Autocomplete, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Autocomplete = this;
+      _this.el.M_Autocomplete = _this;
 
       /**
        * Options for the autocomplete
@@ -52,18 +55,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @prop {Boolean} noWrap
        * @prop {Function} onCycleTo
        */
-      this.options = $.extend({}, Autocomplete.defaults, options);
+      _this.options = $.extend({}, Autocomplete.defaults, options);
 
       // Setup
-      this.isOpen = false;
-      this.count = 0;
-      this.activeIndex = -1;
-      this.oldVal;
-      this.$inputField = this.$el.closest('.input-field');
-      this.$active = $();
-      this._setupDropdown();
+      _this.isOpen = false;
+      _this.count = 0;
+      _this.activeIndex = -1;
+      _this.oldVal;
+      _this.$inputField = _this.$el.closest('.input-field');
+      _this.$active = $();
+      _this._setupDropdown();
 
-      this._setupEventHandlers();
+      _this._setupEventHandlers();
+      return _this;
     }
 
     _createClass(Autocomplete, [{
@@ -314,7 +318,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_renderDropdown',
       value: function _renderDropdown(data, val) {
-        var _this = this;
+        var _this2 = this;
 
         this._removeAutocomplete();
 
@@ -340,7 +344,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // Sort
         var sortFunctionBound = function (a, b) {
-          return _this.options.sortFunction(a.key.toLowerCase(), b.key.toLowerCase(), val.toLowerCase());
+          return _this2.options.sortFunction(a.key.toLowerCase(), b.key.toLowerCase(), val.toLowerCase());
         };
         matchingData.sort(sortFunctionBound);
 
@@ -376,12 +380,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Autocomplete(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Autocomplete.__proto__ || Object.getPrototypeOf(Autocomplete), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -402,7 +402,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Autocomplete;
-  }();
+  }(Component);
 
   /**
    * @static

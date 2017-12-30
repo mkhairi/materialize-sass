@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($) {
   'use strict';
@@ -83,7 +89,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var Datepicker = function () {
+  var Datepicker = function (_Component) {
+    _inherits(Datepicker, _Component);
+
     /**
      * Construct Datepicker instance and set up overlay
      * @constructor
@@ -93,51 +101,48 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function Datepicker(el, options) {
       _classCallCheck(this, Datepicker);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Datepicker) {
-        el.M_Datepicker.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Datepicker.__proto__ || Object.getPrototypeOf(Datepicker)).call(this, Datepicker, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Datepicker = this;
+      _this.el.M_Datepicker = _this;
 
-      this.options = $.extend({}, Datepicker.defaults, options);
+      _this.options = $.extend({}, Datepicker.defaults, options);
 
       // Remove time component from minDate and maxDate options
-      if (this.options.minDate) this.options.minDate.setHours(0, 0, 0, 0);
-      if (this.options.maxDate) this.options.maxDate.setHours(0, 0, 0, 0);
+      if (_this.options.minDate) _this.options.minDate.setHours(0, 0, 0, 0);
+      if (_this.options.maxDate) _this.options.maxDate.setHours(0, 0, 0, 0);
 
-      this.id = M.guid();
+      _this.id = M.guid();
 
-      this._setupVariables();
-      this._insertHTMLIntoDOM();
-      this._setupModal();
+      _this._setupVariables();
+      _this._insertHTMLIntoDOM();
+      _this._setupModal();
 
-      this._setupEventHandlers();
+      _this._setupEventHandlers();
 
-      if (!this.options.defaultDate) {
-        this.options.defaultDate = new Date(Date.parse(this.el.value));
-        this.options.setDefaultDate = true;
+      if (!_this.options.defaultDate) {
+        _this.options.defaultDate = new Date(Date.parse(_this.el.value));
+        _this.options.setDefaultDate = true;
       }
 
-      var defDate = this.options.defaultDate;
+      var defDate = _this.options.defaultDate;
 
       if (Datepicker._isDate(defDate)) {
-        if (this.options.setDefaultDate) {
-          this.setDate(defDate, true);
+        if (_this.options.setDefaultDate) {
+          _this.setDate(defDate, true);
         } else {
-          this.gotoDate(defDate);
+          _this.gotoDate(defDate);
         }
       } else {
-        this.gotoDate(new Date());
+        _this.gotoDate(new Date());
       }
 
       /**
        * Describes open/close state of datepicker
        * @type {Boolean}
        */
-      this.isOpen = false;
+      _this.isOpen = false;
+
+      return _this;
     }
 
     _createClass(Datepicker, [{
@@ -147,7 +152,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       /**
        * Teardown component
        */
-      value: function destroy() {}
+      value: function destroy() {
+        this._removeEventHandlers();
+        this.modal.destroy();
+        $(this.modalEl).remove();
+        this.el.M_Datepicker = undefined;
+      }
     }, {
       key: '_insertHTMLIntoDOM',
       value: function _insertHTMLIntoDOM() {
@@ -165,19 +175,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_setupModal',
       value: function _setupModal() {
-        var _this = this;
+        var _this2 = this;
 
         this.modalEl.id = 'modal-' + this.id;
-        this.modal = new M.Modal(this.modalEl, {
-          complete: function () {
-            _this.isOpen = false;
+        this.modal = M.Modal.init(this.modalEl, {
+          onCloseEnd: function () {
+            _this2.isOpen = false;
           }
         });
       }
     }, {
       key: 'toString',
       value: function toString(format) {
-        var _this2 = this;
+        var _this3 = this;
 
         format = format || this.options.format;
         if (!Datepicker._isDate(this.date)) {
@@ -186,11 +196,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         var formatArray = format.split(/(d{1,4}|m{1,4}|y{4}|yy|!.)/g);
         var formattedDate = formatArray.map(function (label) {
-          if (_this2.formats[label]) {
-            return _this2.formats[label]();
-          } else {
-            return label;
+          if (_this3.formats[label]) {
+            return _this3.formats[label]();
           }
+
+          return label;
         }).join('');
         return formattedDate;
       }
@@ -569,8 +579,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         // Init Materialize Select
         var yearSelect = this.calendarEl.querySelector('.pika-select-year');
         var monthSelect = this.calendarEl.querySelector('.pika-select-month');
-        new M.Select(yearSelect, { classes: 'select-year' });
-        new M.Select(monthSelect, { classes: 'select-month' });
+        M.Select.init(yearSelect, { classes: 'select-year' });
+        M.Select.init(monthSelect, { classes: 'select-month' });
 
         // Add change handlers for select
         yearSelect.addEventListener('change', this._handleYearChange.bind(this));
@@ -608,7 +618,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_setupVariables',
       value: function _setupVariables() {
-        var _this3 = this;
+        var _this4 = this;
 
         this.$modalEl = $(Datepicker._template);
         this.modalEl = this.$modalEl[0];
@@ -624,28 +634,28 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.formats = {
 
           dd: function () {
-            return _this3.date.getDate();
+            return _this4.date.getDate();
           },
           ddd: function () {
-            return _this3.options.i18n.weekdaysShort[_this3.date.getDay()];
+            return _this4.options.i18n.weekdaysShort[_this4.date.getDay()];
           },
           dddd: function () {
-            return _this3.options.i18n.weekdays[_this3.date.getDay()];
+            return _this4.options.i18n.weekdays[_this4.date.getDay()];
           },
           mm: function () {
-            return _this3.date.getMonth() + 1;
+            return _this4.date.getMonth() + 1;
           },
           mmm: function () {
-            return _this3.options.i18n.monthsShort[_this3.date.getMonth()];
+            return _this4.options.i18n.monthsShort[_this4.date.getMonth()];
           },
           mmmm: function () {
-            return _this3.options.i18n.monthsShort[_this3.date.getMonth()];
+            return _this4.options.i18n.monthsShort[_this4.date.getMonth()];
           },
           yy: function () {
-            return _this3.date.getFullYear().slice(2);
+            return _this4.date.getFullYear().slice(2);
           },
           yyyy: function () {
-            return _this3.date.getFullYear();
+            return _this4.date.getFullYear();
           }
         };
       }
@@ -837,12 +847,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Datepicker(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Datepicker.__proto__ || Object.getPrototypeOf(Datepicker), 'init', this).call(this, this, els, options);
       }
     }, {
       key: '_isDate',
@@ -902,7 +908,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Datepicker;
-  }();
+  }(Component);
 
   Datepicker._template = ['<div class= "modal datepicker-modal">', '<div class="modal-content datepicker-container">', '<div class="datepicker-date-display">', '<span class="year-text"></span>', '<span class="date-text"></span>', '</div>', '<div class="datepicker-calendar-container">', '<div class="pika-single"></div>', '<div class="datepicker-footer">', '<button class="btn-flat datepicker-clear waves-effect" type="button"></button>', '<div class="confirmation-btns">', '<button class="btn-flat datepicker-today waves-effect" type="button"></button>', '<button class="btn-flat datepicker-done waves-effect" type="button"></button>', '</div>', '</div>', '</div>', '</div>', '</div>'].join('');
 

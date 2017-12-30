@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($, anim) {
   'use strict';
@@ -12,7 +18,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var Range = function () {
+  var Range = function (_Component) {
+    _inherits(Range, _Component);
+
     /**
      * Construct Range instance
      * @constructor
@@ -22,27 +30,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function Range(el, options) {
       _classCallCheck(this, Range);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Range) {
-        el.M_Range.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Range.__proto__ || Object.getPrototypeOf(Range)).call(this, Range, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Range = this;
+      _this.el.M_Range = _this;
 
       /**
        * Options for the range
        * @member Range#options
        */
-      this.options = $.extend({}, Range.defaults, options);
+      _this.options = $.extend({}, Range.defaults, options);
 
-      this._mousedown = false;
+      _this._mousedown = false;
 
       // Setup
-      this._setupThumb();
+      _this._setupThumb();
 
-      this._setupEventHandlers();
+      _this._setupEventHandlers();
+      return _this;
     }
 
     _createClass(Range, [{
@@ -289,14 +293,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          if (!$(this).hasClass('browser-default')) {
-            arr.push(new Range(this, options));
-          }
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Range.__proto__ || Object.getPrototypeOf(Range), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -317,7 +315,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Range;
-  }();
+  }(Component);
 
   M.Range = Range;
 

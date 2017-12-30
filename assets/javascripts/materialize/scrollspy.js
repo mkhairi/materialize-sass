@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($, anim) {
   'use strict';
@@ -19,7 +25,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var ScrollSpy = function () {
+  var ScrollSpy = function (_Component) {
+    _inherits(ScrollSpy, _Component);
+
     /**
      * Construct ScrollSpy instance
      * @constructor
@@ -29,14 +37,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function ScrollSpy(el, options) {
       _classCallCheck(this, ScrollSpy);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_ScrollSpy) {
-        el.M_ScrollSpy.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (ScrollSpy.__proto__ || Object.getPrototypeOf(ScrollSpy)).call(this, ScrollSpy, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_ScrollSpy = this;
+      _this.el.M_ScrollSpy = _this;
 
       /**
        * Options for the modal
@@ -46,16 +49,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @prop {String} [activeClass='active'] - Class applied to active elements
        * @prop {Function} [getActiveElement] - Used to find active element
        */
-      this.options = $.extend({}, ScrollSpy.defaults, options);
+      _this.options = $.extend({}, ScrollSpy.defaults, options);
 
       // setup
-      ScrollSpy._elements.push(this);
+      ScrollSpy._elements.push(_this);
       ScrollSpy._count++;
       ScrollSpy._increment++;
-      this.tickId = -1;
-      this.id = ScrollSpy._increment;
-      this._setupEventHandlers();
-      this._handleWindowScroll();
+      _this.tickId = -1;
+      _this.id = ScrollSpy._increment;
+      _this._setupEventHandlers();
+      _this._handleWindowScroll();
+      return _this;
     }
 
     _createClass(ScrollSpy, [{
@@ -208,7 +212,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_exit',
       value: function _exit() {
-        var _this = this;
+        var _this2 = this;
 
         ScrollSpy._visibleElements = ScrollSpy._visibleElements.filter(function (value) {
           return value.height() != 0;
@@ -218,7 +222,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           $(this.options.getActiveElement(ScrollSpy._visibleElements[0].attr('id'))).removeClass(this.options.activeClass);
 
           ScrollSpy._visibleElements = ScrollSpy._visibleElements.filter(function (el) {
-            return el.attr('id') != _this.$el.attr('id');
+            return el.attr('id') != _this2.$el.attr('id');
           });
           if (ScrollSpy._visibleElements[0]) {
             // Check if empty
@@ -228,12 +232,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new ScrollSpy(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(ScrollSpy.__proto__ || Object.getPrototypeOf(ScrollSpy), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -277,7 +277,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return ScrollSpy;
-  }();
+  }(Component);
 
   /**
    * @static

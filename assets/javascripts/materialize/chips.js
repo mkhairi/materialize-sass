@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($) {
   'use strict';
@@ -27,7 +33,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var Chips = function () {
+  var Chips = function (_Component) {
+    _inherits(Chips, _Component);
+
     /**
      * Construct Chips instance and set up overlay
      * @constructor
@@ -37,14 +45,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function Chips(el, options) {
       _classCallCheck(this, Chips);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Chips) {
-        el.M_Chips.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Chips.__proto__ || Object.getPrototypeOf(Chips)).call(this, Chips, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Chips = this;
+      _this.el.M_Chips = _this;
 
       /**
        * Options for the modal
@@ -54,33 +57,34 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @prop {String} secondaryPlaceholder
        * @prop {Object} autocompleteOptions
        */
-      this.options = $.extend({}, Chips.defaults, options);
+      _this.options = $.extend({}, Chips.defaults, options);
 
-      this.$el.addClass('chips input-field');
-      this.chipsData = [];
-      this.$chips = $();
-      this._setupInput();
-      this.hasAutocomplete = Object.keys(this.options.autocompleteOptions).length > 0;
+      _this.$el.addClass('chips input-field');
+      _this.chipsData = [];
+      _this.$chips = $();
+      _this._setupInput();
+      _this.hasAutocomplete = Object.keys(_this.options.autocompleteOptions).length > 0;
 
       // Set input id
-      if (!this.$input.attr('id')) {
-        this.$input.attr('id', M.guid());
+      if (!_this.$input.attr('id')) {
+        _this.$input.attr('id', M.guid());
       }
 
       // Render initial chips
-      if (this.options.data.length) {
-        this.chipsData = this.options.data;
-        this._renderChips(this.chipsData);
+      if (_this.options.data.length) {
+        _this.chipsData = _this.options.data;
+        _this._renderChips(_this.chipsData);
       }
 
       // Setup autocomplete if needed
-      if (this.hasAutocomplete) {
-        this._setupAutocomplete();
+      if (_this.hasAutocomplete) {
+        _this._setupAutocomplete();
       }
 
-      this._setPlaceholder();
-      this._setupLabel();
-      this._setupEventHandlers();
+      _this._setPlaceholder();
+      _this._setupLabel();
+      _this._setupEventHandlers();
+      return _this;
     }
 
     _createClass(Chips, [{
@@ -214,7 +218,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }
 
           e.preventDefault();
-          this.addChip({ tag: this.$input[0].value });
+          this.addChip({
+            tag: this.$input[0].value
+          });
           this.$input[0].value = '';
 
           // delete or left
@@ -281,12 +287,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_setupAutocomplete',
       value: function _setupAutocomplete() {
-        var _this = this;
+        var _this2 = this;
 
         this.options.autocompleteOptions.onAutocomplete = function (val) {
-          _this.addChip({ tag: val });
-          _this.$input[0].value = '';
-          _this.$input[0].focus();
+          _this2.addChip({
+            tag: val
+          });
+          _this2.$input[0].value = '';
+          _this2.$input[0].focus();
         };
 
         this.autocomplete = M.Autocomplete.init(this.$input, this.options.autocompleteOptions)[0];
@@ -352,9 +360,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }
           }
           return !exists;
-        } else {
-          return false;
         }
+
+        return false;
       }
 
       /**
@@ -422,12 +430,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Chips(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Chips.__proto__ || Object.getPrototypeOf(Chips), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -529,7 +533,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Chips;
-  }();
+  }(Component);
 
   /**
    * @static

@@ -1,18 +1,29 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($) {
   'use strict';
 
-  var _defaults = {};
+  var _defaults = {
+    onOpen: undefined,
+    onClose: undefined
+  };
 
   /**
    * @class
    *
    */
 
-  var FeatureDiscovery = function () {
+  var FeatureDiscovery = function (_Component) {
+    _inherits(FeatureDiscovery, _Component);
+
     /**
      * Construct FeatureDiscovery instance
      * @constructor
@@ -22,29 +33,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function FeatureDiscovery(el, options) {
       _classCallCheck(this, FeatureDiscovery);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_FeatureDiscovery) {
-        el.M_FeatureDiscovery.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (FeatureDiscovery.__proto__ || Object.getPrototypeOf(FeatureDiscovery)).call(this, FeatureDiscovery, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_FeatureDiscovery = this;
+      _this.el.M_FeatureDiscovery = _this;
 
       /**
        * Options for the select
        * @member FeatureDiscovery#options
+       * @prop {Function} onOpen - Callback function called when feature discovery is opened
+       * @prop {Function} onClose - Callback function called when feature discovery is closed
        */
-      this.options = $.extend({}, FeatureDiscovery.defaults, options);
+      _this.options = $.extend({}, FeatureDiscovery.defaults, options);
 
-      this.isOpen = false;
+      _this.isOpen = false;
 
       // setup
-      this.$origin = $('#' + this.$el.attr('data-target'));
-      this._setup();
+      _this.$origin = $('#' + _this.$el.attr('data-target'));
+      _this._setup();
 
-      this._calculatePositioning();
-      this._setupEventHandlers();
+      _this._calculatePositioning();
+      _this._setupEventHandlers();
+      return _this;
     }
 
     _createClass(FeatureDiscovery, [{
@@ -287,10 +296,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           return;
         }
 
+        // onOpen callback
+        if (typeof this.options.onOpen === 'function') {
+          this.options.onOpen.call(this, this.$origin[0]);
+        }
+
         this.isOpen = true;
         this.wrapper.classList.add('open');
 
         document.body.addEventListener('click', this._handleDocumentClickBound, true);
+        document.body.addEventListener('touchend', this._handleDocumentClickBound);
       }
 
       /**
@@ -304,19 +319,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           return;
         }
 
+        // onClose callback
+        if (typeof this.options.onClose === 'function') {
+          this.options.onClose.call(this, this.$origin[0]);
+        }
+
         this.isOpen = false;
         this.wrapper.classList.remove('open');
 
         document.body.removeEventListener('click', this._handleDocumentClickBound, true);
+        document.body.removeEventListener('touchend', this._handleDocumentClickBound);
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new FeatureDiscovery(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(FeatureDiscovery.__proto__ || Object.getPrototypeOf(FeatureDiscovery), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -337,7 +354,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return FeatureDiscovery;
-  }();
+  }(Component);
 
   M.FeatureDiscovery = FeatureDiscovery;
 

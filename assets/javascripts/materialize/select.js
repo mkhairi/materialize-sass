@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($) {
   'use strict';
@@ -14,7 +20,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var Select = function () {
+  var Select = function (_Component) {
+    _inherits(Select, _Component);
+
     /**
      * Construct Select instance
      * @constructor
@@ -24,29 +32,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function Select(el, options) {
       _classCallCheck(this, Select);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Select) {
-        el.M_Select.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Select.__proto__ || Object.getPrototypeOf(Select)).call(this, Select, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Select = this;
+      _this.el.M_Select = _this;
 
       /**
        * Options for the select
        * @member Select#options
        */
-      this.options = $.extend({}, Select.defaults, options);
+      _this.options = $.extend({}, Select.defaults, options);
 
-      this.isMultiple = this.$el.prop('multiple');
+      _this.isMultiple = _this.$el.prop('multiple');
 
       // Setup
-      this._keysSelected = {};
-      this._valueDict = {}; // Maps key to original and generated option element.
-      this._setupDropdown();
+      _this._keysSelected = {};
+      _this._valueDict = {}; // Maps key to original and generated option element.
+      _this._setupDropdown();
 
-      this._setupEventHandlers();
+      _this._setupEventHandlers();
+      return _this;
     }
 
     _createClass(Select, [{
@@ -69,14 +73,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_setupEventHandlers',
       value: function _setupEventHandlers() {
-        var _this = this;
+        var _this2 = this;
 
         this._handleSelectChangeBound = this._handleSelectChange.bind(this);
         this._handleOptionClickBound = this._handleOptionClick.bind(this);
         this._handleInputClickBound = this._handleInputClick.bind(this);
 
         $(this.dropdownOptions).find('li:not(.optgroup)').each(function (el) {
-          el.addEventListener('click', _this._handleOptionClickBound);
+          el.addEventListener('click', _this2._handleOptionClickBound);
         });
         this.el.addEventListener('change', this._handleSelectChangeBound);
         this.input.addEventListener('click', this._handleInputClickBound);
@@ -89,10 +93,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_removeEventHandlers',
       value: function _removeEventHandlers() {
-        var _this2 = this;
+        var _this3 = this;
 
         $(this.dropdownOptions).find('li:not(.optgroup)').each(function (el) {
-          el.removeEventListener('click', _this2._handleOptionClickBound);
+          el.removeEventListener('click', _this3._handleOptionClickBound);
         });
         this.el.removeEventListener('change', this._handleSelectChangeBound);
         this.input.removeEventListener('click', this._handleInputClickBound);
@@ -125,6 +129,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var selected = true;
 
           if (this.isMultiple) {
+            // Deselect placeholder option if still selected.
+            var placeholderOption = $(this.dropdownOptions).find('li.disabled.selected');
+            if (placeholderOption.length) {
+              placeholderOption.removeClass('selected');
+              placeholderOption.find('input[type="checkbox"]').prop('checked', false);
+              this._toggleEntryFromArray(placeholderOption[0].id);
+            }
+
             var checkbox = $(option).find('input[type="checkbox"]');
             checkbox.prop('checked', !checkbox.prop('checked'));
             selected = this._toggleEntryFromArray(key);
@@ -162,7 +174,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_setupDropdown',
       value: function _setupDropdown() {
-        var _this3 = this;
+        var _this4 = this;
 
         this.wrapper = document.createElement('div');
         $(this.wrapper).addClass('select-wrapper' + ' ' + this.options.classes);
@@ -185,21 +197,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if ($(el).is('option')) {
               // Direct descendant option.
               var optionEl = void 0;
-              if (_this3.isMultiple) {
-                optionEl = _this3._appendOptionWithIcon(_this3.$el, el, 'multiple');
+              if (_this4.isMultiple) {
+                optionEl = _this4._appendOptionWithIcon(_this4.$el, el, 'multiple');
               } else {
-                optionEl = _this3._appendOptionWithIcon(_this3.$el, el);
+                optionEl = _this4._appendOptionWithIcon(_this4.$el, el);
               }
 
-              _this3._addOptionToValueDict(el, optionEl);
+              _this4._addOptionToValueDict(el, optionEl);
             } else if ($(el).is('optgroup')) {
               // Optgroup.
               var selectOptions = $(el).children('option');
-              $(_this3.dropdownOptions).append($('<li class="optgroup"><span>' + el.getAttribute('label') + '</span></li>')[0]);
+              $(_this4.dropdownOptions).append($('<li class="optgroup"><span>' + el.getAttribute('label') + '</span></li>')[0]);
 
               selectOptions.each(function (el) {
-                var optionEl = _this3._appendOptionWithIcon(_this3.$el, el, 'optgroup-option');
-                _this3._addOptionToValueDict(el, optionEl);
+                var optionEl = _this4._appendOptionWithIcon(_this4.$el, el, 'optgroup-option');
+                _this4._addOptionToValueDict(el, optionEl);
               });
             }
           });
@@ -230,7 +242,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           if (this.isMultiple) {
             dropdownOptions.closeOnClick = false;
           }
-          this.dropdown = new M.Dropdown(this.input, dropdownOptions);
+          this.dropdown = M.Dropdown.init(this.input, dropdownOptions);
         }
 
         // Add initial selections
@@ -412,14 +424,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          if (!$(this).hasClass('browser-default')) {
-            arr.push(new Select(this, options));
-          }
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Select.__proto__ || Object.getPrototypeOf(Select), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -440,7 +446,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Select;
-  }();
+  }(Component);
 
   M.Select = Select;
 

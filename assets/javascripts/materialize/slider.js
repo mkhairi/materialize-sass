@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($, anim) {
   'use strict';
@@ -17,7 +23,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var Slider = function () {
+  var Slider = function (_Component) {
+    _inherits(Slider, _Component);
+
     /**
      * Construct Slider instance and set up overlay
      * @constructor
@@ -25,18 +33,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @param {Object} options
      */
     function Slider(el, options) {
-      var _this = this;
-
       _classCallCheck(this, Slider);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Slider) {
-        el.M_Slider.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Slider.__proto__ || Object.getPrototypeOf(Slider)).call(this, Slider, el, options));
 
-      this.el = el;
-      this.$el = $(el);
-      this.el.M_Slider = this;
+      _this.el.M_Slider = _this;
 
       /**
        * Options for the modal
@@ -46,25 +47,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @prop {Number} [duration=500] - Length in ms of slide transition
        * @prop {Number} [interval=6000] - Length in ms of slide interval
        */
-      this.options = $.extend({}, Slider.defaults, options);
+      _this.options = $.extend({}, Slider.defaults, options);
 
       // setup
-      this.$slider = this.$el.find('.slides');
-      this.$slides = this.$slider.children('li');
-      this.activeIndex = this.$slider.find('.active').index();
-      if (this.activeIndex != -1) {
-        this.$active = this.$slides.eq(this.activeIndex);
+      _this.$slider = _this.$el.find('.slides');
+      _this.$slides = _this.$slider.children('li');
+      _this.activeIndex = _this.$slider.find('.active').index();
+      if (_this.activeIndex != -1) {
+        _this.$active = _this.$slides.eq(_this.activeIndex);
       }
 
-      this._setSliderHeight();
+      _this._setSliderHeight();
 
       // Set initial positions of captions
-      this.$slides.find('.caption').each(function (el) {
+      _this.$slides.find('.caption').each(function (el) {
         _this._animateCaptionIn(el, 0);
       });
 
       // Move img src into background-image
-      this.$slides.find('img').each(function (el) {
+      _this.$slides.find('img').each(function (el) {
         var placeholderBase64 = 'data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
         if ($(el).attr('src') !== placeholderBase64) {
           $(el).css('background-image', 'url("' + $(el).attr('src') + '")');
@@ -72,31 +73,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       });
 
-      this._setupIndicators();
+      _this._setupIndicators();
 
       // Show active slide
-      if (this.$active) {
-        this.$active.css('display', 'block');
+      if (_this.$active) {
+        _this.$active.css('display', 'block');
       } else {
-        this.$slides.first().addClass('active');
+        _this.$slides.first().addClass('active');
         anim({
-          targets: this.$slides.first()[0],
+          targets: _this.$slides.first()[0],
           opacity: 1,
-          duration: this.options.duration,
+          duration: _this.options.duration,
           easing: 'easeOutQuad'
         });
 
-        this.activeIndex = 0;
-        this.$active = this.$slides.eq(this.activeIndex);
+        _this.activeIndex = 0;
+        _this.$active = _this.$slides.eq(_this.activeIndex);
 
         // Update indicators
-        if (this.options.indicators) {
-          this.$indicators.eq(this.activeIndex).addClass('active');
+        if (_this.options.indicators) {
+          _this.$indicators.eq(_this.activeIndex).addClass('active');
         }
       }
 
       // Adjust height to current slide
-      this.$active.find('img').each(function (el) {
+      _this.$active.find('img').each(function (el) {
         anim({
           targets: _this.$active.find('.caption')[0],
           opacity: 1,
@@ -107,10 +108,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         });
       });
 
-      this._setupEventHandlers();
+      _this._setupEventHandlers();
 
       // auto scroll
-      this.start();
+      _this.start();
+      return _this;
     }
 
     _createClass(Slider, [{
@@ -387,12 +389,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Slider(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Slider.__proto__ || Object.getPrototypeOf(Slider), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -413,7 +411,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Slider;
-  }();
+  }(Component);
 
   M.Slider = Slider;
 

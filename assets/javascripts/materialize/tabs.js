@@ -1,6 +1,12 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (function ($, anim) {
   'use strict';
@@ -17,7 +23,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    */
 
-  var Tabs = function () {
+  var Tabs = function (_Component) {
+    _inherits(Tabs, _Component);
+
     /**
      * Construct Tabs instance
      * @constructor
@@ -27,18 +35,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function Tabs(el, options) {
       _classCallCheck(this, Tabs);
 
-      // If exists, destroy and reinitialize
-      if (!!el.M_Tabs) {
-        el.M_Tabs.destroy();
-      }
+      var _this = _possibleConstructorReturn(this, (Tabs.__proto__ || Object.getPrototypeOf(Tabs)).call(this, Tabs, el, options));
 
-      /**
-       * The jQuery element
-       * @type {jQuery}
-       */
-      this.$el = $(el);
-
-      this.el = el;
+      _this.el.M_Tabs = _this;
 
       /**
        * Options for the Tabs
@@ -48,24 +47,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @prop {Boolean} swipeable
        * @prop {Number} responsiveThreshold
        */
-      this.options = $.extend({}, Tabs.defaults, options);
-
-      this.el.M_Tabs = this;
+      _this.options = $.extend({}, Tabs.defaults, options);
 
       // Setup
-      this.$tabLinks = this.$el.children('li.tab').children('a');
-      this.index = 0;
-      this._setTabsAndTabWidth();
-      this._setupActiveTabLink();
-      this._createIndicator();
+      _this.$tabLinks = _this.$el.children('li.tab').children('a');
+      _this.index = 0;
+      _this._setTabsAndTabWidth();
+      _this._setupActiveTabLink();
+      _this._createIndicator();
 
-      if (this.options.swipeable) {
-        this._setupSwipeableTabs();
+      if (_this.options.swipeable) {
+        _this._setupSwipeableTabs();
       } else {
-        this._setupNormalTabs();
+        _this._setupNormalTabs();
       }
 
-      this._setupEventHandlers();
+      _this._setupEventHandlers();
+      return _this;
     }
 
     _createClass(Tabs, [{
@@ -136,7 +134,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_handleTabClick',
       value: function _handleTabClick(e) {
-        var _this = this;
+        var _this2 = this;
 
         var tab = $(e.target).closest('li.tab');
         var tabLink = $(e.target).closest('a');
@@ -176,8 +174,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (this.options.swipeable) {
           if (this._tabsCarousel) {
             this._tabsCarousel.set(this.index, function () {
-              if (typeof _this.options.onShow === "function") {
-                _this.options.onShow.call(_this, _this.$content[0]);
+              if (typeof _this2.options.onShow === "function") {
+                _this2.options.onShow.call(_this2, _this2.$content[0]);
               }
             });
           }
@@ -210,7 +208,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_createIndicator',
       value: function _createIndicator() {
-        var _this2 = this;
+        var _this3 = this;
 
         var indicator = document.createElement('li');
         indicator.classList.add('indicator');
@@ -219,8 +217,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this._indicator = indicator;
 
         setTimeout(function () {
-          _this2._indicator.style.left = _this2._calcLeftPos(_this2.$activeTabLink) + 'px';
-          _this2._indicator.style.right = _this2._calcRightPos(_this2.$activeTabLink) + 'px';
+          _this3._indicator.style.left = _this3._calcLeftPos(_this3.$activeTabLink) + 'px';
+          _this3._indicator.style.right = _this3._calcRightPos(_this3.$activeTabLink) + 'px';
         }, 0);
       }
 
@@ -260,7 +258,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_setupSwipeableTabs',
       value: function _setupSwipeableTabs() {
-        var _this3 = this;
+        var _this4 = this;
 
         // Change swipeable according to responsive threshold
         if (window.innerWidth > this.options.responsiveThreshold) {
@@ -279,18 +277,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         $tabsWrapper.append($tabsContent);
         $tabsContent[0].style.display = '';
 
-        this._tabsCarousel = new M.Carousel($tabsWrapper[0], {
+        this._tabsCarousel = M.Carousel.init($tabsWrapper[0], {
           fullWidth: true,
           noWrap: true,
           onCycleTo: function (item) {
-            var prevIndex = _this3.index;
-            _this3.index = $(item).index();
-            _this3.$activeTabLink.removeClass('active');
-            _this3.$activeTabLink = _this3.$tabLinks.eq(_this3.index);
-            _this3.$activeTabLink.addClass('active');
-            _this3._animateIndicator(prevIndex);
-            if (typeof _this3.options.onShow === "function") {
-              _this3.options.onShow.call(_this3, _this3.$content[0]);
+            var prevIndex = _this4.index;
+            _this4.index = $(item).index();
+            _this4.$activeTabLink.removeClass('active');
+            _this4.$activeTabLink = _this4.$tabLinks.eq(_this4.index);
+            _this4.$activeTabLink.addClass('active');
+            _this4._animateIndicator(prevIndex);
+            if (typeof _this4.options.onShow === "function") {
+              _this4.options.onShow.call(_this4, _this4.$content[0]);
             }
           }
         });
@@ -430,18 +428,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function select(tabId) {
         var tab = this.$tabLinks.filter('[href="#' + tabId + '"]');
         if (tab.length) {
-          4;
           tab.trigger('click');
         }
       }
     }], [{
       key: 'init',
-      value: function init($els, options) {
-        var arr = [];
-        $els.each(function () {
-          arr.push(new Tabs(this, options));
-        });
-        return arr;
+      value: function init(els, options) {
+        return _get(Tabs.__proto__ || Object.getPrototypeOf(Tabs), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -462,7 +455,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Tabs;
-  }();
+  }(Component);
 
   window.M.Tabs = Tabs;
 
