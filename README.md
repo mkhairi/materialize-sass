@@ -74,7 +74,7 @@ Require Materialize javascripts in `app/assets/javascripts/application.js`:
 
 or 
 
-Require materialize-sprockets to provides individual Materialize components for ease of debugging
+Require materialize-sprockets to provide individual Materialize components for ease of debugging
 
 ```js
 //= require materialize-sprockets
