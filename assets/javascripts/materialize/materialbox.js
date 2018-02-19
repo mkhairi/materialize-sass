@@ -97,8 +97,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
        */
 
     }, {
-      key: 'removeEventHandlers',
-      value: function removeEventHandlers() {
+      key: '_removeEventHandlers',
+      value: function _removeEventHandlers() {
         this.el.removeEventListener('click', this._handleMaterialboxClickBound);
       }
 
@@ -190,8 +190,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         var animOptions = {
           targets: this.el,
-          height: this.newHeight,
-          width: this.newWidth,
+          height: [this.originalHeight, this.newHeight],
+          width: [this.originalWidth, this.newWidth],
           left: M.getDocumentScrollLeft() + this.windowWidth / 2 - this.placeholder.offset().left - this.newWidth / 2,
           top: M.getDocumentScrollTop() + this.windowHeight / 2 - this.placeholder.offset().top - this.newHeight / 2,
           duration: this.options.inDuration,
@@ -206,12 +206,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }
         };
 
-        if (this.$el.hasClass('responsive-img')) {
+        // Override max-width or max-height if needed
+        this.maxWidth = this.$el.css('max-width');
+        this.maxHeight = this.$el.css('max-height');
+        if (this.maxWidth !== 'none') {
           animOptions.maxWidth = this.newWidth;
-          animOptions.width = [this.originalWidth, animOptions.width];
-        } else {
-          animOptions.left = [animOptions.left, 0];
-          animOptions.top = [animOptions.top, 0];
+        }
+        if (this.maxHeight !== 'none') {
+          animOptions.maxHeight = this.newHeight;
         }
 
         anim(animOptions);
@@ -242,6 +244,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               top: '',
               left: ''
             });
+
+            // Revert to width or height attribute
+            if (_this3.attrWidth) {
+              _this3.$el.attr('width', _this3.attrWidth);
+            }
+            if (_this3.attrHeight) {
+              _this3.$el.attr('height', _this3.attrHeight);
+            }
 
             _this3.$el.removeAttr('style');
             _this3.$el.attr('style', _this3.originInlineStyles);
@@ -318,6 +328,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           'will-change': 'left, top, width, height'
         });
 
+        // Change from width or height attribute to css
+        this.attrWidth = this.$el.attr('width');
+        this.attrHeight = this.$el.attr('height');
+        if (this.attrWidth) {
+          this.$el.css('width', this.attrWidth + 'px');
+          this.$el.removeAttr('width');
+        }
+        if (this.attrHeight) {
+          this.$el.css('width', this.attrHeight + 'px');
+          this.$el.removeAttr('height');
+        }
+
         // Add overlay
         this.$overlay = $('<div id="materialbox-overlay"></div>').css({
           opacity: 0
@@ -342,10 +364,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         anim.remove(this.el);
         anim.remove(this.$overlay[0]);
 
-        if (this.caption !== "") {
-          anim.remove(this.$photoCaption[0]);
-        }
-
         // Animate Overlay
         anim({
           targets: this.$overlay[0],
@@ -356,6 +374,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         // Add and animate caption if it exists
         if (this.caption !== "") {
+          if (this.$photocaption) {
+            anim.remove(this.$photoCaption[0]);
+          }
           this.$photoCaption = $('<div class="materialbox-caption"></div>');
           this.$photoCaption.text(this.caption);
           $('body').append(this.$photoCaption);

@@ -20,9 +20,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 				container: null,
 				defaultTime: 'now', // default time, 'now' or '13:14' e.g.
 				fromnow: 0, // Millisecond offset from the defaultTime
-				doneText: 'Ok', // done button text
-				clearText: 'Clear',
-				cancelText: 'Cancel',
+
+				// internationalization
+				i18n: {
+						done: 'Ok',
+						clear: 'Clear',
+						cancel: 'Cancel'
+				},
+
 				autoClose: false, // auto close when minute is selected
 				twelveHour: true, // change to 12 hour AM/PM clock from 24 hour
 				vibrate: true // vibrate the device when dragging clock hand
@@ -148,6 +153,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 				}, {
 						key: '_handleDocumentClickEnd',
 						value: function _handleDocumentClickEnd(e) {
+								var _this2 = this;
+
 								e.preventDefault();
 								document.removeEventListener('mouseup', this._handleDocumentClickEndBound);
 								document.removeEventListener('touchend', this._handleDocumentClickEndBound);
@@ -161,9 +168,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 								if (this.currentView === 'hours') {
 										this.showView('minutes', this.options.duration / 2);
 								} else if (this.options.autoClose) {
-										this.minutesView.addClass('timepicker-dial-out');
+										$(this.minutesView).addClass('timepicker-dial-out');
 										setTimeout(function () {
-												this.done();
+												_this2.done();
 										}, this.options.duration / 2);
 								}
 
@@ -189,11 +196,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 				}, {
 						key: '_setupModal',
 						value: function _setupModal() {
-								var _this2 = this;
+								var _this3 = this;
 
 								this.modal = M.Modal.init(this.modalEl, {
 										onCloseEnd: function () {
-												_this2.isOpen = false;
+												_this3.isOpen = false;
 										}
 								});
 						}
@@ -217,11 +224,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 				}, {
 						key: '_pickerSetup',
 						value: function _pickerSetup() {
-								$('<button class="btn-flat timepicker-clear waves-effect" type="button" tabindex="' + (this.options.twelveHour ? '3' : '1') + '">' + this.options.clearText + '</button>').appendTo(this.footer).on('click', this.clear.bind(this));
+								$('<button class="btn-flat timepicker-clear waves-effect" type="button" tabindex="' + (this.options.twelveHour ? '3' : '1') + '">' + this.options.i18n.clear + '</button>').appendTo(this.footer).on('click', this.clear.bind(this));
 
 								var confirmationBtnsContainer = $('<div class="confirmation-btns"></div>');
-								$('<button class="btn-flat timepicker-close waves-effect" type="button" tabindex="' + (this.options.twelveHour ? '3' : '1') + '">' + this.options.cancelText + '</button>').appendTo(confirmationBtnsContainer).on('click', this.close.bind(this));
-								$('<button class="btn-flat timepicker-close waves-effect" type="button" tabindex="' + (this.options.twelveHour ? '3' : '1') + '">' + this.options.doneText + '</button>').appendTo(confirmationBtnsContainer).on('click', this.done.bind(this));
+								$('<button class="btn-flat timepicker-close waves-effect" type="button" tabindex="' + (this.options.twelveHour ? '3' : '1') + '">' + this.options.i18n.cancel + '</button>').appendTo(confirmationBtnsContainer).on('click', this.close.bind(this));
+								$('<button class="btn-flat timepicker-close waves-effect" type="button" tabindex="' + (this.options.twelveHour ? '3' : '1') + '">' + this.options.i18n.done + '</button>').appendTo(confirmationBtnsContainer).on('click', this.done.bind(this));
 								confirmationBtnsContainer.appendTo(this.footer);
 						}
 				}, {
@@ -419,7 +426,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 				}, {
 						key: 'setHand',
 						value: function setHand(x, y, roundBy5) {
-								var _this3 = this;
+								var _this4 = this;
 
 								var radian = Math.atan2(x, -y),
 								    isHours = this.currentView === 'hours',
@@ -474,7 +481,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 												if (!this.vibrateTimer) {
 														navigator[this.vibrate](10);
 														this.vibrateTimer = setTimeout(function () {
-																_this3.vibrateTimer = null;
+																_this4.vibrateTimer = null;
 														}, 100);
 												}
 										}

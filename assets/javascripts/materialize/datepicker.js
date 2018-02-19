@@ -69,8 +69,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       nextMonth: '›',
       months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       weekdaysAbbrev: ['S', 'M', 'T', 'W', 'T', 'F', 'S']
     },
 
@@ -106,6 +106,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this.el.M_Datepicker = _this;
 
       _this.options = $.extend({}, Datepicker.defaults, options);
+
+      // make sure i18n defaults are not lost when only few i18n option properties are passed
+      if (!!options && options.hasOwnProperty('i18n') && typeof options.i18n === 'object') {
+        _this.options.i18n = $.extend({}, Datepicker.defaults.i18n, options.i18n);
+      }
 
       // Remove time component from minDate and maxDate options
       if (_this.options.minDate) _this.options.minDate.setHours(0, 0, 0, 0);
@@ -574,13 +579,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           html += this.renderTitle(this, c, this.calendars[c].year, this.calendars[c].month, this.calendars[0].year, randId) + this.render(this.calendars[c].year, this.calendars[c].month, randId);
         }
 
+        // Destroy Materialize Select
+        var oldYearSelect = this.calendarEl.querySelector('.pika-select-year');
+        if (oldYearSelect) {
+          M.FormSelect.getInstance(oldYearSelect).destroy();
+        }
+        var oldMonthSelect = this.calendarEl.querySelector('.pika-select-month');
+        if (oldMonthSelect) {
+          M.FormSelect.getInstance(oldMonthSelect).destroy();
+        }
+
         this.calendarEl.innerHTML = html;
 
         // Init Materialize Select
         var yearSelect = this.calendarEl.querySelector('.pika-select-year');
         var monthSelect = this.calendarEl.querySelector('.pika-select-month');
-        M.Select.init(yearSelect, { classes: 'select-year' });
-        M.Select.init(monthSelect, { classes: 'select-month' });
+        M.FormSelect.init(yearSelect, { classes: 'select-year', dropdownOptions: { container: document.body, constrainWidth: false } });
+        M.FormSelect.init(monthSelect, { classes: 'select-month', dropdownOptions: { container: document.body, constrainWidth: false } });
 
         // Add change handlers for select
         yearSelect.addEventListener('change', this._handleYearChange.bind(this));
@@ -633,8 +648,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         this.formats = {
 
-          dd: function () {
+          d: function () {
             return _this4.date.getDate();
+          },
+          dd: function () {
+            var d = _this4.date.getDate();
+            return (d < 10 ? '0' : '') + d;
           },
           ddd: function () {
             return _this4.options.i18n.weekdaysShort[_this4.date.getDay()];
@@ -642,17 +661,21 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           dddd: function () {
             return _this4.options.i18n.weekdays[_this4.date.getDay()];
           },
-          mm: function () {
+          m: function () {
             return _this4.date.getMonth() + 1;
+          },
+          mm: function () {
+            var m = _this4.date.getMonth() + 1;
+            return (m < 10 ? '0' : '') + m;
           },
           mmm: function () {
             return _this4.options.i18n.monthsShort[_this4.date.getMonth()];
           },
           mmmm: function () {
-            return _this4.options.i18n.monthsShort[_this4.date.getMonth()];
+            return _this4.options.i18n.months[_this4.date.getMonth()];
           },
           yy: function () {
-            return _this4.date.getFullYear().slice(2);
+            return ('' + _this4.date.getFullYear()).slice(2);
           },
           yyyy: function () {
             return _this4.date.getFullYear();

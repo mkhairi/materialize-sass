@@ -31,9 +31,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
        * @prop {Number} responsiveThreshold
        */
       _this.options = $.extend({}, Parallax.defaults, options);
+      _this._enabled = window.innerWidth > _this.options.responsiveThreshold;
 
       _this.$img = _this.$el.find('img').first();
-      _this._enabled = window.innerWidth > _this.options.responsiveThreshold;
+      _this.$img.each(function () {
+        var el = this;
+        if (el.complete) $(el).trigger("load");
+      });
+
       _this._updateParallax();
       _this._setupEventHandlers();
       _this._setupStyles();
@@ -89,10 +94,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_handleImageLoad',
       value: function _handleImageLoad() {
         this._updateParallax();
-        this.$img.each(function () {
-          var el = this;
-          if (el.complete) $(el).trigger("load");
-        });
       }
     }, {
       key: '_updateParallax',

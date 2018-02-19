@@ -226,6 +226,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_handleDragTargetDrag',
       value: function _handleDragTargetDrag(e) {
+        // Check if draggable
+        if (!this.options.draggable || this._isCurrentlyFixed()) {
+          return;
+        }
+
         // If not being dragged, set initial drag start variables
         if (!this.isDragged) {
           this._startDrag(e);
@@ -293,6 +298,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_handleCloseDrag',
       value: function _handleCloseDrag(e) {
         if (this.isOpen) {
+          // Check if draggable
+          if (!this.options.draggable || this._isCurrentlyFixed()) {
+            return;
+          }
 
           // If not being dragged, set initial drag start variables
           if (!this.isDragged) {
@@ -389,9 +398,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_setupFixed',
       value: function _setupFixed() {
-        if (this.isFixed && window.innerWidth > 992) {
+        if (this._isCurrentlyFixed()) {
           this.open();
         }
+      }
+    }, {
+      key: '_isCurrentlyFixed',
+      value: function _isCurrentlyFixed() {
+        return this.isFixed && window.innerWidth > 992;
       }
     }, {
       key: '_createDragTarget',
@@ -428,7 +442,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         // Handle fixed Sidenav
-        if (this.isFixed && window.innerWidth > 992) {
+        if (this._isCurrentlyFixed()) {
           anim.remove(this.el);
           anim({
             targets: this.el,
@@ -463,7 +477,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         // Handle fixed Sidenav
-        if (this.isFixed && window.innerWidth > 992) {
+        if (this._isCurrentlyFixed()) {
           var transformX = this.options.edge === 'left' ? '-105%' : '105%';
           this.el.style.transform = 'translateX(' + transformX + ')';
 

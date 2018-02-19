@@ -14,6 +14,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
   var _defaults = {
     alignment: 'left',
     constrainWidth: true,
+    container: null,
     coverTrigger: true,
     closeOnClick: true,
     hover: false,
@@ -47,10 +48,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       /**
        * Options for the dropdown
        * @member Dropdown#options
-       * @prop {Function} onOpenStart - Function called when sidenav starts entering
-       * @prop {Function} onOpenEnd - Function called when sidenav finishes entering
-       * @prop {Function} onCloseStart - Function called when sidenav starts exiting
-       * @prop {Function} onCloseEnd - Function called when sidenav finishes exiting
+       * @prop {String} [alignment='left'] - Edge which the dropdown is aligned to
+       * @prop {Boolean} [constrainWidth=true] - Constrain width to width of the button
+       * @prop {Element} container - Container element to attach dropdown to (optional)
+       * @prop {Boolean} [coverTrigger=true] - Place dropdown over trigger
+       * @prop {Boolean} [closeOnClick=true] - Close on click of dropdown item
+       * @prop {Boolean} [hover=false] - Open dropdown on hover
+       * @prop {Number} [inDuration=150] - Duration of open animation in ms
+       * @prop {Number} [outDuration=250] - Duration of close animation in ms
+       * @prop {Function} onOpenStart - Function called when dropdown starts opening
+       * @prop {Function} onOpenEnd - Function called when dropdown finishes opening
+       * @prop {Function} onCloseStart - Function called when dropdown starts closing
+       * @prop {Function} onCloseEnd - Function called when dropdown finishes closing
        */
       _this.options = $.extend({}, Dropdown.defaults, options);
 
@@ -64,7 +73,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this.filterQuery = [];
 
       // Move dropdown-content after dropdown-trigger
-      _this.$el.after(_this.dropdownEl);
+      if (!!_this.options.container) {
+        $(_this.options.container).append(_this.dropdownEl);
+      } else {
+        _this.$el.after(_this.dropdownEl);
+      }
 
       _this._makeDropdownFocusable();
       _this._resetFilterQueryBound = _this._resetFilterQuery.bind(_this);
@@ -137,6 +150,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function _setupTemporaryEventHandlers() {
         // Use capture phase event handler to prevent click
         document.body.addEventListener('click', this._handleDocumentClickBound, true);
+        document.body.addEventListener('touchend', this._handleDocumentClickBound);
         this.dropdownEl.addEventListener('keydown', this._handleDropdownKeydownBound);
       }
     }, {
@@ -144,6 +158,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function _removeTemporaryEventHandlers() {
         // Use capture phase event handler to prevent click
         document.body.removeEventListener('click', this._handleDocumentClickBound, true);
+        document.body.removeEventListener('touchend', this._handleDocumentClickBound);
         this.dropdownEl.removeEventListener('keydown', this._handleDropdownKeydownBound);
       }
     }, {
@@ -184,11 +199,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           setTimeout(function () {
             _this2.close();
           }, 0);
-        } else if ($target.closest('.dropdown-trigger').length) {
-          setTimeout(function () {
-            _this2.close();
-          }, 0);
-        } else if (!$target.closest('.dropdown-content').length) {
+        } else if ($target.closest('.dropdown-trigger').length || !$target.closest('.dropdown-content').length) {
           setTimeout(function () {
             _this2.close();
           }, 0);
@@ -301,15 +312,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_getDropdownPosition',
       value: function _getDropdownPosition() {
         var offsetParentBRect = this.el.offsetParent.getBoundingClientRect();
-        var triggerOffset = { left: this.el.offsetLeft, top: this.el.offsetTop, width: this.el.offsetWidth, height: this.el.offsetHeight };
-        var dropdownOffset = { left: this.dropdownEl.offsetLeft, top: this.dropdownEl.offsetTop, width: this.dropdownEl.offsetWidth, height: this.dropdownEl.offsetHeight };
         var triggerBRect = this.el.getBoundingClientRect();
         var dropdownBRect = this.dropdownEl.getBoundingClientRect();
 
         var idealHeight = dropdownBRect.height;
         var idealWidth = dropdownBRect.width;
-        var idealXPos = triggerOffset.left;
-        var idealYPos = triggerOffset.top;
+        var idealXPos = triggerBRect.left - dropdownBRect.left;
+        var idealYPos = triggerBRect.top - dropdownBRect.top;
 
         var dropdownBounds = {
           left: idealXPos,
@@ -364,12 +373,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         if (horizontalAlignment === 'right') {
           idealXPos = idealXPos - dropdownBRect.width + triggerBRect.width;
         }
-        return { x: idealXPos,
+        return {
+          x: idealXPos,
           y: idealYPos,
           verticalAlignment: verticalAlignment,
           horizontalAlignment: horizontalAlignment,
           height: idealHeight,
-          width: idealWidth };
+          width: idealWidth
+        };
       }
 
       /**

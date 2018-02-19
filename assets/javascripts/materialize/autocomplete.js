@@ -287,6 +287,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         $(this.container).empty();
         this._resetCurrentElement();
         this.oldVal = null;
+        $(this.container).css({
+          display: ''
+        });
         this.isOpen = false;
       }
 
@@ -347,6 +350,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           return _this2.options.sortFunction(a.key.toLowerCase(), b.key.toLowerCase(), val.toLowerCase());
         };
         matchingData.sort(sortFunctionBound);
+
+        $(this.container).css({
+          display: 'block'
+        });
 
         // Render
         for (var i = 0; i < matchingData.length; i++) {

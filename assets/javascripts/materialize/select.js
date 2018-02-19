@@ -12,7 +12,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
   'use strict';
 
   var _defaults = {
-    classes: ''
+    classes: '',
+    dropdownOptions: {}
   };
 
   /**
@@ -20,31 +21,37 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
    *
    */
 
-  var Select = function (_Component) {
-    _inherits(Select, _Component);
+  var FormSelect = function (_Component) {
+    _inherits(FormSelect, _Component);
 
     /**
-     * Construct Select instance
+     * Construct FormSelect instance
      * @constructor
      * @param {Element} el
      * @param {Object} options
      */
-    function Select(el, options) {
-      _classCallCheck(this, Select);
+    function FormSelect(el, options) {
+      _classCallCheck(this, FormSelect);
 
-      var _this = _possibleConstructorReturn(this, (Select.__proto__ || Object.getPrototypeOf(Select)).call(this, Select, el, options));
+      // Don't init if browser default version
+      var _this = _possibleConstructorReturn(this, (FormSelect.__proto__ || Object.getPrototypeOf(FormSelect)).call(this, FormSelect, el, options));
 
-      _this.el.M_Select = _this;
+      if (_this.$el.hasClass('browser-default')) {
+        return _possibleConstructorReturn(_this);
+      }
+
+      _this.el.M_FormSelect = _this;
 
       /**
        * Options for the select
-       * @member Select#options
+       * @member FormSelect#options
        */
-      _this.options = $.extend({}, Select.defaults, options);
+      _this.options = $.extend({}, FormSelect.defaults, options);
 
       _this.isMultiple = _this.$el.prop('multiple');
 
       // Setup
+      _this.el.tabIndex = -1;
       _this._keysSelected = {};
       _this._valueDict = {}; // Maps key to original and generated option element.
       _this._setupDropdown();
@@ -53,7 +60,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       return _this;
     }
 
-    _createClass(Select, [{
+    _createClass(FormSelect, [{
       key: 'destroy',
 
 
@@ -63,7 +70,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function destroy() {
         this._removeEventHandlers();
         this._removeDropdown();
-        this.el.M_Select = undefined;
+        this.el.M_FormSelect = undefined;
       }
 
       /**
@@ -100,7 +107,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         });
         this.el.removeEventListener('change', this._handleSelectChangeBound);
         this.input.removeEventListener('click', this._handleInputClickBound);
-        this.input.removeEventListener('focus', this._handleInputFocusBound);
       }
 
       /**
@@ -238,7 +244,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         // Initialize dropdown
         if (!this.el.disabled) {
-          var dropdownOptions = {};
+          var dropdownOptions = $.extend({}, this.options.dropdownOptions);
+
           if (this.isMultiple) {
             dropdownOptions.closeOnClick = false;
           }
@@ -425,7 +432,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }], [{
       key: 'init',
       value: function init(els, options) {
-        return _get(Select.__proto__ || Object.getPrototypeOf(Select), 'init', this).call(this, this, els, options);
+        return _get(FormSelect.__proto__ || Object.getPrototypeOf(FormSelect), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -436,7 +443,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: 'getInstance',
       value: function getInstance(el) {
         var domElem = !!el.jquery ? el[0] : el;
-        return domElem.M_Select;
+        return domElem.M_FormSelect;
       }
     }, {
       key: 'defaults',
@@ -445,12 +452,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       }
     }]);
 
-    return Select;
+    return FormSelect;
   }(Component);
 
-  M.Select = Select;
+  M.FormSelect = FormSelect;
 
   if (M.jQueryLoaded) {
-    M.initializeJqueryWrapper(Select, 'select', 'M_Select');
+    M.initializeJqueryWrapper(FormSelect, 'formSelect', 'M_FormSelect');
   }
 })(cash);

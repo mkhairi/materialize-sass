@@ -71,10 +71,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this._openingTrigger = undefined;
       _this.$overlay = $('<div class="modal-overlay"></div>');
 
-      Modal._increment++;
       Modal._count++;
-      _this.$overlay[0].style.zIndex = 1000 + Modal._increment * 2;
-      _this.el.style.zIndex = 1000 + Modal._increment * 2 + 1;
       _this._setupEventHandlers();
       return _this;
     }
@@ -311,19 +308,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         this.isOpen = true;
+        Modal._modalsOpen++;
+
+        // Set Z-Index based on number of currently open modals
+        this.$overlay[0].style.zIndex = 1000 + Modal._modalsOpen * 2;
+        this.el.style.zIndex = 1000 + Modal._modalsOpen * 2 + 1;
+
+        // Set opening trigger, undefined indicates modal was opened by javascript
+        this._openingTrigger = !!$trigger ? $trigger[0] : undefined;
 
         // onOpenStart callback
         if (typeof this.options.onOpenStart === 'function') {
           this.options.onOpenStart.call(this, this.el, this._openingTrigger);
         }
 
-        var body = document.body;
-        body.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
         this.el.classList.add('open');
         this.el.insertAdjacentElement('afterend', this.$overlay[0]);
-
-        // Set opening trigger, undefined indicates modal was opened by javascript
-        this._openingTrigger = !!$trigger ? $trigger[0] : undefined;
 
         if (this.options.dismissible) {
           this._handleKeydownBound = this._handleKeydown.bind(this);
@@ -348,6 +349,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         this.isOpen = false;
+        Modal._modalsOpen--;
 
         // Call onCloseStart callback
         if (typeof this.options.onCloseStart === 'function') {
@@ -355,7 +357,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         this.el.classList.remove('open');
-        document.body.style.overflow = '';
+
+        // Enable body scrolling only if there are no more modals open.
+        if (Modal._modalsOpen === 0) {
+          document.body.style.overflow = '';
+        }
 
         if (this.options.dismissible) {
           document.removeEventListener('keydown', this._handleKeydownBound);
@@ -398,7 +404,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
    */
 
 
-  Modal._increment = 0;
+  Modal._modalsOpen = 0;
 
   /**
    * @static

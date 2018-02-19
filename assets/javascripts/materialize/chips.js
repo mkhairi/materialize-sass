@@ -297,7 +297,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           _this2.$input[0].focus();
         };
 
-        this.autocomplete = M.Autocomplete.init(this.$input, this.options.autocompleteOptions)[0];
+        this.autocomplete = M.Autocomplete.init(this.$input[0], this.options.autocompleteOptions);
       }
 
       /**
