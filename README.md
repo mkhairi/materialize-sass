@@ -7,7 +7,7 @@ example: http://materialize.labs.my/
 source: https://github.com/mkhairi/materialize-rails
 
 # Notices
-This master branch now v1.0.0.alpha1
+This master branch now v1.0.0.alpha4
 
 Documentation for previous releases (v0.100.*) are available [this branch.](https://github.com/mkhairi/materialize-sass/tree/v0.100)
 
@@ -16,7 +16,7 @@ Documentation for previous releases (v0.100.*) are available [this branch.](http
 In your Gemfile you need to add the `materialize-sass` gem:
 
 ```ruby
-gem 'materialize-sass'
+gem 'materialize-sass', '~> 1.0.0.alpha4'
 ```
 
 
