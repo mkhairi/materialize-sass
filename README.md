@@ -53,7 +53,7 @@ $ rm app/assets/stylesheets/application.css
 Since materialize color scheme are declared in color.scss you should import the color.scss first. then you can override color variable just like this:
 
 ```scss
-@import "materialize/components/color";
+@import "materialize/components/color-variables";
 $primary-color: color("blue", "lighten-2") !default;
 $secondary-color: color("yellow", "base") !default;
 @import 'materialize';
