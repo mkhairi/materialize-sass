@@ -46,6 +46,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
       _this.isOpen = false;
       _this.isHovered = false;
+      _this.isFocused = false;
       _this._appendTooltipEl();
       _this._setupEventHandlers();
       return _this;
@@ -61,7 +62,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function destroy() {
         $(this.tooltipEl).remove();
         this._removeEventHandlers();
-        this.$el[0].M_Tooltip = undefined;
+        this.el.M_Tooltip = undefined;
       }
     }, {
       key: '_appendTooltipEl',
@@ -84,16 +85,22 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_setupEventHandlers',
       value: function _setupEventHandlers() {
-        this.handleMouseEnterBound = this._handleMouseEnter.bind(this);
-        this.handleMouseLeaveBound = this._handleMouseLeave.bind(this);
-        this.$el[0].addEventListener('mouseenter', this.handleMouseEnterBound);
-        this.$el[0].addEventListener('mouseleave', this.handleMouseLeaveBound);
+        this._handleMouseEnterBound = this._handleMouseEnter.bind(this);
+        this._handleMouseLeaveBound = this._handleMouseLeave.bind(this);
+        this._handleFocusBound = this._handleFocus.bind(this);
+        this._handleBlurBound = this._handleBlur.bind(this);
+        this.el.addEventListener('mouseenter', this._handleMouseEnterBound);
+        this.el.addEventListener('mouseleave', this._handleMouseLeaveBound);
+        this.el.addEventListener('focus', this._handleFocusBound, true);
+        this.el.addEventListener('blur', this._handleBlurBound, true);
       }
     }, {
       key: '_removeEventHandlers',
       value: function _removeEventHandlers() {
-        this.$el[0].removeEventListener('mouseenter', this.handleMouseEnterBound);
-        this.$el[0].removeEventListener('mouseleave', this.handleMouseLeaveBound);
+        this.el.removeEventListener('mouseenter', this._handleMouseEnterBound);
+        this.el.removeEventListener('mouseleave', this._handleMouseLeaveBound);
+        this.el.removeEventListener('focus', this._handleFocusBound, true);
+        this.el.removeEventListener('blur', this._handleBlurBound, true);
       }
     }, {
       key: 'open',
@@ -131,7 +138,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         clearTimeout(this._exitDelayTimeout);
 
         this._exitDelayTimeout = setTimeout(function () {
-          if (_this2.isHovered) {
+          if (_this2.isHovered || _this2.isFocused) {
             return;
           }
 
@@ -151,7 +158,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         clearTimeout(this._enterDelayTimeout);
 
         this._enterDelayTimeout = setTimeout(function () {
-          if (!_this3.isHovered) {
+          if (!_this3.isHovered && !_this3.isFocused) {
             return;
           }
 
@@ -161,7 +168,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_positionTooltip',
       value: function _positionTooltip() {
-        var origin = this.$el[0],
+        var origin = this.el,
             tooltip = this.tooltipEl,
             originHeight = origin.offsetHeight,
             originWidth = origin.offsetWidth,
@@ -277,11 +284,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.close();
       }
     }, {
+      key: '_handleFocus',
+      value: function _handleFocus() {
+        this.isFocused = true;
+        this.open();
+      }
+    }, {
+      key: '_handleBlur',
+      value: function _handleBlur() {
+        this.isFocused = false;
+        this.close();
+      }
+    }, {
       key: '_getAttributeOptions',
       value: function _getAttributeOptions() {
         var attributeOptions = {};
-        var tooltipTextOption = this.$el[0].getAttribute('data-tooltip');
-        var positionOption = this.$el[0].getAttribute('data-position');
+        var tooltipTextOption = this.el.getAttribute('data-tooltip');
+        var positionOption = this.el.getAttribute('data-position');
 
         if (tooltipTextOption) {
           attributeOptions.html = tooltipTextOption;

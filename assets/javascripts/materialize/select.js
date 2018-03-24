@@ -246,6 +246,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         if (!this.el.disabled) {
           var dropdownOptions = $.extend({}, this.options.dropdownOptions);
 
+          // Add callback for centering selected option when dropdown content is scrollable
+          dropdownOptions.onOpenEnd = function (el) {
+            var selectedOption = $(_this4.dropdownOptions).find('.selected').first();
+            if (_this4.dropdown.isScrollable && selectedOption.length) {
+              var scrollOffset = selectedOption[0].getBoundingClientRect().top - _this4.dropdownOptions.getBoundingClientRect().top; // scroll to selected option
+              scrollOffset -= _this4.dropdownOptions.clientHeight / 2; // center in dropdown
+              _this4.dropdownOptions.scrollTop = scrollOffset;
+            }
+          };
+
           if (this.isMultiple) {
             dropdownOptions.closeOnClick = false;
           }

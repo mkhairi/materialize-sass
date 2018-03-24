@@ -132,8 +132,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_setupDropdown',
       value: function _setupDropdown() {
         this.container = document.createElement('ul');
+        this.container.id = 'autocomplete-options-' + M.guid();
         $(this.container).addClass('autocomplete-content dropdown-content');
         this.$inputField.append(this.container);
+        this.el.setAttribute('data-target', this.container.id);
+
+        this.dropdown = M.Dropdown.init(this.el, {
+          autoFocus: false,
+          closeOnClick: false,
+          coverTrigger: false
+        });
+
+        // Sketchy removal of dropdown click handler
+        this.el.removeEventListener('click', this.dropdown._handleClickBound);
       }
 
       /**
@@ -153,7 +164,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_handleInputBlur',
       value: function _handleInputBlur() {
-        this._removeAutocomplete();
+        this.dropdown.close();
+        this._resetAutocomplete();
       }
 
       /**
@@ -164,6 +176,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_handleInputKeyupAndFocus',
       value: function _handleInputKeyupAndFocus(e) {
+        var _this2 = this;
+
         if (e.type === 'keyup') {
           Autocomplete._keydown = false;
         }
@@ -178,11 +192,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         // Check if the input isn't empty
         if (this.oldVal !== val) {
-          this._removeAutocomplete();
+          this._resetAutocomplete();
 
           if (val.length >= this.options.minLength) {
             this.isOpen = true;
             this._renderDropdown(this.options.data, val);
+          }
+
+          // Open dropdown
+          if (!this.dropdown.isOpen) {
+            // Timeout to prevent dropdown temp doc click handler from firing
+            setTimeout(function () {
+              _this2.dropdown.open();
+            }, 100);
+
+            // Recalculate dropdown when its already open
+          } else {
+            this.dropdown.recalculateDimensions();
           }
         }
 
@@ -278,18 +304,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       }
 
       /**
-       * Remove autocomplete elements
+       * Reset autocomplete elements
        */
 
     }, {
-      key: '_removeAutocomplete',
-      value: function _removeAutocomplete() {
+      key: '_resetAutocomplete',
+      value: function _resetAutocomplete() {
         $(this.container).empty();
         this._resetCurrentElement();
         this.oldVal = null;
-        $(this.container).css({
-          display: ''
-        });
         this.isOpen = false;
       }
 
@@ -304,7 +327,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var text = el.text().trim();
         this.el.value = text;
         this.$el.trigger('change');
-        this._removeAutocomplete();
+        this._resetAutocomplete();
+        this.dropdown.close();
 
         // Handle onAutocomplete callback.
         if (typeof this.options.onAutocomplete === 'function') {
@@ -321,9 +345,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_renderDropdown',
       value: function _renderDropdown(data, val) {
-        var _this2 = this;
+        var _this3 = this;
 
-        this._removeAutocomplete();
+        this._resetAutocomplete();
 
         var matchingData = [];
 
@@ -347,13 +371,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         // Sort
         var sortFunctionBound = function (a, b) {
-          return _this2.options.sortFunction(a.key.toLowerCase(), b.key.toLowerCase(), val.toLowerCase());
+          return _this3.options.sortFunction(a.key.toLowerCase(), b.key.toLowerCase(), val.toLowerCase());
         };
         matchingData.sort(sortFunctionBound);
-
-        $(this.container).css({
-          display: 'block'
-        });
 
         // Render
         for (var i = 0; i < matchingData.length; i++) {

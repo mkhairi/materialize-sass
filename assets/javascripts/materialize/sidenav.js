@@ -19,7 +19,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     onOpenStart: null,
     onOpenEnd: null,
     onCloseStart: null,
-    onCloseEnd: null
+    onCloseEnd: null,
+    preventScrolling: true
   };
 
   /**
@@ -74,6 +75,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
        * @type {Boolean}
        */
       _this.isDragged = false;
+
+      // Window size variables for window resize checks
+      _this.lastWindowWidth = window.innerWidth;
+      _this.lastWindowHeight = window.innerHeight;
 
       _this._createOverlay();
       _this._createDragTarget();
@@ -199,6 +204,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this._time = Date.now();
         this._width = this.el.getBoundingClientRect().width;
         this._overlay.style.display = 'block';
+        this._initialScrollTop = this.isOpen ? this.el.scrollTop : M.getDocumentScrollTop();
+        this._verticallyScrolling = false;
         anim.remove(this.el);
         anim.remove(this._overlay);
       }
@@ -212,10 +219,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_dragMoveUpdate',
       value: function _dragMoveUpdate(e) {
         var clientX = e.targetTouches[0].clientX;
+        var currentScrollTop = this.isOpen ? this.el.scrollTop : M.getDocumentScrollTop();
         this.deltaX = Math.abs(this._xPos - clientX);
         this._xPos = clientX;
         this.velocityX = this.deltaX / (Date.now() - this._time);
         this._time = Date.now();
+        if (this._initialScrollTop !== currentScrollTop) {
+          this._verticallyScrolling = true;
+        }
       }
 
       /**
@@ -227,7 +238,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_handleDragTargetDrag',
       value: function _handleDragTargetDrag(e) {
         // Check if draggable
-        if (!this.options.draggable || this._isCurrentlyFixed()) {
+        if (!this.options.draggable || this._isCurrentlyFixed() || this._verticallyScrolling) {
           return;
         }
 
@@ -286,6 +297,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }
 
           this.isDragged = false;
+          this._verticallyScrolling = false;
         }
       }
 
@@ -299,7 +311,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function _handleCloseDrag(e) {
         if (this.isOpen) {
           // Check if draggable
-          if (!this.options.draggable || this._isCurrentlyFixed()) {
+          if (!this.options.draggable || this._isCurrentlyFixed() || this._verticallyScrolling) {
             return;
           }
 
@@ -352,6 +364,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }
 
           this.isDragged = false;
+          this._verticallyScrolling = false;
         }
       }
 
@@ -363,7 +376,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_handleCloseTriggerClick',
       value: function _handleCloseTriggerClick(e) {
         var $closeTrigger = $(e.target).closest('.sidenav-close');
-        if ($closeTrigger.length) {
+        if ($closeTrigger.length && !this._isCurrentlyFixed()) {
           this.close();
         }
       }
@@ -375,11 +388,17 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_handleWindowResize',
       value: function _handleWindowResize() {
-        if (window.innerWidth > 992) {
-          this.open();
-        } else {
-          this.close();
+        // Only handle horizontal resizes
+        if (this.lastWindowWidth !== window.innerWidth) {
+          if (window.innerWidth > 992) {
+            this.open();
+          } else {
+            this.close();
+          }
         }
+
+        this.lastWindowWidth = window.innerWidth;
+        this.lastWindowHeight = window.innerHeight;
       }
     }, {
       key: '_setupClasses',
@@ -455,7 +474,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
           // Handle non-fixed Sidenav
         } else {
-          this._preventBodyScrolling();
+          if (this.options.preventScrolling) {
+            this._preventBodyScrolling();
+          }
 
           if (!this.isDragged || this.percentOpen != 1) {
             this._animateIn();

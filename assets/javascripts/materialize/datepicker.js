@@ -60,10 +60,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     // Specify a DOM element to render the calendar in
     container: null,
 
+    // Show clear button
+    showClearBtn: false,
+
     // internationalization
     i18n: {
+      cancel: 'Cancel',
       clear: 'Clear',
-      today: 'Today',
       done: 'Ok',
       previousMonth: '‹',
       nextMonth: '›',
@@ -161,18 +164,34 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this._removeEventHandlers();
         this.modal.destroy();
         $(this.modalEl).remove();
+        this.destroySelects();
         this.el.M_Datepicker = undefined;
+      }
+    }, {
+      key: 'destroySelects',
+      value: function destroySelects() {
+        var oldYearSelect = this.calendarEl.querySelector('.pika-select-year');
+        if (oldYearSelect) {
+          M.FormSelect.getInstance(oldYearSelect).destroy();
+        }
+        var oldMonthSelect = this.calendarEl.querySelector('.pika-select-month');
+        if (oldMonthSelect) {
+          M.FormSelect.getInstance(oldMonthSelect).destroy();
+        }
       }
     }, {
       key: '_insertHTMLIntoDOM',
       value: function _insertHTMLIntoDOM() {
-        this.clearBtn.innerHTML = this.options.i18n.clear;
-        this.todayBtn.innerHTML = this.options.i18n.today;
-        this.doneBtn.innerHTML = this.options.i18n.done;
+        if (this.options.showClearBtn) {
+          $(this.clearBtn).css({ visibility: '' });
+          this.clearBtn.innerHTML = this.options.i18n.clear;
+        }
 
-        var containerEl = document.querySelector(this.options.container);
-        if (this.options.container && !!containerEl) {
-          this.$modalEl.appendTo(containerEl);
+        this.doneBtn.innerHTML = this.options.i18n.done;
+        this.cancelBtn.innerHTML = this.options.i18n.cancel;
+
+        if (this.options.container) {
+          this.$modalEl.appendTo(this.options.container);
         } else {
           this.$modalEl.insertBefore(this.el);
         }
@@ -579,15 +598,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           html += this.renderTitle(this, c, this.calendars[c].year, this.calendars[c].month, this.calendars[0].year, randId) + this.render(this.calendars[c].year, this.calendars[c].month, randId);
         }
 
-        // Destroy Materialize Select
-        var oldYearSelect = this.calendarEl.querySelector('.pika-select-year');
-        if (oldYearSelect) {
-          M.FormSelect.getInstance(oldYearSelect).destroy();
-        }
-        var oldMonthSelect = this.calendarEl.querySelector('.pika-select-month');
-        if (oldMonthSelect) {
-          M.FormSelect.getInstance(oldMonthSelect).destroy();
-        }
+        this.destroySelects();
 
         this.calendarEl.innerHTML = html;
 
@@ -618,17 +629,20 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this._handleInputChangeBound = this._handleInputChange.bind(this);
         this._handleCalendarClickBound = this._handleCalendarClick.bind(this);
         this._finishSelectionBound = this._finishSelection.bind(this);
-        this._handleTodayClickBound = this._handleTodayClick.bind(this);
-        this._handleClearClickBound = this._handleClearClick.bind(this);
         this._handleMonthChange = this._handleMonthChange.bind(this);
+        this._closeBound = this.close.bind(this);
 
         this.el.addEventListener('click', this._handleInputClickBound);
         this.el.addEventListener('keydown', this._handleInputKeydownBound);
         this.el.addEventListener('change', this._handleInputChangeBound);
         this.calendarEl.addEventListener('click', this._handleCalendarClickBound);
         this.doneBtn.addEventListener('click', this._finishSelectionBound);
-        this.todayBtn.addEventListener('click', this._handleTodayClickBound);
-        this.clearBtn.addEventListener('click', this._handleClearClickBound);
+        this.cancelBtn.addEventListener('click', this._closeBound);
+
+        if (this.options.showClearBtn) {
+          this._handleClearClickBound = this._handleClearClick.bind(this);
+          this.clearBtn.addEventListener('click', this._handleClearClickBound);
+        }
       }
     }, {
       key: '_setupVariables',
@@ -642,9 +656,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         this.yearTextEl = this.modalEl.querySelector('.year-text');
         this.dateTextEl = this.modalEl.querySelector('.date-text');
-        this.clearBtn = this.modalEl.querySelector('.datepicker-clear');
-        this.todayBtn = this.modalEl.querySelector('.datepicker-today');
+        if (this.options.showClearBtn) {
+          this.clearBtn = this.modalEl.querySelector('.datepicker-clear');
+        }
         this.doneBtn = this.modalEl.querySelector('.datepicker-done');
+        this.cancelBtn = this.modalEl.querySelector('.datepicker-cancel');
 
         this.formats = {
 
@@ -736,13 +752,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         // } else {
         //   this._c = true;
         // }
-      }
-    }, {
-      key: '_handleTodayClick',
-      value: function _handleTodayClick() {
-        this.date = new Date();
-        this.setInputValue();
-        this.close();
       }
     }, {
       key: '_handleClearClick',
@@ -933,7 +942,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     return Datepicker;
   }(Component);
 
-  Datepicker._template = ['<div class= "modal datepicker-modal">', '<div class="modal-content datepicker-container">', '<div class="datepicker-date-display">', '<span class="year-text"></span>', '<span class="date-text"></span>', '</div>', '<div class="datepicker-calendar-container">', '<div class="pika-single"></div>', '<div class="datepicker-footer">', '<button class="btn-flat datepicker-clear waves-effect" type="button"></button>', '<div class="confirmation-btns">', '<button class="btn-flat datepicker-today waves-effect" type="button"></button>', '<button class="btn-flat datepicker-done waves-effect" type="button"></button>', '</div>', '</div>', '</div>', '</div>', '</div>'].join('');
+  Datepicker._template = ['<div class= "modal datepicker-modal">', '<div class="modal-content datepicker-container">', '<div class="datepicker-date-display">', '<span class="year-text"></span>', '<span class="date-text"></span>', '</div>', '<div class="datepicker-calendar-container">', '<div class="pika-single"></div>', '<div class="datepicker-footer">', '<button class="btn-flat datepicker-clear waves-effect" style="visibility: hidden;" type="button"></button>', '<div class="confirmation-btns">', '<button class="btn-flat datepicker-cancel waves-effect" type="button"></button>', '<button class="btn-flat datepicker-done waves-effect" type="button"></button>', '</div>', '</div>', '</div>', '</div>', '</div>'].join('');
 
   M.Datepicker = Datepicker;
 

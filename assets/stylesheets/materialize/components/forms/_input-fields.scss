@@ -193,6 +193,12 @@ textarea.materialize-textarea {
     }
   }
 
+  & > input[type=date]:not(.browser-default) + label,
+  & > input[type=time]:not(.browser-default) + label {
+    transform: translateY(-14px) scale(.8);
+    transform-origin: 0 0;
+  }
+
   .helper-text {
     &::after {
       opacity: 1;
@@ -253,6 +259,7 @@ textarea.materialize-textarea {
 .input-field input[type=search] {
   display: block;
   line-height: inherit;
+  transition: .3s background-color;
 
   .nav-wrapper & {
     height: inherit;
@@ -328,11 +335,6 @@ textarea {
 
 /* Autocomplete */
 .autocomplete-content {
-  margin-top: -1 * $input-margin-bottom;
-  margin-bottom: $input-margin-bottom;
-  opacity: 1;
-  position: static;
-
   li {
     .highlight { color: #444; }
 

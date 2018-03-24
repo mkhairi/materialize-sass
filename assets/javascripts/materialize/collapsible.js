@@ -55,6 +55,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
        */
       _this.options = $.extend({}, Collapsible.defaults, options);
 
+      // Setup tab indices
+      _this.$headers = _this.$el.children('li').children('.collapsible-header');
+      _this.$headers.attr('tabindex', 0);
+
       _this._setupEventHandlers();
 
       // Open first active
@@ -88,8 +92,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_setupEventHandlers',
       value: function _setupEventHandlers() {
+        var _this2 = this;
+
         this._handleCollapsibleClickBound = this._handleCollapsibleClick.bind(this);
+        this._handleCollapsibleKeydownBound = this._handleCollapsibleKeydown.bind(this);
         this.el.addEventListener('click', this._handleCollapsibleClickBound);
+        this.$headers.each(function (header) {
+          header.addEventListener('keydown', _this2._handleCollapsibleKeydownBound);
+        });
       }
 
       /**
@@ -129,6 +139,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       }
 
       /**
+       * Handle Collapsible Keydown
+       * @param {Event} e
+       */
+
+    }, {
+      key: '_handleCollapsibleKeydown',
+      value: function _handleCollapsibleKeydown(e) {
+        if (e.keyCode === 13) {
+          this._handleCollapsibleClickBound(e);
+        }
+      }
+
+      /**
        * Animate in collapsible slide
        * @param {Number} index - 0th index of slide
        */
@@ -136,7 +159,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_animateIn',
       value: function _animateIn(index) {
-        var _this2 = this;
+        var _this3 = this;
 
         var $collapsibleLi = this.$el.children('li').eq(index);
         if ($collapsibleLi.length) {
@@ -175,8 +198,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               });
 
               // onOpenEnd callback
-              if (typeof _this2.options.onOpenEnd === 'function') {
-                _this2.options.onOpenEnd.call(_this2, $collapsibleLi[0]);
+              if (typeof _this3.options.onOpenEnd === 'function') {
+                _this3.options.onOpenEnd.call(_this3, $collapsibleLi[0]);
               }
             }
           });
@@ -191,7 +214,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_animateOut',
       value: function _animateOut(index) {
-        var _this3 = this;
+        var _this4 = this;
 
         var $collapsibleLi = this.$el.children('li').eq(index);
         if ($collapsibleLi.length) {
@@ -214,8 +237,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               });
 
               // onCloseEnd callback
-              if (typeof _this3.options.onCloseEnd === 'function') {
-                _this3.options.onCloseEnd.call(_this3, $collapsibleLi[0]);
+              if (typeof _this4.options.onCloseEnd === 'function') {
+                _this4.options.onCloseEnd.call(_this4, $collapsibleLi[0]);
               }
             }
           });
@@ -230,7 +253,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: 'open',
       value: function open(index) {
-        var _this4 = this;
+        var _this5 = this;
 
         var $collapsibleLi = this.$el.children('li').eq(index);
         if ($collapsibleLi.length && !$collapsibleLi[0].classList.contains('active')) {
@@ -246,7 +269,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             var $activeLis = this.$el.children('li.active');
             $activeLis.each(function (el) {
               var index = $collapsibleLis.index($(el));
-              _this4.close(index);
+              _this5.close(index);
             });
           }
 

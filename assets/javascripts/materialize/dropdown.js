@@ -13,6 +13,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
   var _defaults = {
     alignment: 'left',
+    autoFocus: true,
     constrainWidth: true,
     container: null,
     coverTrigger: true,
@@ -49,6 +50,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
        * Options for the dropdown
        * @member Dropdown#options
        * @prop {String} [alignment='left'] - Edge which the dropdown is aligned to
+       * @prop {Boolean} [autoFocus=true] - Automatically focus dropdown el for keyboard
        * @prop {Boolean} [constrainWidth=true] - Constrain width to width of the button
        * @prop {Element} container - Container element to attach dropdown to (optional)
        * @prop {Boolean} [coverTrigger=true] - Place dropdown over trigger
@@ -69,6 +71,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
        */
       _this.isOpen = false;
 
+      /**
+       * Describes if dropdown content is scrollable
+       * @type {Boolean}
+       */
+      _this.isScrollable = false;
+
+      /**
+       * Describes if touch moving on dropdown content
+       * @type {Boolean}
+       */
+      _this.isTouchMoving = false;
+
       _this.focusedIndex = -1;
       _this.filterQuery = [];
 
@@ -82,6 +96,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this._makeDropdownFocusable();
       _this._resetFilterQueryBound = _this._resetFilterQuery.bind(_this);
       _this._handleDocumentClickBound = _this._handleDocumentClick.bind(_this);
+      _this._handleDocumentTouchmoveBound = _this._handleDocumentTouchmove.bind(_this);
       _this._handleDropdownKeydownBound = _this._handleDropdownKeydown.bind(_this);
       _this._handleTriggerKeydownBound = _this._handleTriggerKeydown.bind(_this);
       _this._setupEventHandlers();
@@ -151,6 +166,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         // Use capture phase event handler to prevent click
         document.body.addEventListener('click', this._handleDocumentClickBound, true);
         document.body.addEventListener('touchend', this._handleDocumentClickBound);
+        document.body.addEventListener('touchmove', this._handleDocumentTouchmoveBound);
         this.dropdownEl.addEventListener('keydown', this._handleDropdownKeydownBound);
       }
     }, {
@@ -159,6 +175,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         // Use capture phase event handler to prevent click
         document.body.removeEventListener('click', this._handleDocumentClickBound, true);
         document.body.removeEventListener('touchend', this._handleDocumentClickBound);
+        document.body.removeEventListener('touchmove', this._handleDocumentTouchmoveBound);
         this.dropdownEl.removeEventListener('keydown', this._handleDropdownKeydownBound);
       }
     }, {
@@ -195,7 +212,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var _this2 = this;
 
         var $target = $(e.target);
-        if (this.options.closeOnClick && $target.closest('.dropdown-content').length) {
+        if (this.options.closeOnClick && $target.closest('.dropdown-content').length && !this.isTouchMoving) {
+          // isTouchMoving to check if scrolling on mobile.
           setTimeout(function () {
             _this2.close();
           }, 0);
@@ -204,6 +222,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             _this2.close();
           }, 0);
         }
+        this.isTouchMoving = false;
       }
     }, {
       key: '_handleTriggerKeydown',
@@ -212,6 +231,20 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         if ((e.which === M.keys.ARROW_DOWN || e.which === M.keys.ENTER) && !this.isOpen) {
           e.preventDefault();
           this.open();
+        }
+      }
+
+      /**
+       * Handle Document Touchmove
+       * @param {Event} e
+       */
+
+    }, {
+      key: '_handleDocumentTouchmove',
+      value: function _handleDocumentTouchmove(e) {
+        var $target = $(e.target);
+        if ($target.closest('.dropdown-content').length) {
+          this.isTouchMoving = true;
         }
       }
 
@@ -231,8 +264,21 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         } else if ((e.which === M.keys.ARROW_DOWN || e.which === M.keys.ARROW_UP) && this.isOpen) {
           e.preventDefault();
           var direction = e.which === M.keys.ARROW_DOWN ? 1 : -1;
-          this.focusedIndex = Math.max(Math.min(this.focusedIndex + direction, this.dropdownEl.children.length - 1), 0);
-          this._focusFocusedItem();
+          var newFocusedIndex = this.focusedIndex;
+          var foundNewIndex = false;
+          do {
+            newFocusedIndex = newFocusedIndex + direction;
+
+            if (!!this.dropdownEl.children[newFocusedIndex] && this.dropdownEl.children[newFocusedIndex].tabIndex !== -1) {
+              foundNewIndex = true;
+              break;
+            }
+          } while (newFocusedIndex < this.dropdownEl.children.length && newFocusedIndex >= 0);
+
+          if (foundNewIndex) {
+            this.focusedIndex = newFocusedIndex;
+            this._focusFocusedItem();
+          }
 
           // ENTER selects choice on focused item
         } else if (e.which === M.keys.ENTER && this.isOpen) {
@@ -295,16 +341,20 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_makeDropdownFocusable',
       value: function _makeDropdownFocusable() {
-        if (this.dropdownEl.tabIndex === -1) {
-          this.dropdownEl.tabIndex = 0;
-        }
+        // Needed for arrow key navigation
+        this.dropdownEl.tabIndex = 0;
 
-        $(this.dropdownEl).children().attr('tabindex', 0);
+        // Only set tabindex if it hasn't been set by user
+        $(this.dropdownEl).children().each(function (el) {
+          if (!el.getAttribute('tabindex')) {
+            el.setAttribute('tabindex', 0);
+          }
+        });
       }
     }, {
       key: '_focusFocusedItem',
       value: function _focusFocusedItem() {
-        if (this.focusedIndex >= 0 && this.focusedIndex < this.dropdownEl.children.length) {
+        if (this.focusedIndex >= 0 && this.focusedIndex < this.dropdownEl.children.length && this.options.autoFocus) {
           this.dropdownEl.children[this.focusedIndex].focus();
         }
       }
@@ -334,10 +384,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var verticalAlignment = 'top';
         var horizontalAlignment = this.options.alignment;
         idealYPos += this.options.coverTrigger ? 0 : triggerBRect.height;
+
+        // Reset isScrollable
+        this.isScrollable = false;
+
         if (!alignments.top) {
           if (alignments.bottom) {
             verticalAlignment = 'bottom';
           } else {
+            this.isScrollable = true;
+
             // Determine which side has most space and cutoff at correct height
             if (alignments.spaceOnTop > alignments.spaceOnBottom) {
               verticalAlignment = 'bottom';
@@ -389,15 +445,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
     }, {
       key: '_animateIn',
-      value: function _animateIn(positionInfo) {
+      value: function _animateIn() {
         var _this3 = this;
-
-        // Place dropdown
-        this.dropdownEl.style.left = positionInfo.x + 'px';
-        this.dropdownEl.style.top = positionInfo.y + 'px';
-        this.dropdownEl.style.height = positionInfo.height + 'px';
-        this.dropdownEl.style.width = positionInfo.width + 'px';
-        this.dropdownEl.style.transformOrigin = (positionInfo.horizontalAlignment === 'left' ? '0' : '100%') + ' ' + (positionInfo.verticalAlignment === 'top' ? '0' : '100%');
 
         anim.remove(this.dropdownEl);
         anim({
@@ -411,7 +460,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           duration: this.options.inDuration,
           easing: 'easeOutQuint',
           complete: function (anim) {
-            _this3.dropdownEl.focus();
+            if (_this3.options.autoFocus) {
+              _this3.dropdownEl.focus();
+            }
 
             // onOpenEnd callback
             if (typeof _this3.options.onOpenEnd === 'function') {
@@ -455,6 +506,25 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       }
 
       /**
+       * Place dropdown
+       */
+
+    }, {
+      key: '_placeDropdown',
+      value: function _placeDropdown() {
+        // Set width before calculating positionInfo
+        var idealWidth = this.options.constrainWidth ? this.el.getBoundingClientRect().width : this.dropdownEl.getBoundingClientRect().width;
+        this.dropdownEl.style.width = idealWidth + 'px';
+
+        var positionInfo = this._getDropdownPosition();
+        this.dropdownEl.style.left = positionInfo.x + 'px';
+        this.dropdownEl.style.top = positionInfo.y + 'px';
+        this.dropdownEl.style.height = positionInfo.height + 'px';
+        this.dropdownEl.style.width = positionInfo.width + 'px';
+        this.dropdownEl.style.transformOrigin = (positionInfo.horizontalAlignment === 'left' ? '0' : '100%') + ' ' + (positionInfo.verticalAlignment === 'top' ? '0' : '100%');
+      }
+
+      /**
        * Open Dropdown
        */
 
@@ -475,12 +545,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this._resetDropdownStyles();
         this.dropdownEl.style.display = 'block';
 
-        // Set width before calculating positionInfo
-        var idealWidth = this.options.constrainWidth ? this.el.getBoundingClientRect().width : this.dropdownEl.getBoundingClientRect().width;
-        this.dropdownEl.style.width = idealWidth + 'px';
-
-        var positionInfo = this._getDropdownPosition();
-        this._animateIn(positionInfo);
+        this._placeDropdown();
+        this._animateIn();
         this._setupTemporaryEventHandlers();
       }
 
@@ -504,7 +570,29 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         this._animateOut();
         this._removeTemporaryEventHandlers();
-        this.el.focus();
+
+        if (this.options.autoFocus) {
+          this.el.focus();
+        }
+      }
+
+      /**
+       * Recalculate dimensions
+       */
+
+    }, {
+      key: 'recalculateDimensions',
+      value: function recalculateDimensions() {
+        if (this.isOpen) {
+          this.$dropdownEl.css({
+            width: '',
+            height: '',
+            left: '',
+            top: '',
+            'transform-origin': ''
+          });
+          this._placeDropdown();
+        }
       }
     }], [{
       key: 'init',

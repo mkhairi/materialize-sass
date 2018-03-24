@@ -19,6 +19,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     onOpenEnd: null,
     onCloseStart: null,
     onCloseEnd: null,
+    preventScrolling: true,
     dismissible: true,
     startingTop: '4%',
     endingTop: '10%'
@@ -70,6 +71,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this.id = _this.$el.attr('id');
       _this._openingTrigger = undefined;
       _this.$overlay = $('<div class="modal-overlay"></div>');
+      _this.el.tabIndex = 0;
 
       Modal._count++;
       _this._setupEventHandlers();
@@ -178,6 +180,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         // ESC key
         if (e.keyCode === 27 && this.options.dismissible) {
           this.close();
+        }
+      }
+
+      /**
+       * Handle Focus
+       * @param {Event} e
+       */
+
+    }, {
+      key: '_handleFocus',
+      value: function _handleFocus(e) {
+        if (!this.el.contains(e.target)) {
+          this.el.focus();
         }
       }
 
@@ -322,18 +337,27 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           this.options.onOpenStart.call(this, this.el, this._openingTrigger);
         }
 
-        document.body.style.overflow = 'hidden';
+        if (this.options.preventScrolling) {
+          document.body.style.overflow = 'hidden';
+        }
+
         this.el.classList.add('open');
         this.el.insertAdjacentElement('afterend', this.$overlay[0]);
 
         if (this.options.dismissible) {
           this._handleKeydownBound = this._handleKeydown.bind(this);
+          this._handleFocusBound = this._handleFocus.bind(this);
           document.addEventListener('keydown', this._handleKeydownBound);
+          document.addEventListener('focus', this._handleFocusBound, true);
         }
 
         anim.remove(this.el);
         anim.remove(this.$overlay[0]);
         this._animateIn();
+
+        // Focus modal
+        this.el.focus();
+
         return this;
       }
 
@@ -365,6 +389,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         if (this.options.dismissible) {
           document.removeEventListener('keydown', this._handleKeydownBound);
+          document.removeEventListener('focus', this._handleFocusBound);
         }
 
         anim.remove(this.el);

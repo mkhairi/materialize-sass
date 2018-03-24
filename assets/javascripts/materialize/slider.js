@@ -52,7 +52,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       // setup
       _this.$slider = _this.$el.find('.slides');
       _this.$slides = _this.$slider.children('li');
-      _this.activeIndex = _this.$slider.find('.active').index();
+      _this.activeIndex = _this.$slides.filter(function (item) {
+        return $(item).hasClass('active');
+      }).first().index();
       if (_this.activeIndex != -1) {
         _this.$active = _this.$slides.eq(_this.activeIndex);
       }

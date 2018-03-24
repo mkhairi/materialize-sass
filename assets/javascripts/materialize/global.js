@@ -85,6 +85,41 @@ M.initializeJqueryWrapper = function (plugin, pluginName, classRef) {
 };
 
 /**
+ * Automatically initialize components
+ * @param {Element} context  DOM Element to search within for components
+ */
+M.AutoInit = function (context) {
+  // Use document.body if no context is given
+  var root = !!context ? context : document.body;
+
+  var registry = {
+    Autocomplete: root.querySelectorAll('.autocomplete:not(.no-autoinit)'),
+    Carousel: root.querySelectorAll('.carousel:not(.no-autoinit)'),
+    Chips: root.querySelectorAll('.chips:not(.no-autoinit)'),
+    Collapsible: root.querySelectorAll('.collapsible:not(.no-autoinit)'),
+    Datepicker: root.querySelectorAll('.datepicker:not(.no-autoinit)'),
+    Dropdown: root.querySelectorAll('.dropdown-trigger:not(.no-autoinit)'),
+    Materialbox: root.querySelectorAll('.materialboxed:not(.no-autoinit)'),
+    Modal: root.querySelectorAll('.modal:not(.no-autoinit)'),
+    Parallax: root.querySelectorAll('.parallax:not(.no-autoinit)'),
+    Pushpin: root.querySelectorAll('.pushpin:not(.no-autoinit)'),
+    ScrollSpy: root.querySelectorAll('.scrollspy:not(.no-autoinit)'),
+    FormSelect: root.querySelectorAll('select:not(.no-autoinit)'),
+    Sidenav: root.querySelectorAll('.sidenav:not(.no-autoinit)'),
+    Tabs: root.querySelectorAll('.tabs:not(.no-autoinit)'),
+    TapTarget: root.querySelectorAll('.tap-target:not(.no-autoinit)'),
+    Timepicker: root.querySelectorAll('.timepicker:not(.no-autoinit)'),
+    Tooltip: root.querySelectorAll('.tooltipped:not(.no-autoinit)'),
+    FloatingActionButton: root.querySelectorAll('.fixed-action-btn:not(.no-autoinit)')
+  };
+
+  for (var pluginName in registry) {
+    var plugin = M[pluginName];
+    plugin.init(registry[pluginName]);
+  }
+};
+
+/**
  * Generate approximated selector string for a jQuery object
  * @param {jQuery} obj  jQuery object to be parsed
  * @returns {string}

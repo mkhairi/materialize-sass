@@ -468,7 +468,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             var index = currChips._selectedChip.index();
             currChips.deleteChip(index);
             currChips._selectedChip = null;
-            selectIndex = index - 1;
+
+            // Make sure selectIndex doesn't go negative
+            selectIndex = Math.max(index - 1, 0);
           }
 
           if (currChips.chipsData.length) {

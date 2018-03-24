@@ -21,29 +21,29 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
    *
    */
 
-  var FeatureDiscovery = function (_Component) {
-    _inherits(FeatureDiscovery, _Component);
+  var TapTarget = function (_Component) {
+    _inherits(TapTarget, _Component);
 
     /**
-     * Construct FeatureDiscovery instance
+     * Construct TapTarget instance
      * @constructor
      * @param {Element} el
      * @param {Object} options
      */
-    function FeatureDiscovery(el, options) {
-      _classCallCheck(this, FeatureDiscovery);
+    function TapTarget(el, options) {
+      _classCallCheck(this, TapTarget);
 
-      var _this = _possibleConstructorReturn(this, (FeatureDiscovery.__proto__ || Object.getPrototypeOf(FeatureDiscovery)).call(this, FeatureDiscovery, el, options));
+      var _this = _possibleConstructorReturn(this, (TapTarget.__proto__ || Object.getPrototypeOf(TapTarget)).call(this, TapTarget, el, options));
 
-      _this.el.M_FeatureDiscovery = _this;
+      _this.el.M_TapTarget = _this;
 
       /**
        * Options for the select
-       * @member FeatureDiscovery#options
+       * @member TapTarget#options
        * @prop {Function} onOpen - Callback function called when feature discovery is opened
        * @prop {Function} onClose - Callback function called when feature discovery is closed
        */
-      _this.options = $.extend({}, FeatureDiscovery.defaults, options);
+      _this.options = $.extend({}, TapTarget.defaults, options);
 
       _this.isOpen = false;
 
@@ -56,7 +56,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       return _this;
     }
 
-    _createClass(FeatureDiscovery, [{
+    _createClass(TapTarget, [{
       key: 'destroy',
 
 
@@ -65,7 +65,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
        */
       value: function destroy() {
         this._removeEventHandlers();
-        this.el.FeatureDiscovery = undefined;
+        this.el.TapTarget = undefined;
       }
 
       /**
@@ -150,7 +150,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       }
 
       /**
-       * Setup feature discovery
+       * Setup Tap Target
        */
 
     }, {
@@ -286,7 +286,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       }
 
       /**
-       * Open Feature Discovery
+       * Open TapTarget
        */
 
     }, {
@@ -309,7 +309,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       }
 
       /**
-       * Close Feature Discovery
+       * Close Tap Target
        */
 
     }, {
@@ -333,7 +333,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }], [{
       key: 'init',
       value: function init(els, options) {
-        return _get(FeatureDiscovery.__proto__ || Object.getPrototypeOf(FeatureDiscovery), 'init', this).call(this, this, els, options);
+        return _get(TapTarget.__proto__ || Object.getPrototypeOf(TapTarget), 'init', this).call(this, this, els, options);
       }
 
       /**
@@ -344,7 +344,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: 'getInstance',
       value: function getInstance(el) {
         var domElem = !!el.jquery ? el[0] : el;
-        return domElem.M_FeatureDiscovery;
+        return domElem.M_TapTarget;
       }
     }, {
       key: 'defaults',
@@ -353,12 +353,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       }
     }]);
 
-    return FeatureDiscovery;
+    return TapTarget;
   }(Component);
 
-  M.FeatureDiscovery = FeatureDiscovery;
+  M.TapTarget = TapTarget;
 
   if (M.jQueryLoaded) {
-    M.initializeJqueryWrapper(FeatureDiscovery, 'featureDiscovery', 'M_FeatureDiscovery');
+    M.initializeJqueryWrapper(TapTarget, 'tapTarget', 'M_TapTarget');
   }
 })(cash);
