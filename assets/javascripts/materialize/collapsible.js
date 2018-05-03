@@ -257,7 +257,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         var $collapsibleLi = this.$el.children('li').eq(index);
         if ($collapsibleLi.length && !$collapsibleLi[0].classList.contains('active')) {
-
           // onOpenStart callback
           if (typeof this.options.onOpenStart === 'function') {
             this.options.onOpenStart.call(this, $collapsibleLi[0]);
@@ -289,7 +288,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function close(index) {
         var $collapsibleLi = this.$el.children('li').eq(index);
         if ($collapsibleLi.length && $collapsibleLi[0].classList.contains('active')) {
-
           // onCloseStart callback
           if (typeof this.options.onCloseStart === 'function') {
             this.options.onCloseStart.call(this, $collapsibleLi[0]);

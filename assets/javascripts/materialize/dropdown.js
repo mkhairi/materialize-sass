@@ -24,7 +24,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     onOpenStart: null,
     onOpenEnd: null,
     onCloseStart: null,
-    onCloseEnd: null
+    onCloseEnd: null,
+    onItemClick: null
   };
 
   /**
@@ -97,6 +98,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this._resetFilterQueryBound = _this._resetFilterQuery.bind(_this);
       _this._handleDocumentClickBound = _this._handleDocumentClick.bind(_this);
       _this._handleDocumentTouchmoveBound = _this._handleDocumentTouchmove.bind(_this);
+      _this._handleDropdownClickBound = _this._handleDropdownClick.bind(_this);
       _this._handleDropdownKeydownBound = _this._handleDropdownKeydown.bind(_this);
       _this._handleTriggerKeydownBound = _this._handleTriggerKeydown.bind(_this);
       _this._setupEventHandlers();
@@ -127,6 +129,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         // Trigger keydown handler
         this.el.addEventListener('keydown', this._handleTriggerKeydownBound);
 
+        // Item click handler
+        this.dropdownEl.addEventListener('click', this._handleDropdownClickBound);
+
         // Hover event handlers
         if (this.options.hover) {
           this._handleMouseEnterBound = this._handleMouseEnter.bind(this);
@@ -149,13 +154,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_removeEventHandlers',
       value: function _removeEventHandlers() {
-        // Trigger keydown handler
         this.el.removeEventListener('keydown', this._handleTriggerKeydownBound);
+        this.dropdownEl.removeEventListener('click', this._handleDropdownClickBound);
 
         if (this.options.hover) {
-          this.el.removeEventHandlers('mouseenter', this._handleMouseEnterBound);
-          this.el.removeEventHandlers('mouseleave', this._handleMouseLeaveBound);
-          this.dropdownEl.removeEventHandlers('mouseleave', this._handleMouseLeaveBound);
+          this.el.removeEventListener('mouseenter', this._handleMouseEnterBound);
+          this.el.removeEventListener('mouseleave', this._handleMouseLeaveBound);
+          this.dropdownEl.removeEventListener('mouseleave', this._handleMouseLeaveBound);
         } else {
           this.el.removeEventListener('click', this._handleClickBound);
         }
@@ -245,6 +250,21 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var $target = $(e.target);
         if ($target.closest('.dropdown-content').length) {
           this.isTouchMoving = true;
+        }
+      }
+
+      /**
+       * Handle Dropdown Click
+       * @param {Event} e
+       */
+
+    }, {
+      key: '_handleDropdownClick',
+      value: function _handleDropdownClick(e) {
+        // onItemClick callback
+        if (typeof this.options.onItemClick === 'function') {
+          var itemEl = $(e.target).closest('li')[0];
+          this.options.onItemClick.call(this, itemEl);
         }
       }
 
@@ -455,8 +475,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             value: [0, 1],
             easing: 'easeOutQuad'
           },
-          scaleX: [.3, 1],
-          scaleY: [.3, 1],
+          scaleX: [0.3, 1],
+          scaleY: [0.3, 1],
           duration: this.options.inDuration,
           easing: 'easeOutQuint',
           complete: function (anim) {
@@ -489,8 +509,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             value: 0,
             easing: 'easeOutQuint'
           },
-          scaleX: .3,
-          scaleY: .3,
+          scaleX: 0.3,
+          scaleY: 0.3,
           duration: this.options.outDuration,
           easing: 'easeOutQuint',
           complete: function (anim) {

@@ -72,6 +72,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this._openingTrigger = undefined;
       _this.$overlay = $('<div class="modal-overlay"></div>');
       _this.el.tabIndex = 0;
+      _this._nthModalOpened = 0;
 
       Modal._count++;
       _this._setupEventHandlers();
@@ -191,7 +192,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_handleFocus',
       value: function _handleFocus(e) {
-        if (!this.el.contains(e.target)) {
+        // Only trap focus if this modal is the last model opened (prevents loops in nested modals).
+        if (!this.el.contains(e.target) && this._nthModalOpened === Modal._modalsOpen) {
           this.el.focus();
         }
       }
@@ -249,8 +251,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           $.extend(enterAnimOptions, {
             top: [this.options.startingTop, this.options.endingTop],
             opacity: 1,
-            scaleX: [.8, 1],
-            scaleY: [.8, 1]
+            scaleX: [0.8, 1],
+            scaleY: [0.8, 1]
           });
           anim(enterAnimOptions);
         }
@@ -324,6 +326,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         this.isOpen = true;
         Modal._modalsOpen++;
+        this._nthModalOpened = Modal._modalsOpen;
 
         // Set Z-Index based on number of currently open modals
         this.$overlay[0].style.zIndex = 1000 + Modal._modalsOpen * 2;
@@ -374,6 +377,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         this.isOpen = false;
         Modal._modalsOpen--;
+        this._nthModalOpened = 0;
 
         // Call onCloseStart callback
         if (typeof this.options.onCloseStart === 'function') {
@@ -389,7 +393,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         if (this.options.dismissible) {
           document.removeEventListener('keydown', this._handleKeydownBound);
-          document.removeEventListener('focus', this._handleFocusBound);
+          document.removeEventListener('focus', this._handleFocusBound, true);
         }
 
         anim.remove(this.el);

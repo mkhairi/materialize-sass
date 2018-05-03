@@ -70,14 +70,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_setupEventHandlers',
       value: function _setupEventHandlers() {
         this._handleRangeChangeBound = this._handleRangeChange.bind(this);
-        this._handleRangeFocusBound = this._handleRangeFocus.bind(this);
         this._handleRangeMousedownTouchstartBound = this._handleRangeMousedownTouchstart.bind(this);
         this._handleRangeInputMousemoveTouchmoveBound = this._handleRangeInputMousemoveTouchmove.bind(this);
         this._handleRangeMouseupTouchendBound = this._handleRangeMouseupTouchend.bind(this);
         this._handleRangeBlurMouseoutTouchleaveBound = this._handleRangeBlurMouseoutTouchleave.bind(this);
 
         this.el.addEventListener('change', this._handleRangeChangeBound);
-        this.el.addEventListener('focus', this._handleRangeFocusBound);
 
         this.el.addEventListener('mousedown', this._handleRangeMousedownTouchstartBound);
         this.el.addEventListener('touchstart', this._handleRangeMousedownTouchstartBound);
@@ -102,7 +100,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_removeEventHandlers',
       value: function _removeEventHandlers() {
         this.el.removeEventListener('change', this._handleRangeChangeBound);
-        this.el.removeEventListener('focus', this._handleRangeFocusBound);
 
         this.el.removeEventListener('mousedown', this._handleRangeMousedownTouchstartBound);
         this.el.removeEventListener('touchstart', this._handleRangeMousedownTouchstartBound);
@@ -135,19 +132,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         var offsetLeft = this._calcRangeOffset();
         $(this.thumb).addClass('active').css('left', offsetLeft + 'px');
-      }
-
-      /**
-       * Handle Range Focus
-       * @param {Event} e
-       */
-
-    }, {
-      key: '_handleRangeFocus',
-      value: function _handleRangeFocus() {
-        if (M.tabPressed) {
-          this.$el.addClass('focused');
-        }
       }
 
       /**
@@ -211,7 +195,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_handleRangeBlurMouseoutTouchleave',
       value: function _handleRangeBlurMouseoutTouchleave() {
         if (!this._mousedown) {
-          this.$el.removeClass('focused');
           var paddingLeft = parseInt(this.$el.css('padding-left'));
           var marginLeft = 7 + paddingLeft + 'px';
 
@@ -286,8 +269,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_calcRangeOffset',
       value: function _calcRangeOffset() {
         var width = this.$el.width() - 15;
-        var max = parseFloat(this.$el.attr('max'));
-        var min = parseFloat(this.$el.attr('min'));
+        var max = parseFloat(this.$el.attr('max')) || 100; // Range default max
+        var min = parseFloat(this.$el.attr('min')) || 0; // Range default min
         var percent = (parseFloat(this.$el.val()) - min) / (max - min);
         return percent * width;
       }

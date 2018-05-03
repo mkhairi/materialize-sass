@@ -64,6 +64,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this.oldVal;
       _this.$inputField = _this.$el.closest('.input-field');
       _this.$active = $();
+      _this._mousedown = false;
       _this._setupDropdown();
 
       _this._setupEventHandlers();
@@ -93,16 +94,21 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this._handleInputBlurBound = this._handleInputBlur.bind(this);
         this._handleInputKeyupAndFocusBound = this._handleInputKeyupAndFocus.bind(this);
         this._handleInputKeydownBound = this._handleInputKeydown.bind(this);
+        this._handleInputClickBound = this._handleInputClick.bind(this);
         this._handleContainerMousedownAndTouchstartBound = this._handleContainerMousedownAndTouchstart.bind(this);
+        this._handleContainerMouseupAndTouchendBound = this._handleContainerMouseupAndTouchend.bind(this);
 
         this.el.addEventListener('blur', this._handleInputBlurBound);
         this.el.addEventListener('keyup', this._handleInputKeyupAndFocusBound);
         this.el.addEventListener('focus', this._handleInputKeyupAndFocusBound);
         this.el.addEventListener('keydown', this._handleInputKeydownBound);
+        this.el.addEventListener('click', this._handleInputClickBound);
         this.container.addEventListener('mousedown', this._handleContainerMousedownAndTouchstartBound);
+        this.container.addEventListener('mouseup', this._handleContainerMouseupAndTouchendBound);
 
         if (typeof window.ontouchstart !== 'undefined') {
           this.container.addEventListener('touchstart', this._handleContainerMousedownAndTouchstartBound);
+          this.container.addEventListener('touchend', this._handleContainerMouseupAndTouchendBound);
         }
       }
 
@@ -117,10 +123,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.el.removeEventListener('keyup', this._handleInputKeyupAndFocusBound);
         this.el.removeEventListener('focus', this._handleInputKeyupAndFocusBound);
         this.el.removeEventListener('keydown', this._handleInputKeydownBound);
+        this.el.removeEventListener('click', this._handleInputClickBound);
         this.container.removeEventListener('mousedown', this._handleContainerMousedownAndTouchstartBound);
+        this.container.removeEventListener('mouseup', this._handleContainerMouseupAndTouchendBound);
 
         if (typeof window.ontouchstart !== 'undefined') {
           this.container.removeEventListener('touchstart', this._handleContainerMousedownAndTouchstartBound);
+          this.container.removeEventListener('touchend', this._handleContainerMouseupAndTouchendBound);
         }
       }
 
@@ -131,6 +140,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_setupDropdown',
       value: function _setupDropdown() {
+        var _this2 = this;
+
         this.container = document.createElement('ul');
         this.container.id = 'autocomplete-options-' + M.guid();
         $(this.container).addClass('autocomplete-content dropdown-content');
@@ -140,7 +151,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.dropdown = M.Dropdown.init(this.el, {
           autoFocus: false,
           closeOnClick: false,
-          coverTrigger: false
+          coverTrigger: false,
+          onItemClick: function (itemEl) {
+            _this2.selectOption($(itemEl));
+          }
         });
 
         // Sketchy removal of dropdown click handler
@@ -164,8 +178,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_handleInputBlur',
       value: function _handleInputBlur() {
-        this.dropdown.close();
-        this._resetAutocomplete();
+        if (!this._mousedown) {
+          this.close();
+          this._resetAutocomplete();
+        }
       }
 
       /**
@@ -176,8 +192,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_handleInputKeyupAndFocus',
       value: function _handleInputKeyupAndFocus(e) {
-        var _this2 = this;
-
         if (e.type === 'keyup') {
           Autocomplete._keydown = false;
         }
@@ -191,25 +205,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         // Check if the input isn't empty
-        if (this.oldVal !== val) {
-          this._resetAutocomplete();
-
-          if (val.length >= this.options.minLength) {
-            this.isOpen = true;
-            this._renderDropdown(this.options.data, val);
-          }
-
-          // Open dropdown
-          if (!this.dropdown.isOpen) {
-            // Timeout to prevent dropdown temp doc click handler from firing
-            setTimeout(function () {
-              _this2.dropdown.open();
-            }, 100);
-
-            // Recalculate dropdown when its already open
-          } else {
-            this.dropdown.recalculateDimensions();
-          }
+        // Check if focus triggered by tab
+        if (this.oldVal !== val && (M.tabPressed || e.type !== 'focus')) {
+          this.open();
         }
 
         // Update oldVal
@@ -232,7 +230,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             numItems = $(this.container).children('li').length;
 
         // select element on Enter
-        if (keyCode === 13 && this.activeIndex >= 0) {
+        if (keyCode === M.keys.ENTER && this.activeIndex >= 0) {
           liElement = $(this.container).children('li').eq(this.activeIndex);
           if (liElement.length) {
             this.selectOption(liElement);
@@ -242,14 +240,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         // Capture up and down key
-        if (keyCode === 38 || keyCode === 40) {
+        if (keyCode === M.keys.ARROW_UP || keyCode === M.keys.ARROW_DOWN) {
           e.preventDefault();
 
-          if (keyCode === 38 && this.activeIndex > 0) {
+          if (keyCode === M.keys.ARROW_UP && this.activeIndex > 0) {
             this.activeIndex--;
           }
 
-          if (keyCode === 40 && this.activeIndex < numItems - 1) {
+          if (keyCode === M.keys.ARROW_DOWN && this.activeIndex < numItems - 1) {
             this.activeIndex++;
           }
 
@@ -262,6 +260,17 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       }
 
       /**
+       * Handle Input Click
+       * @param {Event} e
+       */
+
+    }, {
+      key: '_handleInputClick',
+      value: function _handleInputClick(e) {
+        this.open();
+      }
+
+      /**
        * Handle Container Mousedown and Touchstart
        * @param {Event} e
        */
@@ -269,8 +278,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_handleContainerMousedownAndTouchstart',
       value: function _handleContainerMousedownAndTouchstart(e) {
-        var $autocompleteOption = $(e.target).closest('li');
-        this.selectOption($autocompleteOption);
+        this._mousedown = true;
+      }
+
+      /**
+       * Handle Container Mouseup and Touchend
+       * @param {Event} e
+       */
+
+    }, {
+      key: '_handleContainerMouseupAndTouchend',
+      value: function _handleContainerMouseupAndTouchend(e) {
+        this._mousedown = false;
       }
 
       /**
@@ -281,12 +300,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_highlight',
       value: function _highlight(string, $el) {
         var img = $el.find('img');
-        var matchStart = $el.text().toLowerCase().indexOf("" + string.toLowerCase() + ""),
+        var matchStart = $el.text().toLowerCase().indexOf('' + string.toLowerCase() + ''),
             matchEnd = matchStart + string.length - 1,
             beforeMatch = $el.text().slice(0, matchStart),
             matchText = $el.text().slice(matchStart, matchEnd + 1),
             afterMatch = $el.text().slice(matchEnd + 1);
-        $el.html("<span>" + beforeMatch + "<span class='highlight'>" + matchText + "</span>" + afterMatch + "</span>");
+        $el.html('<span>' + beforeMatch + '<span class=\'highlight\'>' + matchText + '</span>' + afterMatch + '</span>');
         if (img.length) {
           $el.prepend(img);
         }
@@ -314,6 +333,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this._resetCurrentElement();
         this.oldVal = null;
         this.isOpen = false;
+        this._mousedown = false;
       }
 
       /**
@@ -328,7 +348,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.el.value = text;
         this.$el.trigger('change');
         this._resetAutocomplete();
-        this.dropdown.close();
+        this.close();
 
         // Handle onAutocomplete callback.
         if (typeof this.options.onAutocomplete === 'function') {
@@ -370,10 +390,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         // Sort
-        var sortFunctionBound = function (a, b) {
-          return _this3.options.sortFunction(a.key.toLowerCase(), b.key.toLowerCase(), val.toLowerCase());
-        };
-        matchingData.sort(sortFunctionBound);
+        if (this.options.sortFunction) {
+          var sortFunctionBound = function (a, b) {
+            return _this3.options.sortFunction(a.key.toLowerCase(), b.key.toLowerCase(), val.toLowerCase());
+          };
+          matchingData.sort(sortFunctionBound);
+        }
 
         // Render
         for (var i = 0; i < matchingData.length; i++) {
@@ -388,6 +410,41 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           $(this.container).append($autocompleteOption);
           this._highlight(val, $autocompleteOption);
         }
+      }
+
+      /**
+       * Open Autocomplete Dropdown
+       */
+
+    }, {
+      key: 'open',
+      value: function open() {
+        var val = this.el.value.toLowerCase();
+
+        this._resetAutocomplete();
+
+        if (val.length >= this.options.minLength) {
+          this.isOpen = true;
+          this._renderDropdown(this.options.data, val);
+        }
+
+        // Open dropdown
+        if (!this.dropdown.isOpen) {
+          this.dropdown.open();
+        } else {
+          // Recalculate dropdown when its already open
+          this.dropdown.recalculateDimensions();
+        }
+      }
+
+      /**
+       * Close Autocomplete Dropdown
+       */
+
+    }, {
+      key: 'close',
+      value: function close() {
+        this.dropdown.close();
       }
 
       /**

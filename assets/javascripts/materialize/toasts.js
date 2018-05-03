@@ -46,6 +46,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var toastElement = this._createToast();
       toastElement.M_Toast = this;
       this.el = toastElement;
+      this.$el = $(toastElement);
       this._animateIn();
       this._setTimer();
     }
@@ -96,7 +97,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           targets: this.el,
           top: 0,
           opacity: 1,
-          duration: 300,
+          duration: this.options.inDuration,
           easing: 'easeOutCubic'
         });
       }
@@ -156,7 +157,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               _this2.options.completeCallback();
             }
             // Remove toast from DOM
-            _this2.el.parentNode.removeChild(_this2.el);
+            _this2.$el.remove();
             Toast._toasts.splice(Toast._toasts.indexOf(_this2), 1);
             if (Toast._toasts.length === 0) {
               Toast._removeContainer();
@@ -210,7 +211,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         document.removeEventListener('mousemove', Toast._onDragMove);
         document.removeEventListener('mouseup', Toast._onDragEnd);
 
-        Toast._container.parentNode.removeChild(Toast._container);
+        $(Toast._container).remove();
         Toast._container = null;
       }
 

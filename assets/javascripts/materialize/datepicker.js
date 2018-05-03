@@ -12,6 +12,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
   'use strict';
 
   var _defaults = {
+    // Close when date is selected
+    autoClose: false,
 
     // the default output format for the input field value
     format: 'mmm dd, yyyy',
@@ -129,14 +131,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
       if (!_this.options.defaultDate) {
         _this.options.defaultDate = new Date(Date.parse(_this.el.value));
-        _this.options.setDefaultDate = true;
       }
 
       var defDate = _this.options.defaultDate;
-
       if (Datepicker._isDate(defDate)) {
         if (_this.options.setDefaultDate) {
           _this.setDate(defDate, true);
+          _this.setInputValue();
         } else {
           _this.gotoDate(defDate);
         }
@@ -149,7 +150,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
        * @type {Boolean}
        */
       _this.isOpen = false;
-
       return _this;
     }
 
@@ -170,11 +170,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: 'destroySelects',
       value: function destroySelects() {
-        var oldYearSelect = this.calendarEl.querySelector('.pika-select-year');
+        var oldYearSelect = this.calendarEl.querySelector('.orig-select-year');
         if (oldYearSelect) {
           M.FormSelect.getInstance(oldYearSelect).destroy();
         }
-        var oldMonthSelect = this.calendarEl.querySelector('.pika-select-month');
+        var oldMonthSelect = this.calendarEl.querySelector('.orig-select-month');
         if (oldMonthSelect) {
           M.FormSelect.getInstance(oldMonthSelect).destroy();
         }
@@ -309,9 +309,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             month: date.getMonth(),
             year: date.getFullYear()
           }];
-          // if (this.options.mainCalendar === 'right') {
-          //   this.calendars[0].month += 1 - this.options.numberOfMonths;
-          // }
         }
 
         this.adjustCalendars();
@@ -320,12 +317,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: 'adjustCalendars',
       value: function adjustCalendars() {
         this.calendars[0] = this.adjustCalendar(this.calendars[0]);
-        // for (let c = 1; c < this.options.numberOfMonths; c++) {
-        //   this.calendars[c] = this.adjustCalendar({
-        //     month: this.calendars[0].month + c,
-        //     year: this.calendars[0].year
-        //   });
-        // }
         this.draw();
       }
     }, {
@@ -469,12 +460,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         if (opts.isEndRange) {
           arr.push('is-endrange');
         }
-        return '<td data-day="' + opts.day + '" class="' + arr.join(' ') + '" aria-selected="' + ariaSelected + '">' + '<button class="datepicker-day-button" type="button" ' + 'data-pika-year="' + opts.year + '" data-pika-month="' + opts.month + '" data-pika-day="' + opts.day + '">' + opts.day + '</button>' + '</td>';
+        return '<td data-day="' + opts.day + '" class="' + arr.join(' ') + '" aria-selected="' + ariaSelected + '">' + ('<button class="datepicker-day-button" type="button" data-year="' + opts.year + '" data-month="' + opts.month + '" data-day="' + opts.day + '">' + opts.day + '</button>') + '</td>';
       }
     }, {
       key: 'renderRow',
       value: function renderRow(days, isRTL, isRowSelected) {
-        return '<tr class="pika-row' + (isRowSelected ? ' is-selected' : '') + '">' + (isRTL ? days.reverse() : days).join('') + '</tr>';
+        return '<tr class="datepicker-row' + (isRowSelected ? ' is-selected' : '') + '">' + (isRTL ? days.reverse() : days).join('') + '</tr>';
       }
     }, {
       key: 'renderTable',
@@ -515,7 +506,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           arr.push('<option value="' + (year === refYear ? i - c : 12 + i - c) + '"' + (i === month ? ' selected="selected"' : '') + (isMinYear && i < opts.minMonth || isMaxYear && i > opts.maxMonth ? 'disabled="disabled"' : '') + '>' + opts.i18n.months[i] + '</option>');
         }
 
-        monthHtml = '<select class="pika-select pika-select-month" tabindex="-1">' + arr.join('') + '</select>';
+        monthHtml = '<select class="datepicker-select orig-select-month" tabindex="-1">' + arr.join('') + '</select>';
 
         if ($.isArray(opts.yearRange)) {
           i = opts.yearRange[0];
@@ -527,11 +518,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         for (arr = []; i < j && i <= opts.maxYear; i++) {
           if (i >= opts.minYear) {
-            arr.push('<option value="' + i + '"' + (i === year ? ' selected="selected"' : '') + '>' + i + '</option>');
+            arr.push('<option value="' + i + '" ' + (i === year ? 'selected="selected"' : '') + '>' + i + '</option>');
           }
         }
 
-        yearHtml = '<select class="pika-select pika-select-year" tabindex="-1">' + arr.join('') + '</select>';
+        yearHtml = '<select class="datepicker-select orig-select-year" tabindex="-1">' + arr.join('') + '</select>';
 
         var leftArrow = '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"/><path d="M0-.5h24v24H0z" fill="none"/></svg>';
         html += '<button class="month-prev' + (prev ? '' : ' is-disabled') + '" type="button">' + leftArrow + '</button>';
@@ -552,10 +543,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           next = false;
         }
 
-        // if (c === (this.options.numberOfMonths - 1) ) {
         var rightArrow = '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/><path d="M0-.25h24v24H0z" fill="none"/></svg>';
         html += '<button class="month-next' + (next ? '' : ' is-disabled') + '" type="button">' + rightArrow + '</button>';
-        // }
 
         return html += '</div>';
       }
@@ -591,7 +580,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }
         }
 
-        randId = 'pika-title-' + Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 2);
+        randId = 'datepicker-title-' + Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 2);
 
         for (var c = 0; c < 1; c++) {
           this._renderDateDisplay();
@@ -603,10 +592,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.calendarEl.innerHTML = html;
 
         // Init Materialize Select
-        var yearSelect = this.calendarEl.querySelector('.pika-select-year');
-        var monthSelect = this.calendarEl.querySelector('.pika-select-month');
-        M.FormSelect.init(yearSelect, { classes: 'select-year', dropdownOptions: { container: document.body, constrainWidth: false } });
-        M.FormSelect.init(monthSelect, { classes: 'select-month', dropdownOptions: { container: document.body, constrainWidth: false } });
+        var yearSelect = this.calendarEl.querySelector('.orig-select-year');
+        var monthSelect = this.calendarEl.querySelector('.orig-select-month');
+        M.FormSelect.init(yearSelect, {
+          classes: 'select-year',
+          dropdownOptions: { container: document.body, constrainWidth: false }
+        });
+        M.FormSelect.init(monthSelect, {
+          classes: 'select-month',
+          dropdownOptions: { container: document.body, constrainWidth: false }
+        });
 
         // Add change handlers for select
         yearSelect.addEventListener('change', this._handleYearChange.bind(this));
@@ -652,7 +647,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.$modalEl = $(Datepicker._template);
         this.modalEl = this.$modalEl[0];
 
-        this.calendarEl = this.modalEl.querySelector('.pika-single');
+        this.calendarEl = this.modalEl.querySelector('.datepicker-calendar');
 
         this.yearTextEl = this.modalEl.querySelector('.year-text');
         this.dateTextEl = this.modalEl.querySelector('.date-text');
@@ -663,7 +658,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.cancelBtn = this.modalEl.querySelector('.datepicker-cancel');
 
         this.formats = {
-
           d: function () {
             return _this4.date.getDate();
           },
@@ -734,24 +728,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var $target = $(e.target);
         if (!$target.hasClass('is-disabled')) {
           if ($target.hasClass('datepicker-day-button') && !$target.hasClass('is-empty') && !$target.parent().hasClass('is-disabled')) {
-            this.setDate(new Date(e.target.getAttribute('data-pika-year'), e.target.getAttribute('data-pika-month'), e.target.getAttribute('data-pika-day')));
+            this.setDate(new Date(e.target.getAttribute('data-year'), e.target.getAttribute('data-month'), e.target.getAttribute('data-day')));
+            if (this.options.autoClose) {
+              this._finishSelection();
+            }
           } else if ($target.closest('.month-prev').length) {
             this.prevMonth();
           } else if ($target.closest('.month-next').length) {
             this.nextMonth();
           }
         }
-        // if (!$target.hasClass('pika-select')) {
-        //   // if this is touch event prevent mouse events emulation
-        //   // if (e.preventDefault) {
-        //   //   e.preventDefault();
-        //   // } else {
-        //   //   e.returnValue = false;
-        //   //   return false;
-        //   // }
-        // } else {
-        //   this._c = true;
-        // }
       }
     }, {
       key: '_handleClearClick',
@@ -814,9 +800,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         if (Datepicker._isDate(date)) {
           this.setDate(date);
         }
-        // if (!self._v) {
-        //   self.show();
-        // }
       }
     }, {
       key: 'renderDayName',
@@ -942,7 +925,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     return Datepicker;
   }(Component);
 
-  Datepicker._template = ['<div class= "modal datepicker-modal">', '<div class="modal-content datepicker-container">', '<div class="datepicker-date-display">', '<span class="year-text"></span>', '<span class="date-text"></span>', '</div>', '<div class="datepicker-calendar-container">', '<div class="pika-single"></div>', '<div class="datepicker-footer">', '<button class="btn-flat datepicker-clear waves-effect" style="visibility: hidden;" type="button"></button>', '<div class="confirmation-btns">', '<button class="btn-flat datepicker-cancel waves-effect" type="button"></button>', '<button class="btn-flat datepicker-done waves-effect" type="button"></button>', '</div>', '</div>', '</div>', '</div>', '</div>'].join('');
+  Datepicker._template = ['<div class= "modal datepicker-modal">', '<div class="modal-content datepicker-container">', '<div class="datepicker-date-display">', '<span class="year-text"></span>', '<span class="date-text"></span>', '</div>', '<div class="datepicker-calendar-container">', '<div class="datepicker-calendar"></div>', '<div class="datepicker-footer">', '<button class="btn-flat datepicker-clear waves-effect" style="visibility: hidden;" type="button"></button>', '<div class="confirmation-btns">', '<button class="btn-flat datepicker-cancel waves-effect" type="button"></button>', '<button class="btn-flat datepicker-done waves-effect" type="button"></button>', '</div>', '</div>', '</div>', '</div>', '</div>'].join('');
 
   M.Datepicker = Datepicker;
 

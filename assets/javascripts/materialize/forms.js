@@ -45,7 +45,7 @@
     }
 
     if (!$textarea.length) {
-      console.error("No textarea element found");
+      console.error('No textarea element found');
       return;
     }
 
@@ -186,10 +186,10 @@
     document.addEventListener('blur', function (e) {
       var $inputElement = $(e.target);
       if ($inputElement.is(input_selector)) {
-        var selector = ".prefix";
+        var selector = '.prefix';
 
         if ($inputElement[0].value.length === 0 && $inputElement[0].validity.badInput !== true && $inputElement.attr('placeholder') === null) {
-          selector += ", label";
+          selector += ', label';
         }
         $inputElement.siblings(selector).removeClass('active');
         M.validate_field($inputElement);
@@ -238,7 +238,7 @@
       for (var i = 0; i < files.length; i++) {
         file_names.push(files[i].name);
       }
-      path_input[0].value = file_names.join(", ");
+      path_input[0].value = file_names.join(', ');
       path_input.trigger('change');
     });
   }); // End of $(document).ready

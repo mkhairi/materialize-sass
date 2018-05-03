@@ -11,8 +11,8 @@
 })(window);
 
 // AMD
-if (typeof define === "function" && define.amd) {
-  define("M", [], function () {
+if (typeof define === 'function' && define.amd) {
+  define('M', [], function () {
     return M;
   });
 
@@ -36,18 +36,31 @@ M.keys = {
  * TabPress Keydown handler
  */
 M.tabPressed = false;
+M.keyDown = false;
 var docHandleKeydown = function (e) {
-  if (e.which === M.keys.TAB) {
+  M.keyDown = true;
+  if (e.which === M.keys.TAB || e.which === M.keys.ARROW_DOWN || e.which === M.keys.ARROW_UP) {
     M.tabPressed = true;
   }
 };
 var docHandleKeyup = function (e) {
-  if (e.which === M.keys.TAB) {
+  M.keyDown = false;
+  if (e.which === M.keys.TAB || e.which === M.keys.ARROW_DOWN || e.which === M.keys.ARROW_UP) {
     M.tabPressed = false;
   }
 };
-document.addEventListener('keydown', docHandleKeydown);
-document.addEventListener('keyup', docHandleKeyup);
+var docHandleFocus = function (e) {
+  if (M.keyDown) {
+    document.body.classList.add('keyboard-focused');
+  }
+};
+var docHandleBlur = function (e) {
+  document.body.classList.remove('keyboard-focused');
+};
+document.addEventListener('keydown', docHandleKeydown, true);
+document.addEventListener('keyup', docHandleKeyup, true);
+document.addEventListener('focus', docHandleFocus, true);
+document.addEventListener('blur', docHandleBlur, true);
 
 /**
  * Initialize jQuery wrapper for plugin
@@ -80,7 +93,7 @@ M.initializeJqueryWrapper = function (plugin, pluginName, classRef) {
     }
 
     // Return error if an unrecognized  method name is passed in
-    jQuery.error("Method " + methodOrOptions + " does not exist on jQuery." + pluginName);
+    jQuery.error('Method ' + methodOrOptions + ' does not exist on jQuery.' + pluginName);
   };
 };
 
@@ -147,7 +160,7 @@ M.guid = function () {
  * @returns {string}
  */
 M.escapeHash = function (hash) {
-  return hash.replace(/(:|\.|\[|\]|,|=|\/)/g, "\\$1");
+  return hash.replace(/(:|\.|\[|\]|,|=|\/)/g, '\\$1');
 };
 
 M.elementOrParentIsFixed = function (element) {
@@ -155,7 +168,7 @@ M.elementOrParentIsFixed = function (element) {
   var $checkElements = $element.add($element.parents());
   var isFixed = false;
   $checkElements.each(function () {
-    if ($(this).css("position") === "fixed") {
+    if ($(this).css('position') === 'fixed') {
       isFixed = true;
       return false;
     }
@@ -195,6 +208,8 @@ M.checkWithinContainer = function (container, bounding, offset) {
   };
 
   var containerRect = container.getBoundingClientRect();
+  // If body element is smaller than viewport, use viewport height instead.
+  var containerBottom = container === document.body ? Math.max(containerRect.bottom, window.innerHeight) : containerRect.bottom;
 
   var scrollLeft = container.scrollLeft;
   var scrollTop = container.scrollTop;
@@ -215,7 +230,7 @@ M.checkWithinContainer = function (container, bounding, offset) {
     edges.top = true;
   }
 
-  if (scrolledY + bounding.height > containerRect.bottom - offset || scrolledY + bounding.height > window.innerHeight - offset) {
+  if (scrolledY + bounding.height > containerBottom - offset || scrolledY + bounding.height > window.innerHeight - offset) {
     edges.bottom = true;
   }
 
@@ -298,7 +313,7 @@ M.getIdFromTrigger = function (trigger) {
     if (id) {
       id = id.slice(1);
     } else {
-      id = "";
+      id = '';
     }
   }
   return id;

@@ -186,7 +186,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_handleInterval',
       value: function _handleInterval() {
         var newActiveIndex = this.$slider.find('.active').index();
-        if (this.$slides.length === newActiveIndex + 1) newActiveIndex = 0; // loop to start
+        if (this.$slides.length === newActiveIndex + 1) newActiveIndex = 0;
+        // loop to start
         else newActiveIndex += 1;
 
         this.set(newActiveIndex);

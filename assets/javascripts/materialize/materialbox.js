@@ -59,7 +59,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this.originalWidth = 0;
       _this.originalHeight = 0;
       _this.originInlineStyles = _this.$el.attr('style');
-      _this.caption = _this.el.getAttribute('data-caption') || "";
+      _this.caption = _this.el.getAttribute('data-caption') || '';
 
       // Wrap
       _this.$el.before(_this.placeholder);
@@ -284,7 +284,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function _updateVars() {
         this.windowWidth = window.innerWidth;
         this.windowHeight = window.innerHeight;
-        this.caption = this.el.getAttribute('data-caption') || "";
+        this.caption = this.el.getAttribute('data-caption') || '';
       }
 
       /**
@@ -373,14 +373,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         });
 
         // Add and animate caption if it exists
-        if (this.caption !== "") {
+        if (this.caption !== '') {
           if (this.$photocaption) {
             anim.remove(this.$photoCaption[0]);
           }
           this.$photoCaption = $('<div class="materialbox-caption"></div>');
           this.$photoCaption.text(this.caption);
           $('body').append(this.$photoCaption);
-          this.$photoCaption.css({ "display": "inline" });
+          this.$photoCaption.css({ display: 'inline' });
 
           anim({
             targets: this.$photoCaption[0],
@@ -439,7 +439,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         anim.remove(this.el);
         anim.remove(this.$overlay[0]);
 
-        if (this.caption !== "") {
+        if (this.caption !== '') {
           anim.remove(this.$photoCaption[0]);
         }
 
@@ -462,7 +462,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this._animateImageOut();
 
         // Remove Caption + reset css settings on image
-        if (this.caption !== "") {
+        if (this.caption !== '') {
           anim({
             targets: this.$photoCaption[0],
             opacity: 0,

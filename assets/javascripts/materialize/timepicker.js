@@ -31,7 +31,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
     autoClose: false, // auto close when minute is selected
     twelveHour: true, // change to 12 hour AM/PM clock from 24 hour
-    vibrate: true // vibrate the device when dragging clock hand
+    vibrate: true, // vibrate the device when dragging clock hand
+
+    // Callbacks
+    onOpenStart: null,
+    onOpenEnd: null,
+    onCloseStart: null,
+    onCloseEnd: null,
+    onSelect: null
   };
 
   /**
@@ -175,6 +182,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }, this.options.duration / 2);
         }
 
+        if (typeof this.options.onSelect === 'function') {
+          this.options.onSelect.call(this, this.hours, this.minutes);
+        }
+
         // Unbind mousemove event
         document.removeEventListener('mousemove', this._handleDocumentClickMoveBound);
         document.removeEventListener('touchmove', this._handleDocumentClickMoveBound);
@@ -200,7 +211,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var _this3 = this;
 
         this.modal = M.Modal.init(this.modalEl, {
+          onOpenStart: this.options.onOpenStart,
+          onOpenEnd: this.options.onOpenEnd,
+          onCloseStart: this.options.onCloseStart,
           onCloseEnd: function () {
+            if (typeof _this3.options.onCloseEnd === 'function') {
+              _this3.options.onCloseEnd.call(_this3);
+            }
             _this3.isOpen = false;
           }
         });
@@ -225,7 +242,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_pickerSetup',
       value: function _pickerSetup() {
-
         var $clearBtn = $('<button class="btn-flat timepicker-clear waves-effect" style="visibility: hidden;" type="button" tabindex="' + (this.options.twelveHour ? '3' : '1') + '">' + this.options.i18n.clear + '</button>').appendTo(this.footer).on('click', this.clear.bind(this));
         if (this.options.showClearBtn) {
           $clearBtn.css({ visibility: '' });
@@ -357,12 +373,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         // Get the time
         var value = ((this.el.value || this.options.defaultTime || '') + '').split(':');
         if (this.options.twelveHour && !(typeof value[1] === 'undefined')) {
-          if (value[1].toUpperCase().indexOf("AM") > 0) {
+          if (value[1].toUpperCase().indexOf('AM') > 0) {
             this.amOrPm = 'AM';
           } else {
             this.amOrPm = 'PM';
           }
-          value[1] = value[1].replace("AM", "").replace("PM", "");
+          value[1] = value[1].replace('AM', '').replace('PM', '');
         }
         if (value[0] === 'now') {
           var now = new Date(+new Date() + this.options.fromNow);
@@ -381,7 +397,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: 'showView',
       value: function showView(view, delay) {
-        if (view === 'minutes' && $(this.hoursView).css("visibility") === "visible") {
+        if (view === 'minutes' && $(this.hoursView).css('visibility') === 'visible') {
           // raiseCallback(this.options.beforeHourSelect);
         }
         var isHours = view === 'hours',
@@ -519,6 +535,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.isOpen = true;
         this._updateTimeFromInput();
         this.showView('hours');
+
         this.modal.open();
       }
     }, {

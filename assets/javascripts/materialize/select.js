@@ -142,17 +142,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               placeholderOption.find('input[type="checkbox"]').prop('checked', false);
               this._toggleEntryFromArray(placeholderOption[0].id);
             }
-
-            var checkbox = $(option).find('input[type="checkbox"]');
-            checkbox.prop('checked', !checkbox.prop('checked'));
             selected = this._toggleEntryFromArray(key);
           } else {
-            $(this.dropdownOptions).find('li').removeClass('active');
-            $(option).toggleClass('active');
-            this.input.value = option.textContent;
+            $(this.dropdownOptions).find('li').removeClass('selected');
+            $(option).toggleClass('selected', selected);
           }
 
-          this._activateOption($(this.dropdownOptions), option);
+          // Set selected on original select option
           $(this._valueDict[key].el).prop('selected', selected);
           this.$el.trigger('change');
         }
@@ -183,7 +179,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var _this4 = this;
 
         this.wrapper = document.createElement('div');
-        $(this.wrapper).addClass('select-wrapper' + ' ' + this.options.classes);
+        $(this.wrapper).addClass('select-wrapper ' + this.options.classes);
         this.$el.before($(this.wrapper));
         this.wrapper.appendChild(this.el);
 
@@ -322,7 +318,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         // add icons
         var iconUrl = option.getAttribute('data-icon');
-        var classes = option.getAttribute('class');
         if (!!iconUrl) {
           var imgEl = $('<img alt="" src="' + iconUrl + '">');
           liEl.prepend(imgEl);
@@ -343,49 +338,54 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_toggleEntryFromArray',
       value: function _toggleEntryFromArray(key) {
         var notAdded = !this._keysSelected.hasOwnProperty(key);
+        var $optionLi = $(this._valueDict[key].optionEl);
+
         if (notAdded) {
           this._keysSelected[key] = true;
         } else {
           delete this._keysSelected[key];
         }
 
-        $(this._valueDict[key].optionEl).toggleClass('active');
+        $optionLi.toggleClass('selected', notAdded);
+
+        // Set checkbox checked value
+        $optionLi.find('input[type="checkbox"]').prop('checked', notAdded);
 
         // use notAdded instead of true (to detect if the option is selected or not)
-        $(this._valueDict[key].el).prop('selected', notAdded);
+        $optionLi.prop('selected', notAdded);
 
         return notAdded;
       }
 
       /**
-       * Set value to input
+       * Set text value to input
        */
 
     }, {
       key: '_setValueToInput',
       value: function _setValueToInput() {
-        var value = '';
+        var values = [];
         var options = this.$el.find('option');
 
         options.each(function (el) {
           if ($(el).prop('selected')) {
             var text = $(el).text();
-            value === '' ? value += text : value += ', ' + text;
+            values.push(text);
           }
         });
 
-        if (value === '') {
+        if (!values.length) {
           var firstDisabled = this.$el.find('option:disabled').eq(0);
-          if (firstDisabled.length) {
-            value = firstDisabled.text();
+          if (firstDisabled.length && firstDisabled[0].value === '') {
+            values.push(firstDisabled.text());
           }
         }
 
-        this.input.value = value;
+        this.input.value = values.join(', ');
       }
 
       /**
-       * Set selected state of dropdown too match actual select element
+       * Set selected state of dropdown to match actual select element
        */
 
     }, {
@@ -395,12 +395,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         for (var key in this._valueDict) {
           var option = this._valueDict[key];
-          if ($(option.el).prop('selected')) {
-            $(option.optionEl).find('input[type="checkbox"]').prop("checked", true);
+          var optionIsSelected = $(option.el).prop('selected');
+          $(option.optionEl).find('input[type="checkbox"]').prop('checked', optionIsSelected);
+          if (optionIsSelected) {
             this._activateOption($(this.dropdownOptions), $(option.optionEl));
             this._keysSelected[key] = true;
           } else {
-            $(option.optionEl).find('input[type="checkbox"]').prop("checked", false);
             $(option.optionEl).removeClass('selected');
           }
         }
@@ -419,7 +419,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           if (!this.isMultiple) {
             collection.find('li.selected').removeClass('selected');
           }
-
           var option = $(newOption);
           option.addClass('selected');
         }

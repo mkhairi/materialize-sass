@@ -32,8 +32,7 @@ namespace :javascripts do
   task :turbolinks_init do
     files =  Dir.glob('assets/javascripts/materialize/**/*.js').reject { |file| file.end_with?(".min.js") and File.file?(file) }
     files.each do |file|
-      selected_files = %w(buttons.js cards.js character_counter.js chips.js collapsible.js 
-                          dropdown.js forms.js materialbox.js scrollspy.js tabs.js tooltip.js transitions.js)
+      selected_files = %w(forms.js chips.js)
       file_name = File.basename file
       #only selected file
       if selected_files.include?(file_name)

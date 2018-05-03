@@ -56,17 +56,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this.$floatingBtnsReverse = _this.$el.find('ul .btn-floating').reverse();
       _this.offsetY = 0;
       _this.offsetX = 0;
+
+      _this.$el.addClass('direction-' + _this.options.direction);
       if (_this.options.direction === 'top') {
-        _this.$el.addClass('direction-top');
         _this.offsetY = 40;
       } else if (_this.options.direction === 'right') {
-        _this.$el.addClass('direction-right');
         _this.offsetX = -40;
       } else if (_this.options.direction === 'bottom') {
-        _this.$el.addClass('direction-bottom');
         _this.offsetY = -40;
       } else {
-        _this.$el.addClass('direction-left');
         _this.offsetX = 40;
       }
       _this._setupEventHandlers();
@@ -202,7 +200,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           anim({
             targets: el,
             opacity: 1,
-            scale: [.4, 1],
+            scale: [0.4, 1],
             translateY: [_this2.offsetY, 0],
             translateX: [_this2.offsetX, 0],
             duration: 275,
@@ -227,7 +225,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           anim({
             targets: el,
             opacity: 0,
-            scale: .4,
+            scale: 0.4,
             translateY: _this3.offsetY,
             translateX: _this3.offsetX,
             duration: 175,

@@ -102,6 +102,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this._overlay.parentNode.removeChild(this._overlay);
         this.dragTarget.parentNode.removeChild(this.dragTarget);
         this.el.M_Sidenav = undefined;
+        this.el.style.transform = '';
 
         var index = Sidenav._sidenavs.indexOf(this);
         if (index >= 0) {
@@ -290,7 +291,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_handleDragTargetRelease',
       value: function _handleDragTargetRelease() {
         if (this.isDragged) {
-          if (this.percentOpen > .5) {
+          if (this.percentOpen > 0.2) {
             this.open();
           } else {
             this._animateOut();
@@ -357,7 +358,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_handleCloseRelease',
       value: function _handleCloseRelease() {
         if (this.isOpen && this.isDragged) {
-          if (this.percentOpen > .5) {
+          if (this.percentOpen > 0.8) {
             this._animateIn();
           } else {
             this.close();

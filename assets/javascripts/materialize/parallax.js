@@ -36,7 +36,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this.$img = _this.$el.find('img').first();
       _this.$img.each(function () {
         var el = this;
-        if (el.complete) $(el).trigger("load");
+        if (el.complete) $(el).trigger('load');
       });
 
       _this._updateParallax();

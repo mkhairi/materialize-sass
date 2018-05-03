@@ -572,7 +572,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             this.$el.find('.carousel-item').removeClass('active');
             el.classList.add('active');
           }
-          var transformString = alignment + ' translateX(' + -delta / 2 + 'px)' + ' translateX(' + dir * this.options.shift * tween * i + 'px)' + ' translateZ(' + this.options.dist * tween + 'px)';
+          var transformString = alignment + ' translateX(' + -delta / 2 + 'px) translateX(' + dir * this.options.shift * tween * i + 'px) translateZ(' + this.options.dist * tween + 'px)';
           this._updateItemStyle(el, centerTweenedOpacity, 0, transformString);
         }
 
@@ -588,7 +588,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           // Don't show wrapped items.
           if (!this.noWrap || this.center + i < this.count) {
             el = this.images[this._wrap(this.center + i)];
-            var _transformString = alignment + ' translateX(' + (this.options.shift + (this.dim * i - delta) / 2) + 'px)' + ' translateZ(' + zTranslation + 'px)';
+            var _transformString = alignment + ' translateX(' + (this.options.shift + (this.dim * i - delta) / 2) + 'px) translateZ(' + zTranslation + 'px)';
             this._updateItemStyle(el, tweenedOpacity, -i, _transformString);
           }
 
@@ -603,7 +603,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           // Don't show wrapped items.
           if (!this.noWrap || this.center - i >= 0) {
             el = this.images[this._wrap(this.center - i)];
-            var _transformString2 = alignment + ' translateX(' + (-this.options.shift + (-this.dim * i - delta) / 2) + 'px)' + ' translateZ(' + zTranslation + 'px)';
+            var _transformString2 = alignment + ' translateX(' + (-this.options.shift + (-this.dim * i - delta) / 2) + 'px) translateZ(' + zTranslation + 'px)';
             this._updateItemStyle(el, tweenedOpacity, -i, _transformString2);
           }
         }
@@ -612,18 +612,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         // Don't show wrapped items.
         if (!this.noWrap || this.center >= 0 && this.center < this.count) {
           el = this.images[this._wrap(this.center)];
-          var _transformString3 = alignment + ' translateX(' + -delta / 2 + 'px)' + ' translateX(' + dir * this.options.shift * tween + 'px)' + ' translateZ(' + this.options.dist * tween + 'px)';
+          var _transformString3 = alignment + ' translateX(' + -delta / 2 + 'px) translateX(' + dir * this.options.shift * tween + 'px) translateZ(' + this.options.dist * tween + 'px)';
           this._updateItemStyle(el, centerTweenedOpacity, 0, _transformString3);
         }
 
         // onCycleTo callback
         var $currItem = this.$el.find('.carousel-item').eq(this._wrap(this.center));
-        if (lastCenter !== this.center && typeof this.options.onCycleTo === "function") {
+        if (lastCenter !== this.center && typeof this.options.onCycleTo === 'function') {
           this.options.onCycleTo.call(this, $currItem[0], this.dragged);
         }
 
         // One time callback
-        if (typeof this.oneTimeCallback === "function") {
+        if (typeof this.oneTimeCallback === 'function') {
           this.oneTimeCallback.call(this, $currItem[0], this.dragged);
           this.oneTimeCallback = null;
         }
@@ -681,7 +681,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         // Set one time callback
-        if (typeof callback === "function") {
+        if (typeof callback === 'function') {
           this.oneTimeCallback = callback;
         }
 

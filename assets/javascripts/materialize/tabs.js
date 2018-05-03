@@ -150,7 +150,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         // Act as regular link if target attribute is specified.
-        if (!!tabLink.attr("target")) {
+        if (!!tabLink.attr('target')) {
           return;
         }
 
@@ -174,7 +174,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         if (this.options.swipeable) {
           if (this._tabsCarousel) {
             this._tabsCarousel.set(this.index, function () {
-              if (typeof _this2.options.onShow === "function") {
+              if (typeof _this2.options.onShow === 'function') {
                 _this2.options.onShow.call(_this2, _this2.$content[0]);
               }
             });
@@ -290,7 +290,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             _this4.$activeTabLink = _this4.$tabLinks.eq(_this4.index);
             _this4.$activeTabLink.addClass('active');
             _this4._animateIndicator(prevIndex);
-            if (typeof _this4.options.onShow === "function") {
+            if (typeof _this4.options.onShow === 'function') {
               _this4.options.onShow.call(_this4, _this4.$content[0]);
             }
           }

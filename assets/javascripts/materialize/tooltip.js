@@ -108,7 +108,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         if (this.isOpen) {
           return;
         }
-
         this.isOpen = true;
         // Update tooltip content with HTML attribute options
         this.options = $.extend({}, this.options, this._getAttributeOptions());
@@ -122,6 +121,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           return;
         }
 
+        this.isHovered = false;
+        this.isFocused = false;
         this.isOpen = false;
         this._setExitDelayTimeout();
       }
@@ -275,19 +276,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_handleMouseEnter',
       value: function _handleMouseEnter() {
         this.isHovered = true;
+        this.isFocused = false; // Allows close of tooltip when opened by focus.
         this.open();
       }
     }, {
       key: '_handleMouseLeave',
       value: function _handleMouseLeave() {
         this.isHovered = false;
+        this.isFocused = false; // Allows close of tooltip when opened by focus.
         this.close();
       }
     }, {
       key: '_handleFocus',
       value: function _handleFocus() {
-        this.isFocused = true;
-        this.open();
+        if (M.tabPressed) {
+          this.isFocused = true;
+          this.open();
+        }
       }
     }, {
       key: '_handleBlur',
