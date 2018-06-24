@@ -398,7 +398,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         };
 
         // Countainer here will be closest ancestor with overflow: hidden
-        var closestOverflowParent = this.dropdownEl.offsetParent;
+        var closestOverflowParent = !!this.dropdownEl.offsetParent ? this.dropdownEl.offsetParent : this.dropdownEl.parentNode;
+
         var alignments = M.checkPossibleAlignments(this.el, closestOverflowParent, dropdownBounds, this.options.coverTrigger ? 0 : triggerBRect.height);
 
         var verticalAlignment = 'top';

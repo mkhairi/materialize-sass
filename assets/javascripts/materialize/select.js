@@ -149,8 +149,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }
 
           // Set selected on original select option
-          $(this._valueDict[key].el).prop('selected', selected);
-          this.$el.trigger('change');
+          // Only trigger if selected state changed
+          var prevSelected = $(this._valueDict[key].el).prop('selected');
+          if (prevSelected !== selected) {
+            $(this._valueDict[key].el).prop('selected', selected);
+            this.$el.trigger('change');
+          }
         }
 
         e.stopPropagation();

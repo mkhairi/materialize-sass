@@ -52,15 +52,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       // Setup
       _this.$tabLinks = _this.$el.children('li.tab').children('a');
       _this.index = 0;
-      _this._setTabsAndTabWidth();
       _this._setupActiveTabLink();
-      _this._createIndicator();
 
+      // Setup tabs content
       if (_this.options.swipeable) {
         _this._setupSwipeableTabs();
       } else {
         _this._setupNormalTabs();
       }
+
+      // Setup tabs indicator after content to ensure accurate widths
+      _this._setTabsAndTabWidth();
+      _this._createIndicator();
 
       _this._setupEventHandlers();
       return _this;
@@ -154,8 +157,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           return;
         }
 
-        this._setTabsAndTabWidth();
-
         // Make the old tab inactive.
         this.$activeTabLink.removeClass('active');
         var $oldContent = this.$content;
@@ -193,6 +194,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             }
           }
         }
+
+        // Update widths after content is swapped (scrollbar bugfix)
+        this._setTabsAndTabWidth();
 
         // Update indicator
         this._animateIndicator(prevIndex);
@@ -386,6 +390,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: 'updateTabIndicator',
       value: function updateTabIndicator() {
+        this._setTabsAndTabWidth();
         this._animateIndicator(this.index);
       }
 

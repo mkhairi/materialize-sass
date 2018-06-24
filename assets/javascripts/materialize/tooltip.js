@@ -104,15 +104,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       }
     }, {
       key: 'open',
-      value: function open() {
+      value: function open(isManual) {
         if (this.isOpen) {
           return;
         }
+        isManual = isManual === undefined ? true : undefined; // Default value true
         this.isOpen = true;
         // Update tooltip content with HTML attribute options
         this.options = $.extend({}, this.options, this._getAttributeOptions());
         this._updateTooltipContent();
-        this._setEnterDelayTimeout();
+        this._setEnterDelayTimeout(isManual);
       }
     }, {
       key: 'close',
@@ -153,13 +154,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
     }, {
       key: '_setEnterDelayTimeout',
-      value: function _setEnterDelayTimeout() {
+      value: function _setEnterDelayTimeout(isManual) {
         var _this3 = this;
 
         clearTimeout(this._enterDelayTimeout);
 
         this._enterDelayTimeout = setTimeout(function () {
-          if (!_this3.isHovered && !_this3.isFocused) {
+          if (!_this3.isHovered && !_this3.isFocused && !isManual) {
             return;
           }
 
@@ -277,7 +278,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function _handleMouseEnter() {
         this.isHovered = true;
         this.isFocused = false; // Allows close of tooltip when opened by focus.
-        this.open();
+        this.open(false);
       }
     }, {
       key: '_handleMouseLeave',
@@ -291,7 +292,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function _handleFocus() {
         if (M.tabPressed) {
           this.isFocused = true;
-          this.open();
+          this.open(false);
         }
       }
     }, {

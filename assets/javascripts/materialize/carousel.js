@@ -706,7 +706,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         var index = this.center + n;
-        if (index > this.count || index < 0) {
+        if (index >= this.count || index < 0) {
           if (this.noWrap) {
             return;
           }
@@ -729,7 +729,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         var index = this.center - n;
-        if (index > this.count || index < 0) {
+        if (index >= this.count || index < 0) {
           if (this.noWrap) {
             return;
           }

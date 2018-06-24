@@ -79,6 +79,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function destroy() {
         this._removeEventHandlers();
         this.el.M_Materialbox = undefined;
+
+        // Unwrap image
+        $(this.placeholder).after(this.el).remove();
+
+        this.$el.removeAttr('style');
       }
 
       /**
@@ -254,7 +259,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             }
 
             _this3.$el.removeAttr('style');
-            _this3.$el.attr('style', _this3.originInlineStyles);
+            _this3.originInlineStyles && _this3.$el.attr('style', _this3.originInlineStyles);
 
             // Remove class
             _this3.$el.removeClass('active');

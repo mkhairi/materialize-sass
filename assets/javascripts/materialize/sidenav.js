@@ -99,6 +99,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
        */
       value: function destroy() {
         this._removeEventHandlers();
+        this._enableBodyScrolling();
         this._overlay.parentNode.removeChild(this._overlay);
         this.dragTarget.parentNode.removeChild(this.dragTarget);
         this.el.M_Sidenav = undefined;

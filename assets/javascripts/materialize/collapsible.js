@@ -109,7 +109,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_removeEventHandlers',
       value: function _removeEventHandlers() {
+        var _this3 = this;
+
         this.el.removeEventListener('click', this._handleCollapsibleClickBound);
+        this.$headers.each(function (header) {
+          header.removeEventListener('keydown', _this3._handleCollapsibleKeydownBound);
+        });
       }
 
       /**
@@ -159,7 +164,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_animateIn',
       value: function _animateIn(index) {
-        var _this3 = this;
+        var _this4 = this;
 
         var $collapsibleLi = this.$el.children('li').eq(index);
         if ($collapsibleLi.length) {
@@ -198,8 +203,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               });
 
               // onOpenEnd callback
-              if (typeof _this3.options.onOpenEnd === 'function') {
-                _this3.options.onOpenEnd.call(_this3, $collapsibleLi[0]);
+              if (typeof _this4.options.onOpenEnd === 'function') {
+                _this4.options.onOpenEnd.call(_this4, $collapsibleLi[0]);
               }
             }
           });
@@ -214,7 +219,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_animateOut',
       value: function _animateOut(index) {
-        var _this4 = this;
+        var _this5 = this;
 
         var $collapsibleLi = this.$el.children('li').eq(index);
         if ($collapsibleLi.length) {
@@ -237,8 +242,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               });
 
               // onCloseEnd callback
-              if (typeof _this4.options.onCloseEnd === 'function') {
-                _this4.options.onCloseEnd.call(_this4, $collapsibleLi[0]);
+              if (typeof _this5.options.onCloseEnd === 'function') {
+                _this5.options.onCloseEnd.call(_this5, $collapsibleLi[0]);
               }
             }
           });
@@ -253,7 +258,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: 'open',
       value: function open(index) {
-        var _this5 = this;
+        var _this6 = this;
 
         var $collapsibleLi = this.$el.children('li').eq(index);
         if ($collapsibleLi.length && !$collapsibleLi[0].classList.contains('active')) {
@@ -268,7 +273,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             var $activeLis = this.$el.children('li.active');
             $activeLis.each(function (el) {
               var index = $collapsibleLis.index($(el));
-              _this5.close(index);
+              _this6.close(index);
             });
           }
 
