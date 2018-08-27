@@ -551,7 +551,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     M.initializeJqueryWrapper(Chips, 'chips', 'M_Chips');
   }
 
-  $(document).on('ready turbolinks:load', function () {
+  $(document).ready(function () {
     // Handle removal of static chips.
     $(document.body).on('click', '.chip .close', function () {
       var $chips = $(this).closest('.chips');

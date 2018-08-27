@@ -128,7 +128,7 @@
     $textarea.data('previous-length', $textarea[0].value.length);
   };
 
-  $(document).on('ready turbolinks:load', function () {
+  $(document).ready(function () {
     // Text based inputs
     var input_selector = 'input[type=text], input[type=password], input[type=email], input[type=url], input[type=tel], input[type=number], input[type=search], input[type=date], input[type=time], textarea';
 
@@ -141,7 +141,7 @@
     });
 
     // Add active if input element has been pre-populated on document ready
-    $(document).on('ready turbolinks:load', function () {
+    $(document).ready(function () {
       M.updateTextFields();
     });
 

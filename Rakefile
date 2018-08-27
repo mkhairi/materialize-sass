@@ -45,7 +45,7 @@ namespace :javascripts do
   
 
   desc "Setup javascript assets"
-  task setup: [:clean, :copy, :copy_extras, :turbolinks_init]
+  task setup: [:clean, :copy, :copy_extras]
   #task setup: [:clean, :copy, :copy_extras]
 end
 
