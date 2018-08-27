@@ -249,10 +249,20 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           // Add callback for centering selected option when dropdown content is scrollable
           dropdownOptions.onOpenEnd = function (el) {
             var selectedOption = $(_this4.dropdownOptions).find('.selected').first();
-            if (_this4.dropdown.isScrollable && selectedOption.length) {
-              var scrollOffset = selectedOption[0].getBoundingClientRect().top - _this4.dropdownOptions.getBoundingClientRect().top; // scroll to selected option
-              scrollOffset -= _this4.dropdownOptions.clientHeight / 2; // center in dropdown
-              _this4.dropdownOptions.scrollTop = scrollOffset;
+
+            if (selectedOption.length) {
+              // Focus selected option in dropdown
+              M.keyDown = true;
+              _this4.dropdown.focusedIndex = selectedOption.index();
+              _this4.dropdown._focusFocusedItem();
+              M.keyDown = false;
+
+              // Handle scrolling to selected option
+              if (_this4.dropdown.isScrollable) {
+                var scrollOffset = selectedOption[0].getBoundingClientRect().top - _this4.dropdownOptions.getBoundingClientRect().top; // scroll to selected option
+                scrollOffset -= _this4.dropdownOptions.clientHeight / 2; // center in dropdown
+                _this4.dropdownOptions.scrollTop = scrollOffset;
+              }
             }
           };
 

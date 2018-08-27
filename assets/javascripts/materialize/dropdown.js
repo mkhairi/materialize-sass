@@ -307,7 +307,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           var $activatableElement = $(focusedElement).find('a, button').first();
 
           // Click a or button tag if exists, otherwise click li tag
-          !!$activatableElement.length ? $activatableElement[0].click() : focusedElement.click();
+          if (!!$activatableElement.length) {
+            $activatableElement[0].click();
+          } else if (!!focusedElement) {
+            focusedElement.click();
+          }
 
           // Close dropdown on ESC
         } else if (e.which === M.keys.ESC && this.isOpen) {
@@ -487,8 +491,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
             // onOpenEnd callback
             if (typeof _this3.options.onOpenEnd === 'function') {
-              var elem = anim.animatables[0].target;
-              _this3.options.onOpenEnd.call(elem, _this3.el);
+              _this3.options.onOpenEnd.call(_this3, _this3.el);
             }
           }
         });
@@ -519,7 +522,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
             // onCloseEnd callback
             if (typeof _this4.options.onCloseEnd === 'function') {
-              var elem = anim.animatables[0].target;
               _this4.options.onCloseEnd.call(_this4, _this4.el);
             }
           }
