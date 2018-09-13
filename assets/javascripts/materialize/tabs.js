@@ -468,7 +468,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     return Tabs;
   }(Component);
 
-  window.M.Tabs = Tabs;
+  M.Tabs = Tabs;
 
   if (M.jQueryLoaded) {
     M.initializeJqueryWrapper(Tabs, 'tabs', 'M_Tabs');
