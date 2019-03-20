@@ -91,6 +91,27 @@
 //  }
 //}
 
+//.picker__nav--prev:before,
+//.picker__nav--next:before {
+//  content: " ";
+//  border-top: .5em solid transparent;
+//  border-bottom: .5em solid transparent;
+//  border-right: 0.75em solid #000;
+//  width: 0;
+//  height: 0;
+//  display: block;
+//  margin: 0 auto;
+//}
+//.picker__nav--next:before {
+//  border-right: 0;
+//  border-left: 0.75em solid #000;
+//}
+//.picker__nav--prev:hover,
+//.picker__nav--next:hover {
+//  cursor: pointer;
+//  color: #000;
+//  background: #b1dcfb;
+//}
 .picker__nav--disabled,
 .picker__nav--disabled:hover,
 .picker__nav--disabled:before,
@@ -113,18 +134,14 @@
   margin-top: .75em;
   margin-bottom: .5em;
 }
-
-
-
+//@media (min-height: 33.875em) {
+//  .picker__table {
+//    margin-bottom: .75em;
+//  }
+//}
 .picker__table th, .picker__table td {
   text-align: center;
 }
-
-
-
-
-
-
 .picker__table td {
   margin: 0;
   padding: 0;
@@ -148,7 +165,11 @@
 /**
  * The days on the calendar
  */
-
+//.picker__day {
+//  padding: .3125em 0;
+//  font-weight: 200;
+//  border: 1px solid transparent;
+//}
 .picker__day--today {
   position: relative;
   color: #595959;
@@ -172,45 +193,37 @@
 .picker__day--disabled:before {
   border-top-color: #aaaaaa;
 }
-
-
+.picker__day--outfocus {
+  display: none;
+  padding: .75rem 0;
+  color: #fff;
+}
 .picker__day--infocus:hover{
   cursor: pointer;
   color: #000;
   font-weight: 500;
 }
-
-.picker__day--outfocus {
-  display: none;
-  padding: .75rem 0;
-  color: #fff;
-
-}
+//.picker__day--infocus:hover,
 .picker__day--outfocus:hover {
   cursor: pointer;
   color: #dddddd;
 //  background: #b1dcfb;
   font-weight: 500;
 }
-
-
 .picker__day--highlighted {
-//  border-color: #0089ec;
+  //border-color: #0089ec;
 }
 .picker__day--highlighted:hover,
 .picker--focused .picker__day--highlighted {
   cursor: pointer;
-//  color: #000000;
-//  background: #b1dcfb;
-//  font-weight: 500;
+  //color: #000;
+  //background: #b1dcfb;
 }
 .picker__day--selected,
 .picker__day--selected:hover,
 .picker--focused .picker__day--selected {
-
-
-//  Circle background
-   border-radius: 50%;
+  //  Circle background
+  border-radius: 50%;
   transform: scale(.75);
   background: #0089ec;
   color: #ffffff;
@@ -303,7 +316,7 @@
 }
 
 /* ==========================================================================
-   CUSTOM MATERIALIZE STYLES
+   $DEFAULT-DATE-PICKER
    ========================================================================== */
 /*.picker__box {
   border-radius: 2px;

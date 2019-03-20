@@ -50,10 +50,12 @@
  */
 .picker__holder,
 .picker__frame {
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  top: 100%;
+  -ms-transform: translateY(100%);
+  transform: translateY(100%);
 }
 /**
  * The holder should overlay the entire screen.
@@ -155,7 +157,8 @@
  * When the picker opens...
  */
 .picker--opened .picker__holder {
-  top: 0;
+  -ms-transform: translateY(0);
+  transform: translateY(0);
   background: transparent;
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#1E000000,endColorstr=#1E000000)";
   zoom: 1;
@@ -165,7 +168,8 @@
   transition: background 0.15s ease-out;
 }
 .picker--opened .picker__frame {
-  top: 0;
+  -ms-transform: translateY(0);
+  transform: translateY(0);
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
   filter: alpha(opacity=100);
   -moz-opacity: 1;
