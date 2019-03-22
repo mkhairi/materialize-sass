@@ -146,6 +146,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           } else {
             $(this.dropdownOptions).find('li').removeClass('selected');
             $(option).toggleClass('selected', selected);
+            this._keysSelected = {};
+            this._keysSelected[option.id] = true;
           }
 
           // Set selected on original select option
@@ -185,7 +187,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.wrapper = document.createElement('div');
         $(this.wrapper).addClass('select-wrapper ' + this.options.classes);
         this.$el.before($(this.wrapper));
-        this.wrapper.appendChild(this.el);
+        // Move actual select element into overflow hidden wrapper
+        var $hideSelect = $('<div class="hide-select"></div>');
+        $(this.wrapper).append($hideSelect);
+        $hideSelect[0].appendChild(this.el);
 
         if (this.el.disabled) {
           this.wrapper.classList.add('disabled');
@@ -223,7 +228,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           });
         }
 
-        this.$el.after(this.dropdownOptions);
+        $(this.wrapper).append(this.dropdownOptions);
 
         // Add input dropdown
         this.input = document.createElement('input');
@@ -235,16 +240,17 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           $(this.input).prop('disabled', 'true');
         }
 
-        this.$el.before(this.input);
+        $(this.wrapper).prepend(this.input);
         this._setValueToInput();
 
         // Add caret
         var dropdownIcon = $('<svg class="caret" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
-        this.$el.before(dropdownIcon[0]);
+        $(this.wrapper).prepend(dropdownIcon[0]);
 
         // Initialize dropdown
         if (!this.el.disabled) {
           var dropdownOptions = $.extend({}, this.options.dropdownOptions);
+          var userOnOpenEnd = dropdownOptions.onOpenEnd;
 
           // Add callback for centering selected option when dropdown content is scrollable
           dropdownOptions.onOpenEnd = function (el) {
@@ -263,6 +269,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                 scrollOffset -= _this4.dropdownOptions.clientHeight / 2; // center in dropdown
                 _this4.dropdownOptions.scrollTop = scrollOffset;
               }
+            }
+
+            // Handle user declared onOpenEnd if needed
+            if (userOnOpenEnd && typeof userOnOpenEnd === 'function') {
+              userOnOpenEnd.call(_this4.dropdown, _this4.el);
             }
           };
 

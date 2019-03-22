@@ -325,7 +325,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function _setupLabel() {
         this.$label = this.$el.find('label');
         if (this.$label.length) {
-          this.$label.setAttribute('for', this.$input.attr('id'));
+          this.$label[0].setAttribute('for', this.$input.attr('id'));
         }
       }
 
