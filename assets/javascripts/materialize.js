@@ -11916,6 +11916,7 @@ $jscomp.polyfill = function (e, r, p, m) {
         var spanEl = $('<span></span>');
         spanEl.html(multipleCheckbox);
         liEl.addClass(disabledClass + " " + optgroupClass);
+        liEl.addClass(option.className);
         liEl.append(spanEl);
 
         // add icons
