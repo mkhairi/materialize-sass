@@ -8,7 +8,10 @@ module Materialize
         %w(stylesheets javascripts).each do |sub|
           app.config.assets.paths << root.join('assets', sub).to_s
         end
-        ActionController::Base.send(:helper, Materialize::Helpers)
+
+        ActiveSupport.on_load(:action_controller_base) do
+          ActionController::Base.send(:helper, Materialize::Helpers)
+        end
       end
     end
   end
