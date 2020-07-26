@@ -4825,6 +4825,15 @@ $jscomp.polyfill = function (e, r, p, m) {
     return style;
   }
 
+  function setStyle(obj, style) {
+    if (M.jQueryLoaded) {
+      $( obj ).css(style);
+    }
+    else {
+      obj.setAttribute('style', convertStyle(style));
+    }
+  }
+
   var Effect = {
 
     // Effect delay
@@ -4869,7 +4878,7 @@ $jscomp.polyfill = function (e, r, p, m) {
       };
 
       ripple.className = ripple.className + ' waves-notransition';
-      ripple.setAttribute('style', convertStyle(rippleStyle));
+      setStyle(ripple, rippleStyle);
       ripple.className = ripple.className.replace('waves-notransition', '');
 
       // Scale the ripple
@@ -4890,7 +4899,7 @@ $jscomp.polyfill = function (e, r, p, m) {
       rippleStyle['-o-transition-timing-function'] = 'cubic-bezier(0.250, 0.460, 0.450, 0.940)';
       rippleStyle['transition-timing-function'] = 'cubic-bezier(0.250, 0.460, 0.450, 0.940)';
 
-      ripple.setAttribute('style', convertStyle(rippleStyle));
+      setStyle(ripple, rippleStyle);
     },
 
     hide: function (e) {
@@ -4939,7 +4948,7 @@ $jscomp.polyfill = function (e, r, p, m) {
           'transform': scale
         };
 
-        ripple.setAttribute('style', convertStyle(style));
+        setStyle(ripple, style);
 
         setTimeout(function () {
           try {
@@ -4974,7 +4983,7 @@ $jscomp.polyfill = function (e, r, p, m) {
             elementStyle = '';
           }
 
-          wrapper.setAttribute('style', elementStyle);
+          setStyle(wrapper, elementStyle);
 
           el.className = 'waves-button-input';
           el.removeAttribute('style');
