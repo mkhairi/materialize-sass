@@ -339,6 +339,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var spanEl = $('<span></span>');
         spanEl.html(multipleCheckbox);
         liEl.addClass(disabledClass + ' ' + optgroupClass);
+        liEl.addClass(option.className);
         liEl.append(spanEl);
 
         // add icons
