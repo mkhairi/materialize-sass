@@ -15,11 +15,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     data: {}, // Autocomplete data set
     limit: Infinity, // Limit of results the autocomplete shows
     onAutocomplete: null, // Callback for when autocompleted
+    dropdownOptions: {
+      // Default dropdown options
+      autoFocus: false,
+      closeOnClick: false,
+      coverTrigger: false
+    },
     minLength: 1, // Min characters before autocomplete starts
     sortFunction: function (a, b, inputString) {
       // Sort function for sorting autocomplete results
       return a.indexOf(inputString) - b.indexOf(inputString);
-    }
+    },
+    allowUnsafeHTML: false
   };
 
   /**
@@ -148,14 +155,21 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.$inputField.append(this.container);
         this.el.setAttribute('data-target', this.container.id);
 
-        this.dropdown = M.Dropdown.init(this.el, {
-          autoFocus: false,
-          closeOnClick: false,
-          coverTrigger: false,
-          onItemClick: function (itemEl) {
-            _this2.selectOption($(itemEl));
+        // Initialize dropdown
+        var dropdownOptions = $.extend({}, Autocomplete.defaults.dropdownOptions, this.options.dropdownOptions);
+        var userOnItemClick = dropdownOptions.onItemClick;
+
+        // Ensuring the selectOption call when user passes custom onItemClick function to dropdown
+        dropdownOptions.onItemClick = function (el) {
+          _this2.selectOption($(el));
+
+          // Handle user declared onItemClick if needed
+          if (userOnItemClick && typeof userOnItemClick === 'function') {
+            userOnItemClick.call(_this2.dropdown, _this2.el);
           }
-        });
+        };
+
+        this.dropdown = M.Dropdown.init(this.el, dropdownOptions);
 
         // Sketchy removal of dropdown click handler
         this.el.removeEventListener('click', this.dropdown._handleClickBound);
@@ -255,6 +269,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           if (this.activeIndex >= 0) {
             this.$active = $(this.container).children('li').eq(this.activeIndex);
             this.$active.addClass('active');
+
+            // Focus selected
+            this.container.children[this.activeIndex].scrollIntoView({
+              behavior: 'smooth',
+              block: 'nearest',
+              inline: 'nearest'
+            });
           }
         }
       }
@@ -298,17 +319,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
     }, {
       key: '_highlight',
-      value: function _highlight(string, $el) {
-        var img = $el.find('img');
-        var matchStart = $el.text().toLowerCase().indexOf('' + string.toLowerCase() + ''),
-            matchEnd = matchStart + string.length - 1,
-            beforeMatch = $el.text().slice(0, matchStart),
-            matchText = $el.text().slice(matchStart, matchEnd + 1),
-            afterMatch = $el.text().slice(matchEnd + 1);
-        $el.html('<span>' + beforeMatch + '<span class=\'highlight\'>' + matchText + '</span>' + afterMatch + '</span>');
-        if (img.length) {
-          $el.prepend(img);
+      value: function _highlight(input, label) {
+        var start = label.toLowerCase().indexOf('' + input.toLowerCase() + '');
+        var end = start + input.length - 1;
+        //custom filters may return results where the string does not match any part
+        if (start == -1 || end == -1) {
+          return [label, '', ''];
         }
+        return [label.slice(0, start), label.slice(start, end + 1), label.slice(end + 1)];
       }
 
       /**
@@ -374,11 +392,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         // Gather all matching data
         for (var key in data) {
           if (data.hasOwnProperty(key) && key.toLowerCase().indexOf(val) !== -1) {
-            // Break if past limit
-            if (this.count >= this.options.limit) {
-              break;
-            }
-
             var entry = {
               data: data[key],
               key: key
@@ -397,18 +410,37 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           matchingData.sort(sortFunctionBound);
         }
 
+        // Limit
+        matchingData = matchingData.slice(0, this.options.limit);
+
         // Render
         for (var i = 0; i < matchingData.length; i++) {
           var _entry = matchingData[i];
-          var $autocompleteOption = $('<li></li>');
+          var item = document.createElement('li');
           if (!!_entry.data) {
-            $autocompleteOption.append('<img src="' + _entry.data + '" class="right circle"><span>' + _entry.key + '</span>');
-          } else {
-            $autocompleteOption.append('<span>' + _entry.key + '</span>');
+            var img = document.createElement('img');
+            img.classList.add('right', 'circle');
+            img.src = _entry.data;
+            item.appendChild(img);
           }
 
-          $(this.container).append($autocompleteOption);
-          this._highlight(val, $autocompleteOption);
+          var parts = this._highlight(val, _entry.key);
+          var s = document.createElement('span');
+          if (this.options.allowUnsafeHTML) {
+            s.innerHTML = parts[0] + '<span class="highlight">' + parts[1] + '</span>' + parts[2];
+          } else {
+            s.appendChild(document.createTextNode(parts[0]));
+            if (!!parts[1]) {
+              var highlight = document.createElement('span');
+              highlight.textContent = parts[1];
+              highlight.classList.add('highlight');
+              s.appendChild(highlight);
+              s.appendChild(document.createTextNode(parts[2]));
+            }
+          }
+          item.appendChild(s);
+
+          $(this.container).append(item);
         }
       }
 

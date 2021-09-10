@@ -191,6 +191,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.cancelBtn.innerHTML = this.options.i18n.cancel;
 
         if (this.options.container) {
+          var optEl = this.options.container;
+          this.options.container = optEl instanceof HTMLElement ? optEl : document.querySelector(optEl);
           this.$modalEl.appendTo(this.options.container);
         } else {
           this.$modalEl.insertBefore(this.el);
@@ -214,6 +216,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var _this3 = this;
 
         format = format || this.options.format;
+        if (typeof format === 'function') {
+          return format(this.date);
+        }
+
         if (!Datepicker._isDate(this.date)) {
           return '';
         }
@@ -520,6 +526,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           if (i >= opts.minYear) {
             arr.push('<option value="' + i + '" ' + (i === year ? 'selected="selected"' : '') + '>' + i + '</option>');
           }
+        }
+        if (opts.yearRangeReverse) {
+          arr.reverse();
         }
 
         yearHtml = '<select class="datepicker-select orig-select-year" tabindex="-1">' + arr.join('') + '</select>';

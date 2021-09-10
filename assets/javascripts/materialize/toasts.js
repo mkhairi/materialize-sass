@@ -7,6 +7,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
   var _defaults = {
     html: '',
+    unsafeHTML: '',
+    text: '',
     displayLength: 4000,
     inDuration: 300,
     outDuration: 375,
@@ -24,7 +26,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @member Toast#options
        */
       this.options = $.extend({}, Toast.defaults, options);
-      this.message = this.options.html;
+      this.htmlMessage = this.options.html;
+      // Warn when using html
+      if (!!this.options.html) console.warn('The html option is deprecated and will be removed in the future. See https://github.com/materializecss/materialize/pull/49');
+      // If the new unsafeHTML is used, prefer that
+      if (!!this.options.unsafeHTML) {
+        this.htmlMessage = this.options.unsafeHTML;
+      }
+      this.message = this.options.text;
 
       /**
        * Describes current pan state toast
@@ -67,20 +76,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           $(toast).addClass(this.options.classes);
         }
 
-        // Set content
-        if (typeof HTMLElement === 'object' ? this.message instanceof HTMLElement : this.message && typeof this.message === 'object' && this.message !== null && this.message.nodeType === 1 && typeof this.message.nodeName === 'string') {
-          toast.appendChild(this.message);
-
-          // Check if it is jQuery object
-        } else if (!!this.message.jquery) {
-          $(toast).append(this.message[0]);
-
-          // Insert as html;
+        // Set safe text content
+        toast.textContent = this.message;
+        if (typeof HTMLElement === 'object' ? this.htmlMessage instanceof HTMLElement : this.htmlMessage && typeof this.htmlMessage === 'object' && this.htmlMessage !== null && this.htmlMessage.nodeType === 1 && typeof this.htmlMessage.nodeName === 'string') {
+          //if the htmlMessage is an HTML node, append it directly
+          toast.appendChild(this.htmlMessage);
+        } else if (!!this.htmlMessage.jquery) {
+          // Check if it is jQuery object, append the node
+          $(toast).append(this.htmlMessage[0]);
         } else {
-          toast.innerHTML = this.message;
+          // Append as unsanitized html;
+          $(toast).append(this.htmlMessage);
         }
 
-        // Append toasft
+        // Append toast
         Toast._container.appendChild(toast);
         return toast;
       }

@@ -14,6 +14,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
   var _defaults = {
     edge: 'left',
     draggable: true,
+    dragTargetWidth: '10px',
     inDuration: 250,
     outDuration: 200,
     onOpenStart: null,
@@ -49,6 +50,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
        * @member Sidenav#options
        * @prop {String} [edge='left'] - Side of screen on which Sidenav appears
        * @prop {Boolean} [draggable=true] - Allow swipe gestures to open/close Sidenav
+       * @prop {String} [dragTargetWidth='10px'] - Width of the area where you can start dragging
        * @prop {Number} [inDuration=250] - Length in ms of enter transition
        * @prop {Number} [outDuration=200] - Length in ms of exit transition
        * @prop {Function} onOpenStart - Function called when sidenav starts entering
@@ -135,11 +137,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this._handleCloseReleaseBound = this._handleCloseRelease.bind(this);
         this._handleCloseTriggerClickBound = this._handleCloseTriggerClick.bind(this);
 
-        this.dragTarget.addEventListener('touchmove', this._handleDragTargetDragBound);
+        this.dragTarget.addEventListener('touchmove', this._handleDragTargetDragBound, passiveIfSupported);
         this.dragTarget.addEventListener('touchend', this._handleDragTargetReleaseBound);
-        this._overlay.addEventListener('touchmove', this._handleCloseDragBound);
+        this._overlay.addEventListener('touchmove', this._handleCloseDragBound, passiveIfSupported);
         this._overlay.addEventListener('touchend', this._handleCloseReleaseBound);
-        this.el.addEventListener('touchmove', this._handleCloseDragBound);
+        this.el.addEventListener('touchmove', this._handleCloseDragBound, passiveIfSupported);
         this.el.addEventListener('touchend', this._handleCloseReleaseBound);
         this.el.addEventListener('click', this._handleCloseTriggerClickBound);
 
@@ -191,7 +193,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       }
 
       /**
-       * Set variables needed at the beggining of drag
+       * Set variables needed at the beginning of drag
        * and stop any current transition.
        * @param {Event} e
        */
@@ -433,6 +435,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function _createDragTarget() {
         var dragTarget = document.createElement('div');
         dragTarget.classList.add('drag-target');
+        dragTarget.style.width = this.options.dragTargetWidth;
         document.body.appendChild(dragTarget);
         this.dragTarget = dragTarget;
       }

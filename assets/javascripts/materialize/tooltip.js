@@ -15,6 +15,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     exitDelay: 200,
     enterDelay: 0,
     html: null,
+    text: '',
+    unsafeHTML: null,
     margin: 5,
     inDuration: 250,
     outDuration: 200,
@@ -73,14 +75,28 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         var tooltipContentEl = document.createElement('div');
         tooltipContentEl.classList.add('tooltip-content');
-        tooltipContentEl.innerHTML = this.options.html;
+        this._setTooltipContent(tooltipContentEl);
+
         tooltipEl.appendChild(tooltipContentEl);
         document.body.appendChild(tooltipEl);
       }
     }, {
+      key: '_setTooltipContent',
+      value: function _setTooltipContent(tooltipContentEl) {
+        tooltipContentEl.textContent = this.options.text;
+        if (!!this.options.html) {
+          // Warn when using html
+          console.warn('The html option is deprecated and will be removed in the future. See https://github.com/materializecss/materialize/pull/49');
+          $(tooltipContentEl).append(this.options.html);
+        }
+        if (!!this.options.unsafeHTML) {
+          $(tooltipContentEl).append(this.options.unsafeHTML);
+        }
+      }
+    }, {
       key: '_updateTooltipContent',
       value: function _updateTooltipContent() {
-        this.tooltipEl.querySelector('.tooltip-content').innerHTML = this.options.html;
+        this._setTooltipContent(this.tooltipEl.querySelector('.tooltip-content'));
       }
     }, {
       key: '_setupEventHandlers',
@@ -253,7 +269,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         anim.remove(this.tooltipEl);
         anim({
           targets: this.tooltipEl,
-          opacity: 1,
+          opacity: this.options.opacity || 1,
           translateX: this.xMovement,
           translateY: this.yMovement,
           duration: this.options.inDuration,
@@ -309,7 +325,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var positionOption = this.el.getAttribute('data-position');
 
         if (tooltipTextOption) {
-          attributeOptions.html = tooltipTextOption;
+          attributeOptions.text = tooltipTextOption;
         }
 
         if (positionOption) {

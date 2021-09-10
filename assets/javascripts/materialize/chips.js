@@ -16,6 +16,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     placeholder: '',
     secondaryPlaceholder: '',
     autocompleteOptions: {},
+    autocompleteOnly: false,
     limit: Infinity,
     onChipAdd: null,
     onChipSelect: null,
@@ -218,9 +219,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }
 
           e.preventDefault();
-          this.addChip({
-            tag: this.$input[0].value
-          });
+          if (!this.hasAutocomplete || this.hasAutocomplete && !this.options.autocompleteOnly) {
+            this.addChip({
+              tag: this.$input[0].value
+            });
+          }
           this.$input[0].value = '';
 
           // delete or left
@@ -475,6 +478,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
           if (currChips.chipsData.length) {
             currChips.selectChip(selectIndex);
+          } else {
+            currChips.$input[0].focus();
           }
 
           // left arrow key
@@ -520,7 +525,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }, {
       key: '_handleChipsBlur',
       value: function _handleChipsBlur(e) {
-        if (!Chips._keydown) {
+        if (!Chips._keydown && document.hidden) {
           var $chips = $(e.target).closest('.chips');
           var currChips = $chips[0].M_Chips;
 

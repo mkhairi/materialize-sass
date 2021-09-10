@@ -129,9 +129,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       key: '_handleOptionClick',
       value: function _handleOptionClick(e) {
         e.preventDefault();
-        var option = $(e.target).closest('li')[0];
-        var key = option.id;
-        if (!$(option).hasClass('disabled') && !$(option).hasClass('optgroup') && key.length) {
+        var optionEl = $(e.target).closest('li')[0];
+        this._selectOption(optionEl);
+        e.stopPropagation();
+      }
+    }, {
+      key: '_selectOption',
+      value: function _selectOption(optionEl) {
+        var key = optionEl.id;
+        if (!$(optionEl).hasClass('disabled') && !$(optionEl).hasClass('optgroup') && key.length) {
           var selected = true;
 
           if (this.isMultiple) {
@@ -145,9 +151,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             selected = this._toggleEntryFromArray(key);
           } else {
             $(this.dropdownOptions).find('li').removeClass('selected');
-            $(option).toggleClass('selected', selected);
+            $(optionEl).toggleClass('selected', selected);
             this._keysSelected = {};
-            this._keysSelected[option.id] = true;
+            this._keysSelected[optionEl.id] = true;
           }
 
           // Set selected on original select option
@@ -159,7 +165,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }
         }
 
-        e.stopPropagation();
+        if (!this.isMultiple) {
+          this.dropdown.close();
+        }
       }
 
       /**
@@ -277,9 +285,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             }
           };
 
-          if (this.isMultiple) {
-            dropdownOptions.closeOnClick = false;
-          }
+          // Prevent dropdown from closing too early
+          dropdownOptions.closeOnClick = false;
+
           this.dropdown = M.Dropdown.init(this.input, dropdownOptions);
         }
 
@@ -343,8 +351,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         // add icons
         var iconUrl = option.getAttribute('data-icon');
+        var classes = option.getAttribute('class');
         if (!!iconUrl) {
-          var imgEl = $('<img alt="" src="' + iconUrl + '">');
+          var imgEl = $('<img alt="" class="' + classes + '" src="' + iconUrl + '">');
           liEl.prepend(imgEl);
         }
 
@@ -394,7 +403,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         options.each(function (el) {
           if ($(el).prop('selected')) {
-            var text = $(el).text();
+            var text = $(el).text().trim();
             values.push(text);
           }
         });

@@ -224,6 +224,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         // Calculating screen
         var windowWidth = window.innerWidth;
         var windowHeight = window.innerHeight;
+        var scrollBarWidth = windowWidth - document.documentElement.clientWidth;
         var centerX = windowWidth / 2;
         var centerY = windowHeight / 2;
         var isLeft = originLeft <= centerX;
@@ -258,7 +259,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         // Setting tap target
         var tapTargetWrapperCssObj = {};
         tapTargetWrapperCssObj.top = isTop ? tapTargetTop + 'px' : '';
-        tapTargetWrapperCssObj.right = isRight ? windowWidth - tapTargetLeft - tapTargetWidth + 'px' : '';
+        tapTargetWrapperCssObj.right = isRight ? windowWidth - tapTargetLeft - tapTargetWidth - scrollBarWidth + 'px' : '';
         tapTargetWrapperCssObj.bottom = isBottom ? windowHeight - tapTargetTop - tapTargetHeight + 'px' : '';
         tapTargetWrapperCssObj.left = isLeft ? tapTargetLeft + 'px' : '';
         tapTargetWrapperCssObj.position = tapTargetPosition;
