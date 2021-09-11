@@ -1,13 +1,13 @@
 # Materialize sass ruby gem [![Gem Version](https://badge.fury.io/rb/materialize-sass.svg)](http://badge.fury.io/rb/materialize-sass)
 
-`materialize-sass` is a Sass powered version of [Materialize](http://materializecss.com), a modern responsive front-end framework based on Material Design.
+`materialize-sass` is a Sass powered version of [Materialize](https://materializecss.github.io/materialize), a modern responsive front-end framework based on Material Design.
 
 example: http://materialize.labs.my/ 
 
 source: https://github.com/mkhairi/materialize-rails
 
 # Notices
-This master branch now v1.0.0
+This master branch now v1.1.0-alpha
 
 Documentation for previous releases (v0.100.*) are available [this branch.](https://github.com/mkhairi/materialize-sass/tree/v0.100)
 
@@ -17,6 +17,9 @@ In your Gemfile you need to add the `materialize-sass` gem:
 
 ```ruby
 gem 'materialize-sass', '~> 1.0.0'
+```or github master branch
+```
+gem 'materialize-sass', github: 'mkhairi/materialize-sass
 ```
 
 
@@ -103,7 +106,7 @@ or install this gem for offline icons
 see [docs](https://github.com/Angelmmiguel/material_icons)
 
 ## Contributing
-note: Any changes or Pull Request regarding materialize assets should be made in official [materialize](https://github.com/Dogfalo/materialize) repo.
+note: Any changes or Pull Request regarding materialize assets should be made in official [materialize](https://materializecss.github.io/materialize/) repo.
 
 1. Fork it ( https://github.com/mkhairi/materialize-sass/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
