@@ -17,8 +17,10 @@ In your Gemfile you need to add the `materialize-sass` gem:
 
 ```ruby
 gem 'materialize-sass', '~> 1.0.0'
-```or github master branch
 ```
+or github master branch
+
+```ruby
 gem 'materialize-sass', github: 'mkhairi/materialize-sass
 ```
 
