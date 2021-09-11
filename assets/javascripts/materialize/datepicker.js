@@ -191,8 +191,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.cancelBtn.innerHTML = this.options.i18n.cancel;
 
         if (this.options.container) {
-          var optEl = this.options.container;
-          this.options.container = optEl instanceof HTMLElement ? optEl : document.querySelector(optEl);
           this.$modalEl.appendTo(this.options.container);
         } else {
           this.$modalEl.insertBefore(this.el);
@@ -216,10 +214,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var _this3 = this;
 
         format = format || this.options.format;
-        if (typeof format === 'function') {
-          return format(this.date);
-        }
-
         if (!Datepicker._isDate(this.date)) {
           return '';
         }

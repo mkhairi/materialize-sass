@@ -198,8 +198,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.modalEl.id = 'modal-' + this.id;
 
         // Append popover to input by default
-        var optEl = this.options.container;
-        var containerEl = optEl instanceof HTMLElement ? optEl : document.querySelector(optEl);
+        var containerEl = document.querySelector(this.options.container);
         if (this.options.container && !!containerEl) {
           this.$modalEl.appendTo(containerEl);
         } else {
